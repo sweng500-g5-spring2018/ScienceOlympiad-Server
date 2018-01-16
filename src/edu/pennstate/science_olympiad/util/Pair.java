@@ -12,18 +12,6 @@ public class Pair<L,R> {
     private R right;
 
     /**
-     * Gets the key for this pair.
-     * @return key for this pair
-     */
-    public L getLeft() { return left; }
-
-    /**
-     * Gets the value for this pair.
-     * @return value for this pair
-     */
-    public R getRight() { return right; }
-
-    /**
      * Creates a new pair
      * @param left The left side value for this pair
      * @param right The right side value for this pair
@@ -32,6 +20,10 @@ public class Pair<L,R> {
         this.left = left;
         this.right = right;
     }
+
+    //Getters for left and right
+    public L getLeft() { return left; }
+    public R getRight() { return right; }
 
 
     @Override
