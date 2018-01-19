@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="ScienceOlympiad-Server:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="sweng500.war">
+      <element id="artifact" artifact-name="ScienceOlympiad-Server:war exploded" />
+    </root>
+  </artifact>
+</component>
