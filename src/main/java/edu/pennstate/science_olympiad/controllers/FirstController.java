@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import edu.pennstate.science_olympiad.User;
 
 /**
- * Set up all the end points, RestController automaticaly add
+ * Set up all the end points, RestController automatically add
  * a ResponseBody annotation in the return of each method.
  *
  * Pretty sure in order for the object to convert to json
