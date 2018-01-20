@@ -24,6 +24,8 @@ public class Pair<L,R> {
     //Getters for left and right
     public L getLeft() { return left; }
     public R getRight() { return right; }
+    public void setLeft(L left) { this.left = left; }
+    public void setRight(R right) { this.right = right; }
 
 
     @Override

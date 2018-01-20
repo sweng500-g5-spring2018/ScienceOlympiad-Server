@@ -6,9 +6,43 @@ package edu.pennstate.science_olympiad;
  */
 public class Location {
 
-    private String locationName;
+    private String building;
+    private String roomNumber;
     private Double latitiude;
     private Double longitude;
-    private Double elevation;
 
+    public Location() {
+    }
+
+    public String getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(String building) {
+        this.building = building;
+    }
+
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+
+    public Double getLatitiude() {
+        return latitiude;
+    }
+
+    public void setLatitiude(Double latitiude) {
+        this.latitiude = latitiude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
 }
