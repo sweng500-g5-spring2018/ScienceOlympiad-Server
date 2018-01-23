@@ -12,6 +12,7 @@ public class Coach extends AUser {
     private List<Student> students;
 
     public Coach() {
+        super();
         students = new ArrayList<Student>();
     }
 

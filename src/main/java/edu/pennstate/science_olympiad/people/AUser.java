@@ -1,17 +1,26 @@
 package edu.pennstate.science_olympiad.people;
 
+import com.twilio.type.PhoneNumber;
 import sun.security.util.Password;
 
 public abstract class AUser {
     private String firstName;
     private String lastName;
     private String emailAddress;
-    private String phoneNumber;
+    private PhoneNumber phoneNumber;
     private String userId;
     private Password password;
     private String salt;
 
-
+    public AUser() {
+        firstName = "";
+        lastName = "";
+        emailAddress = "";
+        phoneNumber = new PhoneNumber("+15555555555");
+        userId = "";
+        password = new Password();
+        
+    }
 
     public String getFirstName() {
         return firstName;
@@ -37,11 +46,11 @@ public abstract class AUser {
         this.emailAddress = emailAddress;
     }
 
-    public String getPhoneNumber() {
+    public PhoneNumber getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
+    public void setPhoneNumber(PhoneNumber phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 

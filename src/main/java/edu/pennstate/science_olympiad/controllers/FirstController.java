@@ -1,9 +1,11 @@
 package edu.pennstate.science_olympiad.controllers;
+import edu.pennstate.science_olympiad.people.AUser;
+import edu.pennstate.science_olympiad.people.Admin;
+import edu.pennstate.science_olympiad.people.UserFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
-import edu.pennstate.science_olympiad.User;
 
 /**
  * Set up all the end points, RestController automatically add
@@ -17,7 +19,11 @@ public class FirstController {
 
 
     @RequestMapping(value="users",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public User getUser() {
-        return new User();
+    public AUser getUser() {
+        Admin admin = (Admin)UserFactory.getInstance().createUser("admin");
+        admin.setFirstName("Brandon");
+        admin.setLastName("Hessler");
+        admin.setEmailAddress("PennState@brandonhessler.com");
+        return admin;
     }
 }

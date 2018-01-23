@@ -10,6 +10,7 @@ public class Student extends AUser {
     private TeamRoleEnum teamRoleEnum;
 
     public Student() {
+        super();
     }
 
     public School getSchool() {

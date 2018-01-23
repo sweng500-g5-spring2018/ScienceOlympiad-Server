@@ -4,6 +4,7 @@ public class Admin extends AUser {
     private String siteName;
 
     public Admin() {
+        super();
         this.siteName = "";
     }
 
