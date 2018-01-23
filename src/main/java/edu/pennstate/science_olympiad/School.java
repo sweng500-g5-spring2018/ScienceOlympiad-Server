@@ -5,6 +5,10 @@ import edu.pennstate.science_olympiad.people.Student;
 
 import java.util.List;
 
+/**
+ * This is just the contact information for the school that the  {@link edu.pennstate.science_olympiad.people.Student}s
+ * and  {@link edu.pennstate.science_olympiad.people.Coach}s are from. This is to keep track for our records for later.
+ */
 public class School {
     private String schoolName;
     private String schoolContact;
