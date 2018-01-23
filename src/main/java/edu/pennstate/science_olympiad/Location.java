@@ -1,7 +1,7 @@
 package edu.pennstate.science_olympiad;
 
 /**
- * This  describes a location that a {@link edu.pennstate.science_olympiad.User} or
+ * This  describes a location that a {@link edu.pennstate.science_olympiad.people.AUser} or
  * {@link edu.pennstate.science_olympiad.Event} may be at, as well as its name.
  */
 public class Location {

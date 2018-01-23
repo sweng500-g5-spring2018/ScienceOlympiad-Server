@@ -15,12 +15,13 @@ public class Event {
     private String name;
     private String description;
     private Location location;
-    private Date time;
+    private Date startTime;
+    private Date endTime;
     private Judge judge;
-    private List<Pair<Team, PlaceEnum>> teamsAndPlacement;
+    private List<Pair<Team, Double>> teamsAndScores;
 
     public Event() {
-        teamsAndPlacement = new ArrayList<Pair<Team, PlaceEnum>>();
+        teamsAndScores = new ArrayList<Pair<Team, Double>>();
     }
 
     public String getName() {
@@ -47,12 +48,20 @@ public class Event {
         this.location = location;
     }
 
-    public Date getTime() {
-        return time;
+    public Date getStartTime() {
+        return startTime;
     }
 
-    public void setTime(Date time) {
-        this.time = time;
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
     public Judge getJudge() {
@@ -63,23 +72,23 @@ public class Event {
         this.judge = judge;
     }
 
-    public List<Pair<Team, PlaceEnum>> getTeamsAndPlacement() {
-        return teamsAndPlacement;
+    public List<Pair<Team, Double>> getTeamsAndScores() {
+        return teamsAndScores;
     }
 
-    public void addTeamAndPlacement(Pair<Team, PlaceEnum> teamPlace) {
-        getTeamsAndPlacement().add(teamPlace);
+    public void addTeamAndScore(Pair<Team, Double> teamScore) {
+        getTeamsAndScores().add(teamScore);
     }
 
-    public void setPlacementForTeam(Team team, PlaceEnum placeEnum) {
-        for (Pair<Team, PlaceEnum> pair : getTeamsAndPlacement()) {
+    public void setScoreForTeam(Team team, Double score) {
+        for (Pair<Team, Double> pair : getTeamsAndScores()) {
             if (pair.getLeft() == team) {
-                pair.setRight(placeEnum);
+                pair.setRight(score);
             }
         }
     }
 
-    public void setTeamsAndPlacement(List<Pair<Team, PlaceEnum>> teamsAndPlacement) {
-        this.teamsAndPlacement = teamsAndPlacement;
+    public void setTeamsAndScores(List<Pair<Team, Double>> teamsAndScores) {
+        this.teamsAndScores = teamsAndScores;
     }
 }

@@ -13,6 +13,7 @@ public class Judge extends AUser {
     private List<Event> events;
 
     public Judge() {
+        super();
         events = new ArrayList<Event>();
     }
 

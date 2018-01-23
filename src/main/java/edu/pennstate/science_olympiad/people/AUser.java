@@ -1,17 +1,32 @@
 package edu.pennstate.science_olympiad.people;
 
+import com.twilio.type.PhoneNumber;
 import sun.security.util.Password;
 
+/**
+ * This is the abstract class for all users of this application. All other users extend from this.
+ * When we first create any user, we create it from the  {@link edu.pennstate.science_olympiad.people.UserFactory},
+ * which will call the default constructor. It is advisable to set the firstName, lastName, and emailAddress
+ * to begin with, then the user can set the rest of the preferences when they register.
+ */
 public abstract class AUser {
     private String firstName;
     private String lastName;
     private String emailAddress;
-    private String phoneNumber;
+    private PhoneNumber phoneNumber;
     private String userId;
     private Password password;
     private String salt;
 
-
+    public AUser() {
+        firstName = "";
+        lastName = "";
+        emailAddress = "";
+        phoneNumber = null;
+        userId = "";
+        password = new Password();
+        salt = "";
+    }
 
     public String getFirstName() {
         return firstName;
@@ -37,11 +52,11 @@ public abstract class AUser {
         this.emailAddress = emailAddress;
     }
 
-    public String getPhoneNumber() {
+    public PhoneNumber getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
+    public void setPhoneNumber(PhoneNumber phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -63,6 +78,11 @@ public abstract class AUser {
 
     public void setPassword(Password password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return firstName + " " + lastName;
     }
 
 }

@@ -2,14 +2,18 @@ package edu.pennstate.science_olympiad.people;
 
 import edu.pennstate.science_olympiad.School;
 import edu.pennstate.science_olympiad.Team;
-import edu.pennstate.science_olympiad.TeamRoleEnum;
 
+/**
+ * A student is the participant in the {@link edu.pennstate.science_olympiad.Olympiad} and the
+ *  {@link edu.pennstate.science_olympiad.Event}s therein. There will be more of these actors than any other.
+ */
 public class Student extends AUser {
     private School school;
     private Team team;
-    private TeamRoleEnum teamRoleEnum;
+
 
     public Student() {
+        super();
     }
 
     public School getSchool() {
@@ -28,11 +32,4 @@ public class Student extends AUser {
         this.team = team;
     }
 
-    public TeamRoleEnum getTeamRoleEnum() {
-        return teamRoleEnum;
-    }
-
-    public void setTeamRoleEnum(TeamRoleEnum teamRoleEnum) {
-        this.teamRoleEnum = teamRoleEnum;
-    }
 }
