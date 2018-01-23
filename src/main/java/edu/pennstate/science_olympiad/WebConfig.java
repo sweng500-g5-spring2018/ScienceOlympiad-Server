@@ -26,7 +26,7 @@ public class WebConfig implements WebApplicationInitializer {
         //container.addListener(new ContextLoaderListener(context));
 
         ServletRegistration.Dynamic dispatcher =
-                container.addServlet("sweng500", new DispatcherServlet(context));
+                container.addServlet("/", new DispatcherServlet(context));
 
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
