@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 /**
  * Set up all the end points, RestController automatically add
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RestController
 public class FirstController {
 
-
+    @CrossOrigin(origins = "*")
     @RequestMapping(value="users",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
     public AUser getUser() {
         Admin admin = (Admin)UserFactory.getInstance().createUser("admin");
