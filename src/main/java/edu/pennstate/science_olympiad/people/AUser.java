@@ -1,6 +1,8 @@
 package edu.pennstate.science_olympiad.people;
 
 import com.twilio.type.PhoneNumber;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import sun.security.util.Password;
 
 /**
@@ -8,8 +10,15 @@ import sun.security.util.Password;
  * When we first create any user, we create it from the  {@link edu.pennstate.science_olympiad.people.UserFactory},
  * which will call the default constructor. It is advisable to set the firstName, lastName, and emailAddress
  * to begin with, then the user can set the rest of the preferences when they register.
+ *
+ * Inserts will be entered into the collection : ausers unless otherwise specified
  */
+
+@Document(collection="ausers")
 public abstract class AUser {
+
+    @Id
+    public String id;
     private String firstName;
     private String lastName;
     private String emailAddress;

@@ -1,9 +1,8 @@
-package edu.pennstate.science_olympiad;
+package edu.pennstate.science_olympiad.config;
 
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
-
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
@@ -21,7 +20,7 @@ public class WebConfig implements WebApplicationInitializer {
     public void onStartup(ServletContext container) {
         AnnotationConfigWebApplicationContext context
                 = new AnnotationConfigWebApplicationContext();
-        context.setConfigLocation("edu.pennstate.science_olympiad.SpringConfig");
+        context.setConfigLocation("edu.pennstate.science_olympiad.config.SpringConfig");
 
         //container.addListener(new ContextLoaderListener(context));
 
