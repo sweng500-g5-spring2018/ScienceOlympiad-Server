@@ -17,7 +17,8 @@ public class Event {
     private Location location;
     private Date startTime;
     private Date endTime;
-    private Judge judge;
+    //event most likely has multiple judges
+    private List<Judge> judge;
     private List<Pair<Team, Double>> teamsAndScores;
 
     public Event() {
@@ -64,12 +65,15 @@ public class Event {
         this.endTime = endTime;
     }
 
-    public Judge getJudge() {
+    public List<Judge> getJudges() {
         return judge;
     }
 
-    public void setJudge(Judge judge) {
+    public void setJudge(List<Judge> judge) {
         this.judge = judge;
+    }
+    public void addJudge(Judge judge) {
+        this.judge.add(judge);
     }
 
     public List<Pair<Team, Double>> getTeamsAndScores() {
