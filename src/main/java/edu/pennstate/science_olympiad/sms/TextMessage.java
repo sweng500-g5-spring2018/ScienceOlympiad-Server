@@ -22,6 +22,10 @@ public class TextMessage {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
 
 //    public static void main(String[] args) {
+//        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+//        textKyle("Paid Twilio is all set up");
+//        textJeff("Paid Twilio is all set up");
+//        textRyan("Paid Twilio is all set up");
 //    }
 
     private TextMessage() {
@@ -49,22 +53,30 @@ public class TextMessage {
         }
     }
 
-    private static void textBrandon() {
-        Message.creator(new PhoneNumber("+19092136132"), FROM_NUMBER,
-                "Greetings SWENG 500 Group 5,  from Java... fuck yea!!!").create();
+    private static void textBrandon(String message) {
+        if (message == null)
+            message = "Let's crush this course!";
+
+        Message.creator(new PhoneNumber("+19092136132"), FROM_NUMBER, message).create();
     }
 
-    private static void textJeff() {
-        Message.creator(new PhoneNumber("+15709050467"), FROM_NUMBER,
-                "Greetings SWENG 500 Group 5,  from Java... fuck yea!!!").create();
+    private static void textJeff(String message) {
+        if (message == null)
+            message = "Let's crush this course!";
+
+        Message.creator(new PhoneNumber("+15709050467"), FROM_NUMBER, message).create();
     }
-    private static void textKyle() {
-        Message.creator(new PhoneNumber("+19086165430"), FROM_NUMBER,
-                "Greetings SWENG 500 Group 5,  from Java... fuck yea!!!").create();
+    private static void textKyle(String message) {
+        if (message == null)
+            message = "Let's crush this course!";
+
+        Message.creator(new PhoneNumber("+19086165430"), FROM_NUMBER, message).create();
     }
-    private static void textRyan() {
-        Message.creator(new PhoneNumber("+14127607290"), FROM_NUMBER,
-                "Greetings SWENG 500 Group 5,  from Java... fuck yea!!!").create();
+    private static void textRyan(String message) {
+        if (message == null)
+            message = "Let's crush this course!";
+
+        Message.creator(new PhoneNumber("+14127607290"), FROM_NUMBER, message).create();
     }
 
     //This is for the bulk notifications (up to 10,000 at a time). I am not sure where we get the SERVICE_SID

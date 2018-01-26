@@ -27,14 +27,15 @@ public abstract class AUser {
     private Password password;
     private String salt;
 
+
     public AUser() {
         firstName = "";
         lastName = "";
         emailAddress = "";
-        phoneNumber = null;
+        phoneNumber = new PhoneNumber("+15555555555");
         userId = "";
         password = new Password();
-        salt = "";
+
     }
 
     public String getFirstName() {

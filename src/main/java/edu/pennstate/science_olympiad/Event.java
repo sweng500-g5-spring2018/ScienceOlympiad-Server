@@ -18,10 +18,11 @@ public class Event {
     private Date startTime;
     private Date endTime;
     //event most likely has multiple judges
-    private List<Judge> judge;
+    private List<Judge> judges;
     private List<Pair<Team, Double>> teamsAndScores;
 
     public Event() {
+        judges = new ArrayList<Judge>();
         teamsAndScores = new ArrayList<Pair<Team, Double>>();
     }
 
@@ -66,14 +67,15 @@ public class Event {
     }
 
     public List<Judge> getJudges() {
-        return judge;
+        return judges;
     }
 
-    public void setJudge(List<Judge> judge) {
-        this.judge = judge;
-    }
     public void addJudge(Judge judge) {
-        this.judge.add(judge);
+        this.judges.add(judge);
+    }
+
+    public void setJudges(List<Judge> judge) {
+        this.judges = judges;
     }
 
     public List<Pair<Team, Double>> getTeamsAndScores() {
