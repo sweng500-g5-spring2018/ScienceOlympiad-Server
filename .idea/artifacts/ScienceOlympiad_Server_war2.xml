@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" build-on-make="true" name="ScienceOlympiad-Server:war2">
+    <output-path>$USER_HOME$/Documents/School/0-FinalProject/apache-tomcat-8.5.24/webapps</output-path>
+    <root id="archive" name="sweng500.war">
+      <element id="artifact" artifact-name="ScienceOlympiad-Server:war exploded" />
+    </root>
+  </artifact>
+</component>

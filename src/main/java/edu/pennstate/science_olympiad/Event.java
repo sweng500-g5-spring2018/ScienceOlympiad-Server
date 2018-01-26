@@ -17,10 +17,11 @@ public class Event {
     private Location location;
     private Date startTime;
     private Date endTime;
-    private Judge judge;
+    private List<Judge> judges;
     private List<Pair<Team, Double>> teamsAndScores;
 
     public Event() {
+        judges = new ArrayList<Judge>();
         teamsAndScores = new ArrayList<Pair<Team, Double>>();
     }
 
@@ -64,12 +65,16 @@ public class Event {
         this.endTime = endTime;
     }
 
-    public Judge getJudge() {
-        return judge;
+    public List<Judge> getJudges() {
+        return judges;
     }
 
-    public void setJudge(Judge judge) {
-        this.judge = judge;
+    public void addJudge(Judge judge) {
+        this.judges.add(judge);
+    }
+
+    public void setJudges(List<Judge> judge) {
+        this.judges = judges;
     }
 
     public List<Pair<Team, Double>> getTeamsAndScores() {

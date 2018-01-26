@@ -18,15 +18,7 @@ public abstract class AUser {
     private Password password;
     private String salt;
 
-    public AUser() {
-        firstName = "";
-        lastName = "";
-        emailAddress = "";
-        phoneNumber = null;
-        userId = "";
-        password = new Password();
-        salt = "";
-    }
+
     public AUser() {
         firstName = "";
         lastName = "";
