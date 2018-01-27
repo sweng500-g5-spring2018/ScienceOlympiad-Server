@@ -28,6 +28,7 @@ public abstract class AUser {
     private Password password;
     private String salt;
 
+
     public AUser() {
         firstName = "";
         lastName = "";
@@ -35,7 +36,7 @@ public abstract class AUser {
         phoneNumber = new CustomPhoneNumber("93923234");
         userId = "";
         password = new Password();
-        salt = "";
+
     }
 
     public String getFirstName() {
