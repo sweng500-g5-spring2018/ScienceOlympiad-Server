@@ -1,4 +1,4 @@
-package edu.pennstate.science_olympiad.repository;
+package edu.pennstate.science_olympiad.repositories;
 
 import com.mongodb.WriteResult;
 import edu.pennstate.science_olympiad.people.AUser;

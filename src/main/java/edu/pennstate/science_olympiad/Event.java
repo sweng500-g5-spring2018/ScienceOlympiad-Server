@@ -2,6 +2,8 @@ package edu.pennstate.science_olympiad;
 
 import edu.pennstate.science_olympiad.people.Judge;
 import edu.pennstate.science_olympiad.util.Pair;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,7 +12,11 @@ import java.util.List;
 /**
  * This  is one of the events in the {@link edu.pennstate.science_olympiad.Olympiad} Competition
  */
+@Document
 public class Event {
+
+    @Id
+    public String id;
 
     private String name;
     private String description;

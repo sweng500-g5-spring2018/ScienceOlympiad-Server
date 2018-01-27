@@ -3,6 +3,8 @@ package edu.pennstate.science_olympiad;
 import edu.pennstate.science_olympiad.people.Coach;
 import edu.pennstate.science_olympiad.people.Student;
 import edu.pennstate.science_olympiad.util.Pair;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -12,8 +14,11 @@ import java.util.List;
  * This is one of the participants/ competitors in the {@link edu.pennstate.science_olympiad.Olympiad}. A team is
  * sometimes comprised of one {@link edu.pennstate.science_olympiad.people.Student} but other times it will have more.
  */
+@Document
 public class Team {
 
+    @Id
+    public String id;
     //The advisor or coach to the team
     private Coach coach;
 

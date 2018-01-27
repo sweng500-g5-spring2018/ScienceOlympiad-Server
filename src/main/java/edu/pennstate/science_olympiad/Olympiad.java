@@ -1,14 +1,21 @@
 package edu.pennstate.science_olympiad;
 
 import edu.pennstate.science_olympiad.people.Admin;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * An  Olympiad is a large science competition. There are multiple {@link edu.pennstate.science_olympiad.Event}s and
  * there are multiple {@link edu.pennstate.science_olympiad.Team}s competing.
  */
+@Document
 public class Olympiad {
+
+    @Id
+    public String id;
 
     // The administrator(s) for the events
     private List<Admin> admins;
@@ -20,6 +27,9 @@ public class Olympiad {
     private List<Team> teams;
 
     public Olympiad() {
+        admins = new ArrayList<Admin>();
+        events = new ArrayList<Event>();
+        teams = new ArrayList<Team>();
     }
 
     public List<Admin> getAdmins() {

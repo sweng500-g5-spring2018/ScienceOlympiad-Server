@@ -21,8 +21,8 @@ import java.util.Arrays;
  */
 @EnableWebMvc
 @Configuration
-@ComponentScan(basePackages = {"edu.pennstate.science_olympiad.repository","edu.pennstate.science_olympiad.controllers"})
-@EnableMongoRepositories(basePackages ="edu.pennstate.science_olympiad.repository")
+@ComponentScan(basePackages = {"edu.pennstate.science_olympiad.repositories","edu.pennstate.science_olympiad.controllers"})
+@EnableMongoRepositories(basePackages = "edu.pennstate.science_olympiad.repositories")
 public class SpringConfig extends WebMvcConfigurerAdapter {
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {

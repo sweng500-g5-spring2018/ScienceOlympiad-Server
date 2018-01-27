@@ -2,7 +2,8 @@ package edu.pennstate.science_olympiad.controllers;
 import edu.pennstate.science_olympiad.people.AUser;
 import edu.pennstate.science_olympiad.people.Admin;
 import edu.pennstate.science_olympiad.people.UserFactory;
-import edu.pennstate.science_olympiad.repository.UserRepository;
+import edu.pennstate.science_olympiad.repositories.UserRepository;
+import edu.pennstate.science_olympiad.sms.CustomPhoneNumber;
 import edu.pennstate.science_olympiad.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -10,9 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Set up all the end points, RestController automatically add
@@ -42,11 +40,12 @@ public class FirstController {
         user.setFirstName("Kyle");
         user.setLastName("h");
         user.setEmailAddress("test@email");
+        user.setPhoneNumber(new CustomPhoneNumber("+12345678910"));
         userRepository.addUser(user);
 
         AUser coach = UserFactory.getInstance().createUser("coach");
-        coach.setFirstName("coach1");
-        coach.setLastName("co");
+        coach.setFirstName("Coach");
+        coach.setLastName("Nixon");
         userRepository.addUser(coach);
        // log.info("<<addUser()");
         Pair response = new Pair("success","true");

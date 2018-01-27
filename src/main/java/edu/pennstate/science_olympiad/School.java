@@ -2,14 +2,21 @@ package edu.pennstate.science_olympiad;
 
 import edu.pennstate.science_olympiad.people.Coach;
 import edu.pennstate.science_olympiad.people.Student;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * This is just the contact information for the school that the  {@link edu.pennstate.science_olympiad.people.Student}s
  * and  {@link edu.pennstate.science_olympiad.people.Coach}s are from. This is to keep track for our records for later.
  */
+@Document
 public class School {
+
+    @Id
+    public String id;
     private String schoolName;
     private String schoolContact;
     private String schoolContactPhone;
@@ -18,6 +25,8 @@ public class School {
 
     public School(String schoolName) {
         this.schoolName = schoolName;
+        coaches = new ArrayList<Coach>();
+        students = new ArrayList<Student>();
     }
 
     public String getSchoolName() {
