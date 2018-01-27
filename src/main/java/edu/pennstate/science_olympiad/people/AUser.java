@@ -2,6 +2,7 @@ package edu.pennstate.science_olympiad.people;
 
 import com.twilio.type.PhoneNumber;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import sun.security.util.Password;
 
@@ -22,7 +23,7 @@ public abstract class AUser {
     private String firstName;
     private String lastName;
     private String emailAddress;
-    private PhoneNumber phoneNumber;
+    private CustomPhoneNumber phoneNumber;
     private String userId;
     private Password password;
     private String salt;
@@ -32,7 +33,7 @@ public abstract class AUser {
         firstName = "";
         lastName = "";
         emailAddress = "";
-        phoneNumber = new PhoneNumber("+15555555555");
+        phoneNumber = new CustomPhoneNumber("93923234");
         userId = "";
         password = new Password();
 
@@ -66,7 +67,7 @@ public abstract class AUser {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(PhoneNumber phoneNumber) {
+    public void setPhoneNumber(CustomPhoneNumber phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
