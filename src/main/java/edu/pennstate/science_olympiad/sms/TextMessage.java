@@ -2,10 +2,6 @@ package edu.pennstate.science_olympiad.sms;
 
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.twiml.MessagingResponse;
-import com.twilio.twiml.TwiMLException;
-import com.twilio.twiml.messaging.Body;
-import com.twilio.twiml.messaging.Redirect;
 import com.twilio.type.PhoneNumber;
 import edu.pennstate.science_olympiad.Event;
 import edu.pennstate.science_olympiad.people.AUser;

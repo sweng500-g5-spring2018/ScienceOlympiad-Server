@@ -9,8 +9,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 /**
  * This will be used to perform CRUD operations on {@link edu.pennstate.science_olympiad.Event}s
  * This is then registered to be used elsewhere.

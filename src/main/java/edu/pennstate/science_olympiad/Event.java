@@ -1,12 +1,15 @@
 package edu.pennstate.science_olympiad;
 
+import com.google.gson.Gson;
+import edu.pennstate.science_olympiad.many_to_many.Judge_Event;
+import edu.pennstate.science_olympiad.many_to_many.Team_Event;
 import edu.pennstate.science_olympiad.people.Judge;
-import edu.pennstate.science_olympiad.util.Pair;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -24,12 +27,15 @@ public class Event {
     private Date startTime;
     private Date endTime;
     //event most likely has multiple judges
-    private List<Judge> judges;
-    private List<Pair<Team, Double>> teamsAndScores;
 
-    public Event() {
-        judges = new ArrayList<Judge>();
-        teamsAndScores = new ArrayList<Pair<Team, Double>>();
+    private List<Judge_Event> judge_events;
+    private List<Team_Event> team_events;
+
+    public Event(String eventName) {
+        Olympiad.getInstance().addEvent(this);
+        this.name = eventName;
+        judge_events = new ArrayList<Judge_Event>();
+        team_events = new ArrayList<Team_Event>();
     }
 
     public String getName() {
@@ -72,35 +78,38 @@ public class Event {
         this.endTime = endTime;
     }
 
-    public List<Judge> getJudges() {
-        return judges;
+    public void addJudgeToEvent(Judge judge) {
+        judge_events.add(new Judge_Event(judge, this));
     }
 
-    public void addJudge(Judge judge) {
-        this.judges.add(judge);
-    }
-
-    public void setJudges(List<Judge> judge) {
-        this.judges = judges;
-    }
-
-    public List<Pair<Team, Double>> getTeamsAndScores() {
-        return teamsAndScores;
-    }
-
-    public void addTeamAndScore(Pair<Team, Double> teamScore) {
-        getTeamsAndScores().add(teamScore);
-    }
-
-    public void setScoreForTeam(Team team, Double score) {
-        for (Pair<Team, Double> pair : getTeamsAndScores()) {
-            if (pair.getLeft() == team) {
-                pair.setRight(score);
+    public boolean removeJudge(Judge judge) {
+        for (Iterator<Judge_Event> judge_event_Iter = judge_events.iterator(); judge_event_Iter.hasNext();) {
+            if (judge_event_Iter.next().getJudge() == judge) {
+                judge_event_Iter.remove();
+                return true;
             }
         }
+        return false;
     }
 
-    public void setTeamsAndScores(List<Pair<Team, Double>> teamsAndScores) {
-        this.teamsAndScores = teamsAndScores;
+    public void addTeamToEvent(Team team) {
+        team_events.add(new Team_Event(team, this));
+    }
+
+    public boolean removeTeam(Team team) {
+        for (Iterator<Team_Event> team_event_Iter = team_events.iterator(); team_event_Iter.hasNext();) {
+            if (team_event_Iter.next().getTeam() == team) {
+                Olympiad.getInstance().getTeams().remove(team);
+                team_event_Iter.remove();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 }

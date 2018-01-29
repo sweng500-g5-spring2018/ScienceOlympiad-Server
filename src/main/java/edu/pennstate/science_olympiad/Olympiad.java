@@ -26,7 +26,15 @@ public class Olympiad {
     // All of the teams that are competing in the competition
     private List<Team> teams;
 
-    public Olympiad() {
+    private static Olympiad INSTANCE;
+
+    public static Olympiad getInstance() {
+        if (INSTANCE == null)
+            INSTANCE = new Olympiad();
+        return INSTANCE;
+    }
+
+    private Olympiad() {
         admins = new ArrayList<Admin>();
         events = new ArrayList<Event>();
         teams = new ArrayList<Team>();
@@ -40,6 +48,10 @@ public class Olympiad {
         this.admins = admins;
     }
 
+    public void addAdmin(Admin admin) {
+        this.admins.add(admin);
+    }
+
     public List<Event> getEvents() {
         return events;
     }
@@ -48,11 +60,19 @@ public class Olympiad {
         this.events = events;
     }
 
+    public void addEvent(Event event) {
+        this.events.add(event);
+    }
+
     public List<Team> getTeams() {
         return teams;
     }
 
     public void setTeams(List<Team> teams) {
         this.teams = teams;
+    }
+
+    public void addTeam(Team team) {
+        this.teams.add(team);
     }
 }

@@ -6,6 +6,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import sun.security.util.Password;
 
+import javax.annotation.Generated;
+
 /**
  * This is the abstract class for all users of this application. All other users extend from this.
  * When we first create any user, we create it from the  {@link edu.pennstate.science_olympiad.people.UserFactory},
