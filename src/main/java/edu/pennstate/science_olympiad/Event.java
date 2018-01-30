@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * This  is one of the events in the {@link edu.pennstate.science_olympiad.Olympiad} Competition
  */
-@Document
+@Document(collection="events")
 public class Event {
 
     @Id
@@ -29,15 +29,19 @@ public class Event {
     //event most likely has multiple judges
 
     private List<Judge_Event> judge_events;
+    //may not need this becuase when we add a team to this event we will create it in the service
     private List<Team_Event> team_events;
 
-    public Event(String eventName) {
-        Olympiad.getInstance().addEvent(this);
-        this.name = eventName;
-        judge_events = new ArrayList<Judge_Event>();
-        team_events = new ArrayList<Team_Event>();
-    }
+    public Event() {
 
+    }
+    public Event(String name) {
+        //Olympiad.getInstance().addEvent(this);
+        this.name = name;
+       // judge_events = new ArrayList<Judge_Event>();
+       // team_events = new ArrayList<Team_Event>();
+    }
+    public String getId(){return id;}
     public String getName() {
         return name;
     }

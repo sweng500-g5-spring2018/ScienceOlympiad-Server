@@ -1,6 +1,10 @@
 package edu.pennstate.science_olympiad.repositories;
 
 import edu.pennstate.science_olympiad.Event;
+import edu.pennstate.science_olympiad.Team;
+import edu.pennstate.science_olympiad.many_to_many.Team_Event;
+import edu.pennstate.science_olympiad.people.Coach;
+import edu.pennstate.science_olympiad.people.Student;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +46,46 @@ public class EventRepository {
             logger.info("Insert Completed");
         else
             logger.info("Insert Failed");
+    }
+
+    /**************************************
+     *
+     * Just added all of these methods to easily see whats happening
+     */
+    public void createNewEvent(Event event) {
+        logger.info("Inserting a new event " + event.getName());
+        mongoTemplate.insert(event);
+    }
+
+    public void saveTestCoach(Coach coach) {
+        mongoTemplate.insert(coach);
+    }
+
+    public void saveTestStudent(Student student) {
+        mongoTemplate.insert(student);
+    }
+
+    public void createTeam(Team team) {
+        logger.info("creating the team");
+        mongoTemplate.insert(team);
+    }
+
+    public Event getEvent(String eventName) {
+        logger.info("retrieving the db event " +eventName);
+
+        Query query = new Query();
+        query.addCriteria(Criteria.where("name").is(eventName));
+        logger.info("Query " + query.toString());
+        Event dbEvent = mongoTemplate.findOne(query, Event.class);
+
+        logger.info("returning the db event " +dbEvent.getName());
+        return dbEvent;
+
+    }
+
+    public void createTeamEvent(Team_Event teamEvent) {
+        logger.info("inserting a team event record");
+        mongoTemplate.insert(teamEvent);
     }
 
 //    public List<Event> getEvents() {

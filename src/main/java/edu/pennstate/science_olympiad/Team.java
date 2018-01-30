@@ -4,6 +4,7 @@ import edu.pennstate.science_olympiad.many_to_many.Team_Event;
 import edu.pennstate.science_olympiad.people.Coach;
 import edu.pennstate.science_olympiad.people.Student;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
@@ -14,12 +15,13 @@ import java.util.List;
  * This is one of the participants/ competitors in the {@link edu.pennstate.science_olympiad.Olympiad}. A team is
  * sometimes comprised of one {@link edu.pennstate.science_olympiad.people.Student} but other times it will have more.
  */
-@Document
+@Document(collection="teams")
 public class Team {
 
     @Id
     public String id;
     //The advisor or coach to the team
+    @DBRef
     private Coach coach;
 
     //All of the members of this team
