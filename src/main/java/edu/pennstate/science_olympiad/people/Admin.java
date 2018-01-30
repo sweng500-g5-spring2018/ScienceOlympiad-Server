@@ -1,6 +1,6 @@
 package edu.pennstate.science_olympiad.people;
 
-import org.springframework.data.mongodb.core.mapping.Document;
+import edu.pennstate.science_olympiad.Olympiad;
 
 /**
  * The admin is the person who creates all of the  {@link edu.pennstate.science_olympiad.Event}s and registers the
@@ -14,6 +14,7 @@ public class Admin extends AUser {
 
     public Admin() {
         super();
+        Olympiad.getInstance().addAdmin(this);
         this.siteName = "";
     }
 
@@ -23,5 +24,13 @@ public class Admin extends AUser {
 
     public void setSiteName(String siteName) {
         this.siteName = siteName;
+    }
+
+    public Coach createCoach() {
+        return new Coach(this);
+    }
+
+    public Judge createJudge() {
+        return new Judge(this);
     }
 }

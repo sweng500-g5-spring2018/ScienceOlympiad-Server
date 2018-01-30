@@ -1,10 +1,12 @@
 package edu.pennstate.science_olympiad.people;
 
 import com.twilio.type.PhoneNumber;
+import edu.pennstate.science_olympiad.sms.CustomPhoneNumber;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import sun.security.util.Password;
+
+import javax.annotation.Generated;
 
 /**
  * This is the abstract class for all users of this application. All other users extend from this.
@@ -33,7 +35,7 @@ public abstract class AUser {
         firstName = "";
         lastName = "";
         emailAddress = "";
-        phoneNumber = new CustomPhoneNumber("93923234");
+        phoneNumber = new CustomPhoneNumber("+15555555555");
         userId = "";
         password = new Password();
 

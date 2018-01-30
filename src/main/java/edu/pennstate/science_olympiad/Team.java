@@ -1,39 +1,44 @@
 package edu.pennstate.science_olympiad;
 
+import edu.pennstate.science_olympiad.many_to_many.Team_Event;
 import edu.pennstate.science_olympiad.people.Coach;
 import edu.pennstate.science_olympiad.people.Student;
-import edu.pennstate.science_olympiad.util.Pair;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * This is one of the participants/ competitors in the {@link edu.pennstate.science_olympiad.Olympiad}. A team is
  * sometimes comprised of one {@link edu.pennstate.science_olympiad.people.Student} but other times it will have more.
  */
+@Document
 public class Team {
 
+    @Id
+    public String id;
     //The advisor or coach to the team
     private Coach coach;
 
     //All of the members of this team
     private List<Student> students;
 
-    // This is a list of Pairs. Each Pair is an event paired with the team's score at that event.
-    private List<Pair<Event, Double>> eventScoreList;
+    private School school;
 
-    public Team() {
+    // This is a list of Pairs. Each Pair is an event paired with the team's score at that event.
+    private List<Team_Event> team_events;
+
+    public Team(Coach coach) {
+        Olympiad.getInstance().addTeam(this);
+        this.coach = coach;
         students = new ArrayList<Student>();
-        eventScoreList = new ArrayList<Pair<Event, Double>>();
+        team_events = new ArrayList<Team_Event>();
     }
 
     public Coach getCoach() {
         return coach;
-    }
-
-    public void setCoach(Coach coach) {
-        this.coach = coach;
     }
 
     public List<Student> getStudents() {
@@ -44,11 +49,30 @@ public class Team {
         this.students = students;
     }
 
-    public List<Pair<Event, Double>> getEventScoreList() {
-        return eventScoreList;
+    public School getSchool() {
+        return school;
     }
 
-    public void setEventScoreList(List<Pair<Event, Double>> eventScoreList) {
-        this.eventScoreList = eventScoreList;
+    public void setSchool(School school) {
+        this.school = school;
+    }
+
+    public List<Team_Event> getTeam_events() {
+        return team_events;
+    }
+
+    public void addEvent(Event event) {
+        team_events.add(new Team_Event(this, event));
+    }
+
+    public boolean removeEvent(Event event) {
+        for (Iterator<Team_Event> team_event_Iter = team_events.iterator(); team_event_Iter.hasNext();) {
+            if (team_event_Iter.next().getEvent() == event) {
+                Olympiad.getInstance().getEvents().remove(event);
+                team_event_Iter.remove();
+                return true;
+            }
+        }
+        return false;
     }
 }

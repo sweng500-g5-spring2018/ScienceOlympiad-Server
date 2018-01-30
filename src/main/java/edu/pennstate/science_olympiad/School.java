@@ -1,20 +1,20 @@
 package edu.pennstate.science_olympiad;
 
-import edu.pennstate.science_olympiad.people.Coach;
-import edu.pennstate.science_olympiad.people.Student;
-
-import java.util.List;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * This is just the contact information for the school that the  {@link edu.pennstate.science_olympiad.people.Student}s
  * and  {@link edu.pennstate.science_olympiad.people.Coach}s are from. This is to keep track for our records for later.
  */
+@Document
 public class School {
+
+    @Id
+    public String id;
     private String schoolName;
-    private String schoolContact;
+    private String schoolContactName;
     private String schoolContactPhone;
-    private List<Coach> coaches;
-    private List<Student> students;
 
     public School(String schoolName) {
         this.schoolName = schoolName;
@@ -28,12 +28,12 @@ public class School {
         this.schoolName = schoolName;
     }
 
-    public String getSchoolContact() {
-        return schoolContact;
+    public String getSchoolContactName() {
+        return schoolContactName;
     }
 
-    public void setSchoolContact(String schoolContact) {
-        this.schoolContact = schoolContact;
+    public void setSchoolContactName(String schoolContactName) {
+        this.schoolContactName = schoolContactName;
     }
 
     public String getSchoolContactPhone() {
@@ -44,27 +44,4 @@ public class School {
         this.schoolContactPhone = schoolContactPhone;
     }
 
-    public List<Coach> getCoaches() {
-        return coaches;
-    }
-
-    public void addCoach(Coach coach) {
-        this.coaches.add(coach);
-    }
-
-    public void setCoaches(List<Coach> coaches) {
-        this.coaches = coaches;
-    }
-
-    public List<Student> getStudents() {
-        return students;
-    }
-
-    public void addStudent(Student student) {
-        this.students.add(student);
-    }
-
-    public void setStudents(List<Student> students) {
-        this.students = students;
-    }
 }

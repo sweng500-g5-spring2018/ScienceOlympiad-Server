@@ -1,10 +1,17 @@
 package edu.pennstate.science_olympiad;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 /**
  * This  describes a location that a {@link edu.pennstate.science_olympiad.people.AUser} or
  * {@link edu.pennstate.science_olympiad.Event} may be at, as well as its name.
  */
+@Document
 public class Location {
+
+    @Id
+    public String id;
 
     private String building;
     private String roomNumber;

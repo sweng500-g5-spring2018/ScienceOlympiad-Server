@@ -1,11 +1,8 @@
 package edu.pennstate.science_olympiad.people;
 
 
+import edu.pennstate.science_olympiad.ImproperCreationException;
 import edu.pennstate.science_olympiad.School;
-import edu.pennstate.science_olympiad.Team;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A Coach is a representative of the school and is a chaperon for {@link edu.pennstate.science_olympiad.people.Student}s.
@@ -14,13 +11,11 @@ import java.util.List;
 public class Coach extends AUser {
 
     private School school;
-    private List<Team> teams;
-    private List<Student> students;
 
-    public Coach() {
+    Coach(Admin admin) {
         super();
-        teams = new ArrayList<Team>();
-        students = new ArrayList<Student>();
+        if (admin == null)
+            throw new ImproperCreationException();
     }
 
     public School getSchool() {
@@ -31,23 +26,4 @@ public class Coach extends AUser {
         this.school = school;
     }
 
-    public List<Team> getTeams() {
-        return teams;
-    }
-
-    public void setTeams(List<Team> teams) {
-        this.teams = teams;
-    }
-
-    public List<Student> getStudents() {
-        return students;
-    }
-
-    public void addStudent(Student student) {
-        getStudents().add(student);
-    }
-
-    public void setStudents(List<Student> students) {
-        this.students = students;
-    }
 }
