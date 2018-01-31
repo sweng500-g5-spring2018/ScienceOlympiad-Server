@@ -13,9 +13,9 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * This  is one of the events in the {@link edu.pennstate.science_olympiad.Olympiad} Competition
+ * This  is one of the events in the Olympiad Competition
  */
-@Document
+@Document(collection="events")
 public class Event {
 
     @Id
@@ -29,15 +29,18 @@ public class Event {
     //event most likely has multiple judges
 
     private List<Judge_Event> judge_events;
+    //may not need this becuase when we add a team to this event we will create it in the service
     private List<Team_Event> team_events;
 
-    public Event(String eventName) {
-        Olympiad.getInstance().addEvent(this);
-        this.name = eventName;
-        judge_events = new ArrayList<Judge_Event>();
-        team_events = new ArrayList<Team_Event>();
+    public Event() {
+
     }
 
+    public Event(String name) {
+        this.name = name;
+    }
+
+    public String getId(){return id;}
     public String getName() {
         return name;
     }
@@ -78,8 +81,14 @@ public class Event {
         this.endTime = endTime;
     }
 
+    public List<Judge_Event> getJudge_events() {
+        if (judge_events == null)
+            judge_events = new ArrayList<Judge_Event>();
+        return judge_events;
+    }
+
     public void addJudgeToEvent(Judge judge) {
-        judge_events.add(new Judge_Event(judge, this));
+        getJudge_events().add(new Judge_Event(judge, this));
     }
 
     public boolean removeJudge(Judge judge) {
@@ -92,14 +101,19 @@ public class Event {
         return false;
     }
 
+    public List<Team_Event> getTeam_events() {
+        if (team_events == null)
+            team_events = new ArrayList<Team_Event>();
+        return team_events;
+    }
+
     public void addTeamToEvent(Team team) {
-        team_events.add(new Team_Event(team, this));
+        getTeam_events().add(new Team_Event(team, this));
     }
 
     public boolean removeTeam(Team team) {
         for (Iterator<Team_Event> team_event_Iter = team_events.iterator(); team_event_Iter.hasNext();) {
             if (team_event_Iter.next().getTeam() == team) {
-                Olympiad.getInstance().getTeams().remove(team);
                 team_event_Iter.remove();
                 return true;
             }

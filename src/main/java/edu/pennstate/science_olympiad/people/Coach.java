@@ -1,7 +1,5 @@
 package edu.pennstate.science_olympiad.people;
 
-
-import edu.pennstate.science_olympiad.ImproperCreationException;
 import edu.pennstate.science_olympiad.School;
 
 /**
@@ -12,10 +10,8 @@ public class Coach extends AUser {
 
     private School school;
 
-    Coach(Admin admin) {
+    public Coach() {
         super();
-        if (admin == null)
-            throw new ImproperCreationException();
     }
 
     public School getSchool() {

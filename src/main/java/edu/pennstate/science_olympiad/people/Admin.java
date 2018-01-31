@@ -1,7 +1,5 @@
 package edu.pennstate.science_olympiad.people;
 
-import edu.pennstate.science_olympiad.Olympiad;
-
 /**
  * The admin is the person who creates all of the  {@link edu.pennstate.science_olympiad.Event}s and registers the
  * {@link edu.pennstate.science_olympiad.people.Judge}s and {@link edu.pennstate.science_olympiad.people.Coach}s. This
@@ -14,7 +12,6 @@ public class Admin extends AUser {
 
     public Admin() {
         super();
-        Olympiad.getInstance().addAdmin(this);
         this.siteName = "";
     }
 
@@ -26,11 +23,4 @@ public class Admin extends AUser {
         this.siteName = siteName;
     }
 
-    public Coach createCoach() {
-        return new Coach(this);
-    }
-
-    public Judge createJudge() {
-        return new Judge(this);
-    }
 }
