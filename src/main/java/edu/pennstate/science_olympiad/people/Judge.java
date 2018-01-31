@@ -1,8 +1,6 @@
 package edu.pennstate.science_olympiad.people;
 
 import edu.pennstate.science_olympiad.Event;
-import edu.pennstate.science_olympiad.ImproperCreationException;
-import edu.pennstate.science_olympiad.Olympiad;
 import edu.pennstate.science_olympiad.many_to_many.Judge_Event;
 
 import java.util.ArrayList;
@@ -16,26 +14,23 @@ public class Judge extends AUser {
 
     private List<Judge_Event> judge_events;
 
-    Judge(Admin admin) {
-        super();
-        if (admin == null)
-            throw new ImproperCreationException();
+    public Judge() {        super();
 
-        judge_events = new ArrayList<Judge_Event>();
     }
 
     public List<Judge_Event> getJudge_events() {
+        if (judge_events == null)
+            judge_events = new ArrayList<Judge_Event>();
         return judge_events;
     }
 
     public void addEvent(Event event) {
-        judge_events.add(new Judge_Event(this, event));
+        getJudge_events().add(new Judge_Event(this, event));
     }
 
     public boolean removeEvent(Event event) {
         for (Iterator<Judge_Event> judge_event_Iter = judge_events.iterator(); judge_event_Iter.hasNext();) {
             if (judge_event_Iter.next().getEvent() == event) {
-                Olympiad.getInstance().getEvents().remove(event);
                 judge_event_Iter.remove();
                 return true;
             }

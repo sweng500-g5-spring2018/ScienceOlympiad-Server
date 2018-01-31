@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * This is one of the participants/ competitors in the {@link edu.pennstate.science_olympiad.Olympiad}. A team is
+ * This is one of the participants/ competitors in the Olympiad. A team is
  * sometimes comprised of one {@link edu.pennstate.science_olympiad.people.Student} but other times it will have more.
  */
 @Document(collection="teams")
@@ -33,10 +33,7 @@ public class Team {
     private List<Team_Event> team_events;
 
     public Team(Coach coach) {
-        Olympiad.getInstance().addTeam(this);
         this.coach = coach;
-        students = new ArrayList<Student>();
-        team_events = new ArrayList<Team_Event>();
     }
 
     public Coach getCoach() {
@@ -44,6 +41,8 @@ public class Team {
     }
 
     public List<Student> getStudents() {
+        if (students == null)
+            students = new ArrayList<Student>();
         return students;
     }
 
@@ -60,6 +59,9 @@ public class Team {
     }
 
     public List<Team_Event> getTeam_events() {
+        if (team_events == null)
+            team_events = new ArrayList<Team_Event>();
+
         return team_events;
     }
 
@@ -70,7 +72,6 @@ public class Team {
     public boolean removeEvent(Event event) {
         for (Iterator<Team_Event> team_event_Iter = team_events.iterator(); team_event_Iter.hasNext();) {
             if (team_event_Iter.next().getEvent() == event) {
-                Olympiad.getInstance().getEvents().remove(event);
                 team_event_Iter.remove();
                 return true;
             }
