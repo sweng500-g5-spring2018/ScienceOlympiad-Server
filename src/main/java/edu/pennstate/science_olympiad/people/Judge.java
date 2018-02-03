@@ -14,8 +14,8 @@ public class Judge extends AUser {
 
     private List<Judge_Event> judge_events;
 
-    public Judge() {        super();
-
+    public Judge() {
+        super();
     }
 
     public List<Judge_Event> getJudge_events() {

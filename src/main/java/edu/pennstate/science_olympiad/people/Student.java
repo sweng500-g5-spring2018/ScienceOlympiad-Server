@@ -7,6 +7,7 @@ package edu.pennstate.science_olympiad.people;
 public class Student extends AUser {
     //This is a variable to keep track of whether a student has opted out of SMS messages
     private boolean hasOptedOut = false;
+    private Coach coach;
 
     public Student() {
         super();
@@ -18,5 +19,13 @@ public class Student extends AUser {
 
     public void setHasOptedOut(boolean hasOptedOut) {
         this.hasOptedOut = hasOptedOut;
+    }
+
+    public Coach getCoach() {
+        return coach;
+    }
+
+    public void setCoach(Coach coach) {
+        this.coach = coach;
     }
 }

@@ -6,8 +6,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import sun.security.util.Password;
 
-import javax.annotation.Generated;
-
 /**
  * This is the abstract class for all users of this application. All other users extend from this.
  * When we first create any user, we create it from the  {@link edu.pennstate.science_olympiad.people.UserFactory},
@@ -29,7 +27,7 @@ public abstract class AUser {
     private String userId;
     private Password password;
     private String salt;
-
+    private int minutesBeforeEvent;
 
     public AUser() {
         firstName = "";
@@ -38,7 +36,7 @@ public abstract class AUser {
         phoneNumber = new CustomPhoneNumber("+15555555555");
         userId = "";
         password = new Password();
-
+        minutesBeforeEvent = 10;
     }
 
     public String getFirstName() {
@@ -91,6 +89,14 @@ public abstract class AUser {
 
     public void setPassword(Password password) {
         this.password = password;
+    }
+
+    public int getMinutesBeforeEvent() {
+        return minutesBeforeEvent;
+    }
+
+    public void setMinutesBeforeEvent(int minutesBeforeEvent) {
+        this.minutesBeforeEvent = minutesBeforeEvent;
     }
 
     @Override
