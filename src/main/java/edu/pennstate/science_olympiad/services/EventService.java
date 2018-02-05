@@ -35,7 +35,7 @@ public class EventService {
         //The students and coaches objects should have already been entered into the database so mock them here
 
         //The coach would be grabbed from the database based on a session of whos logged in
-         Coach coach = new Coach(new Admin());
+         Coach coach = new Coach();
          eventRepository.saveTestCoach(coach);
         //make db request to get the students with these id's entered in form
          Student student = new Student();

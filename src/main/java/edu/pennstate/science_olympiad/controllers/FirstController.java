@@ -5,6 +5,7 @@ import edu.pennstate.science_olympiad.Team;
 import edu.pennstate.science_olympiad.people.AUser;
 import edu.pennstate.science_olympiad.people.Admin;
 import edu.pennstate.science_olympiad.people.Coach;
+import edu.pennstate.science_olympiad.people.UserFactory;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
 import edu.pennstate.science_olympiad.services.EventService;
 import edu.pennstate.science_olympiad.sms.CustomPhoneNumber;
@@ -43,14 +44,14 @@ public class FirstController {
     @RequestMapping(value="createTestUser",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
     public Object addUser() {
        // log.info(">>addUser()");
-        Admin admin = new Admin();
+        Admin admin = (Admin) UserFactory.getInstance().createUser("admin");
         admin.setFirstName("Kyle");
         admin.setLastName("H");
         admin.setEmailAddress("test@email");
         admin.setPhoneNumber(new CustomPhoneNumber("+12345678910"));
         userRepository.addUser(admin);
 
-        Coach coach = admin.createCoach();
+        Coach coach = (Coach) UserFactory.getInstance().createUser("coach");
         coach.setFirstName("Coach");
         coach.setLastName("Nixon");
         userRepository.addUser(coach);
@@ -62,7 +63,7 @@ public class FirstController {
     @CrossOrigin(origins = "*")
     @RequestMapping(value="users",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
     public AUser getUser() {
-        Admin admin = new Admin();
+        Admin admin = (Admin)UserFactory.getInstance().createUser("admin");
         admin.setFirstName("Brandon");
         admin.setLastName("Hessler");
         admin.setEmailAddress("PennState@brandonhessler.com");
