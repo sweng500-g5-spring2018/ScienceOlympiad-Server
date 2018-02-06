@@ -27,7 +27,7 @@ A mongoDB instance is configured for this application.
 Java spring makes it easy to configure this instance for use. 
  - In the Spring Configuration (Java based) an instance can be set up to use by adding the following bean
    This bean will be initialized when deploying the application to tomcat.
-   ```
+ ``` 
   public @Bean Mongo mongo() throws Exception {
         MongoCredential credential = MongoCredential.createCredential("<username>",
                 "<database_name>","<password>".toCharArray());
