@@ -6,6 +6,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import sun.security.util.Password;
 
+import java.util.Date;
+
 /**
  * This is the abstract class for all users of this application. All other users extend from this.
  * When we first create any user, we create it from the  {@link edu.pennstate.science_olympiad.people.UserFactory},
@@ -28,6 +30,7 @@ public abstract class AUser {
     private Password password;
     private String salt;
     private int minutesBeforeEvent;
+    private Date lastLoginDate;
 
     public AUser() {
         firstName = "";
@@ -97,6 +100,14 @@ public abstract class AUser {
 
     public void setMinutesBeforeEvent(int minutesBeforeEvent) {
         this.minutesBeforeEvent = minutesBeforeEvent;
+    }
+
+    public Date getLastLoginDate() {
+        return lastLoginDate;
+    }
+
+    public void setLastLoginDate(Date lastLoginDate) {
+        this.lastLoginDate = lastLoginDate;
     }
 
     @Override
