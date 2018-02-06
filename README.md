@@ -35,9 +35,9 @@ Java spring makes it easy to configure this instance for use.
 
         return new MongoClient(serverAddr, Arrays.asList(credential));
     }
-    ```
+  
 - In order to actually perform operations on the database (insert,update,delete,etc) a mongoTemplate bean is configured
-     ```
+     
        public @Bean
     MongoTemplate mongoTemplate() throws Exception {
         return new MongoTemplate(<mongo_object_from_above>, <database_name>);
