@@ -65,4 +65,8 @@ public class EventService {
         eventRepository.createNewEvent(event);
 
     }
+
+    public List<Event> getEvents() {
+        return eventRepository.getEvents();
+    }
 }
