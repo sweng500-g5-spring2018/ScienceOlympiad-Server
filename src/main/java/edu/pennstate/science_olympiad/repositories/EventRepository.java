@@ -13,6 +13,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * This will be used to perform CRUD operations on {@link edu.pennstate.science_olympiad.Event}s
  * This is then registered to be used elsewhere.
@@ -88,10 +90,12 @@ public class EventRepository {
         mongoTemplate.insert(teamEvent);
     }
 
-//    public List<Event> getEvents() {
-//        logger.info("Retrieving events from the database");
-//
-//        Query query = new Query();
-//        query.addCriteria(Criteria.where("name").)
-//    }
+    public List<Event> getEvents() {
+        logger.info("Retrieving events from the database");
+
+        Query query = new Query();
+        List<Event> events = mongoTemplate.findAll(Event.class);
+        logger.info("found " +events.size());
+        return events;
+    }
 }
