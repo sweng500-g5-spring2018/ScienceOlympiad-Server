@@ -40,35 +40,7 @@ public class FirstController {
     public void setUserRepository(UserRepository userRepository){
         this.userRepository = userRepository;
     }
-    @CrossOrigin(origins = "*")
-    @RequestMapping(value="createTestUser",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public Object addUser() {
-       // log.info(">>addUser()");
-        Admin admin = (Admin) UserFactory.getInstance().createUser("admin");
-        admin.setFirstName("Kyle");
-        admin.setLastName("H");
-        admin.setEmailAddress("test@email");
-        admin.setPhoneNumber(new CustomPhoneNumber("+12345678910"));
-        userRepository.addUser(admin);
 
-        Coach coach = (Coach) UserFactory.getInstance().createUser("coach");
-        coach.setFirstName("Coach");
-        coach.setLastName("Nixon");
-        userRepository.addUser(coach);
-       // log.info("<<addUser()");
-        Pair response = new Pair("success","true");
-        return response;
-    }
-
-    @CrossOrigin(origins = "*")
-    @RequestMapping(value="users",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public AUser getUser() {
-        Admin admin = (Admin)UserFactory.getInstance().createUser("admin");
-        admin.setFirstName("Brandon");
-        admin.setLastName("Hessler");
-        admin.setEmailAddress("PennState@brandonhessler.com");
-        return admin;
-    }
 
     @CrossOrigin(origins = "*")
     @RequestMapping(value="newTeamEvent",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
