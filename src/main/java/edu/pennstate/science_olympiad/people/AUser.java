@@ -2,10 +2,15 @@ package edu.pennstate.science_olympiad.people;
 
 import com.twilio.type.PhoneNumber;
 import edu.pennstate.science_olympiad.sms.CustomPhoneNumber;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import sun.security.util.Password;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -19,6 +24,7 @@ import java.util.Date;
 
 @Document(collection="ausers")
 public abstract class AUser {
+Log logger = LogFactory.getLog(getClass());
 
     @Id
     public String id;
@@ -27,8 +33,8 @@ public abstract class AUser {
     private String emailAddress;
     private CustomPhoneNumber phoneNumber;
     private String userId;
-    private Password password;
-    private String salt;
+    private String password;
+    private byte[] salt;
     private int minutesBeforeEvent;
     private Date lastLoginDate;
 
@@ -38,8 +44,10 @@ public abstract class AUser {
         emailAddress = "";
         phoneNumber = new CustomPhoneNumber("+15555555555");
         userId = "";
-        password = new Password();
+        password = "";
         minutesBeforeEvent = 10;
+
+        salt = generateSalt();
     }
 
     public String getFirstName() {
@@ -82,16 +90,12 @@ public abstract class AUser {
         this.userId = userId;
     }
 
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
-
-    public void setPassword(Password password) {
-        this.password = password;
+    /**
+     * Being passed in should be the String password, in here we will hash and salt it before setting it
+     * @param password the String that a user will type in
+     */
+    public void setPassword(String password) {
+        this.password = get_SHA_512_SecurePassword(password, Arrays.toString(salt));
     }
 
     public int getMinutesBeforeEvent() {
@@ -110,8 +114,45 @@ public abstract class AUser {
         this.lastLoginDate = lastLoginDate;
     }
 
-    @Override
-    public String toString() {
+    private byte[] generateSalt() {
+        try {
+            //Always use a SecureRandom generator
+            SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
+            //Create array for salt
+            byte[] salt = new byte[16];
+            //Get a random salt
+            sr.nextBytes(salt);
+            return salt;
+        } catch (NoSuchAlgorithmException ex) {
+            logger.warn("Could not generate salt");
+        }
+        return null;
+    }
+
+    private String get_SHA_512_SecurePassword(String passwordToHash, String salt){
+        String generatedPassword = null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            md.update(salt.getBytes());
+            byte[] bytes = md.digest(passwordToHash.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for(int i=0; i< bytes.length ;i++){
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            generatedPassword = sb.toString();
+        }
+        catch (NoSuchAlgorithmException e){
+            e.printStackTrace();
+        }
+        return generatedPassword;
+    }
+
+    public boolean isPasswordEqual(String passwordToCheck) {
+        String securePasswordToCheck = get_SHA_512_SecurePassword(passwordToCheck, Arrays.toString(this.salt));
+        return securePasswordToCheck.equals(this.password);
+    }
+
+    public String getName() {
         return firstName + " " + lastName;
     }
 
