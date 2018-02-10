@@ -67,4 +67,11 @@ public class UserRepository {
             mongoTemplate.remove(user);
     }
 
+    public boolean emailUsed(String emailAddress) {
+        logger.info("Checking to see if email address is in use");
+        Query query = new Query();
+        query.addCriteria(Criteria.where("emailAddress").is(emailAddress));
+        return ( mongoTemplate.find(query, AUser.class).size() > 0 );
+    }
+
 }

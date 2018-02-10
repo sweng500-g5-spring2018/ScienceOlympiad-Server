@@ -70,22 +70,22 @@ public class UsersController {
 
     /**
      * Returns a list of all of the users of the system
-     * URI is /sweng500/allusers
+     * URI is /sweng500/allUsers
      * @return all of the users in the database in JSON form
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value="allusers",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value="allUsers",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
     public List<AUser> getAllUsers() {
         return mongoTemplate.findAll(AUser.class);
     }
 
     /**
      * Removes all of the users from the database
-     * URI is /sweng500/removeusers
+     * URI is /sweng500/removeUsers
      * @return true if the code is executed
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value="removeusers",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value="removeUsers",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
     public boolean removeAllUsers() {
         userRepository.removeAllUsers();
         return true;
@@ -101,10 +101,21 @@ public class UsersController {
     @CrossOrigin(origins = "*")
     @RequestMapping(value="login",method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
     public AUser login(@RequestBody String loginJson) {
-        JOptionPane.showMessageDialog(null, "Hit the post command with info: " + loginJson);
         Gson gson = new Gson();
         LoginJsonHelper helper = gson.fromJson(loginJson, LoginJsonHelper.class);
 
         return userRepository.getUser(helper);
+    }
+
+    /**
+     * The PUT request for logging in as a user
+     * URI is /sweng500/emailAvailable
+     * @param emailAddress the email address to be checked in the system
+     * @return TRUE if the email address is AVAILABLE, FALSE if it is TAKEN
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value="emailAvailable",method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public boolean emailAvailable(@RequestBody String emailAddress) {
+        return !userRepository.emailUsed(emailAddress);
     }
 }
