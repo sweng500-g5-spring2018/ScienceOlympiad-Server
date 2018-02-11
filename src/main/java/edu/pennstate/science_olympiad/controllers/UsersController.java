@@ -5,10 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import edu.pennstate.science_olympiad.LoginJsonHelper;
-import edu.pennstate.science_olympiad.people.AUser;
-import edu.pennstate.science_olympiad.people.Admin;
-import edu.pennstate.science_olympiad.people.Coach;
-import edu.pennstate.science_olympiad.people.UserFactory;
+import edu.pennstate.science_olympiad.people.*;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
 import edu.pennstate.science_olympiad.sms.CustomPhoneNumber;
 import edu.pennstate.science_olympiad.util.Pair;
@@ -133,6 +130,46 @@ public class UsersController {
             }
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data.");
+        }
+    }
+
+    /**
+     * The POST request for checking if email username is already in the system
+     * URI is /sweng500/emailAvailable
+     * @param userJson the email address to be checked in the system
+     * @return STATUS 200 if email address is AVAILABLE, STATUS 409 if it is TAKEN, STATUS 400 if bad JSON provided
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value="addUser",method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> addUser(@RequestParam String userType, @RequestBody String userJson) {
+        try {
+            Gson gson = new Gson();
+            boolean added = false;
+            if (userType.equalsIgnoreCase(IUserTypes.ADMIN)){
+                Admin admin = gson.fromJson(userJson, Admin.class);
+                added = userRepository.addUser(admin);
+
+            } else if (userType.equalsIgnoreCase(IUserTypes.COACH)){
+                Coach coach = gson.fromJson(userJson, Coach.class);
+                added = userRepository.addUser(coach);
+
+            } else if (userType.equalsIgnoreCase(IUserTypes.JUDGE)){
+                Judge judge = gson.fromJson(userJson, Judge.class);
+                added = userRepository.addUser(judge);
+
+            } else if (userType.equalsIgnoreCase(IUserTypes.STUDENT)){
+                Student student = gson.fromJson(userJson, Student.class);
+                added = userRepository.addUser(student);
+
+            }
+
+            if (added)
+                return ResponseEntity.status(HttpStatus.OK).body("User was added.");
+            else
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists.");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
         }
     }
 

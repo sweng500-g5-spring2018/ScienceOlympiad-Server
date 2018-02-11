@@ -35,7 +35,7 @@ public class UserRepository {
      * @param user the user to store in the database
      * @return Whether the user was added or not, will not add the user if it already exists
      */
-    public void addUser(AUser user) {
+    public boolean addUser(AUser user) {
         //just testing some operations
 
         logger.info("Checking if user is already here");
@@ -46,7 +46,9 @@ public class UserRepository {
         if (!exists) {
             logger.info("Adding user: " + user.getName());
             mongoTemplate.insert(user, "ausers");
+            return true;
         }
+        return false;
     }
 
     public AUser getUser(LoginJsonHelper loginHelper) {
