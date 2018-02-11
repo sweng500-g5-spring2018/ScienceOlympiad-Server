@@ -94,7 +94,7 @@ public class UsersController {
     }
 
     /**
-     * The PUT request for logging in as a user
+     * The POST request for logging in as a user
      * URI is /sweng500/login
      * @param loginJson the login information in the form of a JSON object containing only the emailAddress and password
      *                  as contained in the {@link edu.pennstate.science_olympiad.LoginJsonHelper} object
@@ -134,10 +134,11 @@ public class UsersController {
     }
 
     /**
-     * The POST request for checking if email username is already in the system
-     * URI is /sweng500/emailAvailable
-     * @param userJson the email address to be checked in the system
-     * @return STATUS 200 if email address is AVAILABLE, STATUS 409 if it is TAKEN, STATUS 400 if bad JSON provided
+     * The POST request for adding a user to the system
+     * URI is /sweng500/addUser
+     * @param userType the string of the type of user to create, matches that from {@link edu.pennstate.science_olympiad.people.IUserTypes}
+     * @param userJson the JSON of all of the user's data
+     * @return STATUS 200 if user is successfully added, STATUS 409 if user was not created, STATUS 400 if bad JSON provided
      */
     @CrossOrigin(origins = "*")
     @RequestMapping(value="addUser",method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
