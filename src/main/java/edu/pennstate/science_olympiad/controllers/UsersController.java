@@ -2,6 +2,8 @@ package edu.pennstate.science_olympiad.controllers;
 
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import edu.pennstate.science_olympiad.LoginJsonHelper;
 import edu.pennstate.science_olympiad.people.AUser;
 import edu.pennstate.science_olympiad.people.Admin;
@@ -12,10 +14,13 @@ import edu.pennstate.science_olympiad.sms.CustomPhoneNumber;
 import edu.pennstate.science_olympiad.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.*;
+import javax.xml.ws.Response;
 import java.util.List;
 
 /**
@@ -108,14 +113,27 @@ public class UsersController {
     }
 
     /**
-     * The PUT request for logging in as a user
+     * The POST request for checking if email username is already in the system
      * URI is /sweng500/emailAvailable
-     * @param emailAddress the email address to be checked in the system
-     * @return TRUE if the email address is AVAILABLE, FALSE if it is TAKEN
+     * @param emailAddressJson the email address to be checked in the system
+     * @return STATUS 200 if email address is AVAILABLE, STATUS 409 if it is TAKEN, STATUS 400 if bad JSON provided
      */
     @CrossOrigin(origins = "*")
     @RequestMapping(value="emailAvailable",method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public boolean emailAvailable(@RequestBody String emailAddress) {
-        return !userRepository.emailUsed(emailAddress);
+    public ResponseEntity<?> emailAvailable(@RequestBody String emailAddressJson) {
+        try {
+            JsonParser parser = new JsonParser();
+            JsonObject jsonObj = parser.parse(emailAddressJson).getAsJsonObject();
+            String email = jsonObj.get("email").getAsString();
+
+            if (!userRepository.emailUsed(email)) {
+                return ResponseEntity.status(HttpStatus.OK).body("Email Address is Available.");
+            } else {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Email Address is Not Available.");
+            }
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data.");
+        }
     }
+
 }
