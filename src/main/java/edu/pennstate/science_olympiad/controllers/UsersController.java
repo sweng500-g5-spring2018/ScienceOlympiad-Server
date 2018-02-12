@@ -5,10 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import edu.pennstate.science_olympiad.LoginJsonHelper;
-import edu.pennstate.science_olympiad.people.AUser;
-import edu.pennstate.science_olympiad.people.Admin;
-import edu.pennstate.science_olympiad.people.Coach;
-import edu.pennstate.science_olympiad.people.UserFactory;
+import edu.pennstate.science_olympiad.people.*;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
 import edu.pennstate.science_olympiad.sms.CustomPhoneNumber;
 import edu.pennstate.science_olympiad.util.Pair;
@@ -97,7 +94,7 @@ public class UsersController {
     }
 
     /**
-     * The PUT request for logging in as a user
+     * The POST request for logging in as a user
      * URI is /sweng500/login
      * @param loginJson the login information in the form of a JSON object containing only the emailAddress and password
      *                  as contained in the {@link edu.pennstate.science_olympiad.LoginJsonHelper} object
@@ -133,6 +130,47 @@ public class UsersController {
             }
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data.");
+        }
+    }
+
+    /**
+     * The POST request for adding a user to the system
+     * URI is /sweng500/addUser
+     * @param userType the string of the type of user to create, matches that from {@link edu.pennstate.science_olympiad.people.IUserTypes}
+     * @param userJson the JSON of all of the user's data
+     * @return STATUS 200 if user is successfully added, STATUS 409 if user was not created, STATUS 400 if bad JSON provided
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value="addUser",method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> addUser(@RequestParam String userType, @RequestBody String userJson) {
+        try {
+            Gson gson = new Gson();
+            boolean added = false;
+            if (userType.equalsIgnoreCase(IUserTypes.ADMIN)){
+                Admin admin = gson.fromJson(userJson, Admin.class);
+                added = userRepository.addUser(admin);
+
+            } else if (userType.equalsIgnoreCase(IUserTypes.COACH)){
+                Coach coach = gson.fromJson(userJson, Coach.class);
+                added = userRepository.addUser(coach);
+
+            } else if (userType.equalsIgnoreCase(IUserTypes.JUDGE)){
+                Judge judge = gson.fromJson(userJson, Judge.class);
+                added = userRepository.addUser(judge);
+
+            } else if (userType.equalsIgnoreCase(IUserTypes.STUDENT)){
+                Student student = gson.fromJson(userJson, Student.class);
+                added = userRepository.addUser(student);
+
+            }
+
+            if (added)
+                return ResponseEntity.status(HttpStatus.OK).body("User was added.");
+            else
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists.");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
         }
     }
 
