@@ -11,12 +11,16 @@ import edu.pennstate.science_olympiad.services.EventService;
 import edu.pennstate.science_olympiad.sms.CustomPhoneNumber;
 import edu.pennstate.science_olympiad.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 
 /**
@@ -54,5 +58,26 @@ public class FirstController {
         Object o = eventService.addTeamToEvent(new ArrayList<String>(),"FirstEvent");
 
         return o;
+    }
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value="testSessionStart",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> testSessionStart(HttpSession session) {
+        System.out.println("TEST SESSION START");
+        session.setAttribute("sessionTest", "OH HELLO");
+        return ResponseEntity.status(HttpStatus.OK).body("SESSION CREATED SUCCESSFUL");
+    }
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value="testSessionEnd",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> testSessionEnd(HttpServletRequest request) {
+        HttpSession userSession = request.getSession(false);
+        if(userSession == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("SESSION DOES NOT SEEM TO EXIST.");
+        }
+
+        userSession.invalidate();
+        System.out.println("TEST SESSION END");
+        return ResponseEntity.status(HttpStatus.OK).body("YAY SESSION KILLED SUCCESSFULLY");
     }
 }

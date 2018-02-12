@@ -27,6 +27,7 @@ public class WebConfig implements WebApplicationInitializer {
         ServletRegistration.Dynamic dispatcher =
                 container.addServlet("/", new DispatcherServlet(context));
 
+        //dispatcher.setInitParameter("dispatchOptionsRequest", "true");
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
     }

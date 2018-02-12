@@ -67,15 +67,15 @@ public class SpringConfig extends WebMvcConfigurerAdapter {
         return new MongoTemplate(mongo(), getDatabaseName());
     }
 
-
-    @Bean
-    public RequestInterceptor localInterceptor() {
-        return new RequestInterceptor();
-    }
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(localInterceptor());
-        //registry.addInterceptor(new ThemeChangeInterceptor()).addPathPatterns("/**").excludePathPatterns("/login", "/emailAvailable");
-    }
+//
+//    @Bean
+//    public RequestInterceptor localInterceptor() {
+//        return new RequestInterceptor();
+//    }
+//
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(localInterceptor());
+//        //registry.addInterceptor(new ThemeChangeInterceptor()).addPathPatterns("/**").excludePathPatterns("/login", "/emailAvailable");
+//    }
 }
