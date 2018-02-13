@@ -62,9 +62,15 @@ public class FirstController {
 
     @CrossOrigin(origins = "*")
     @RequestMapping(value="testSessionStart",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> testSessionStart(HttpSession session) {
+    public ResponseEntity<?> testSessionStart(HttpServletRequest request) {
+        HttpSession userSession = request.getSession(false);
+
+        if(userSession == null) {
+            userSession = request.getSession();
+        }
+
         System.out.println("TEST SESSION START");
-        session.setAttribute("sessionTest", "OH HELLO");
+        userSession.setAttribute("sessionTest", "OH HELLO");
         return ResponseEntity.status(HttpStatus.OK).body("SESSION CREATED SUCCESSFUL");
     }
 

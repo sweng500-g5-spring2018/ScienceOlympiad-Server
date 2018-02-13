@@ -22,12 +22,10 @@ public class HttpSessionTracker implements HttpSessionListener {
         HttpSession session = event.getSession();
         session.setMaxInactiveInterval(60 * 5);
 
-        System.out.println("SESSION GETTING CREATED: " + session.getId());
         sessions.put(session.getId(), session);
         activeSessions++;
 
-        System.out.println("SESSION CREATED ... total: " + activeSessions);
-        System.out.println(sessions.toString());
+        System.out.println("(Active " + activeSessions + ") SESSION CREATED: " + session.getId());
     }
 
     /**
@@ -37,12 +35,11 @@ public class HttpSessionTracker implements HttpSessionListener {
      */
     public void sessionDestroyed(HttpSessionEvent event) {
 
-        System.out.println("SESSION GETTING DESTROYED: " + event.getSession().getId());
+        System.out.println("(Active " + activeSessions + ") SESSION DESTROYED: " + event.getSession().getId());
 
         sessions.remove(event.getSession().getId());
         activeSessions--;
 
-        System.out.println("SESSION DESTROYED ... total: " + activeSessions);
         //event.getSession().invalidate(); CALL THIS and this actually calls sessionDestroyed (call on logout)
     }
 

@@ -24,4 +24,20 @@ public class UserFactory {
 
         return user;
     }
+
+    public String getUserType(AUser user) {
+        System.out.println(user);
+
+        if(user instanceof Admin) {
+            return IUserTypes.ADMIN;
+        } else if (user instanceof Coach) {
+            return IUserTypes.COACH;
+        } else if (user instanceof Judge) {
+            return IUserTypes.JUDGE;
+        } else if (user instanceof Student) {
+            return IUserTypes.STUDENT;
+        } else {
+            return null;
+        }
+    }
 }

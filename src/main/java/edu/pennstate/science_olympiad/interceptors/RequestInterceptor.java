@@ -13,6 +13,7 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        super.preHandle(request, response, handler);
 
         if((((HandlerMethod) handler).getBean() instanceof EventController)) {
             HttpSession session = request.getSession(false);

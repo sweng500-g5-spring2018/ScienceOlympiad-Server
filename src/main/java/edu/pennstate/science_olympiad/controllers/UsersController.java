@@ -4,7 +4,6 @@ package edu.pennstate.science_olympiad.controllers;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import edu.pennstate.science_olympiad.LoginJsonHelper;
 import edu.pennstate.science_olympiad.people.*;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
 import edu.pennstate.science_olympiad.sms.CustomPhoneNumber;
@@ -16,8 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.*;
-import javax.xml.ws.Response;
 import java.util.List;
 
 /**
