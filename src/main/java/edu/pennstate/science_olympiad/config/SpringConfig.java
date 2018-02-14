@@ -10,10 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 
 import java.util.Arrays;
 
@@ -81,10 +78,15 @@ public class SpringConfig extends WebMvcConfigurerAdapter {
 //    }
 
     @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**");
+    }
+
+    @Override
     public void addInterceptors(InterceptorRegistry registry) {
         //registry.addInterceptor(corsInterceptor());
         registry.addInterceptor(localInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/auth/**","/emailAvailable", "/users", "/testSessionStart", "sweng500/addUser");
+                .excludePathPatterns("/auth/**","/emailAvailable", "/users", "/testSessionStart", "/addUser");
     }
 }
