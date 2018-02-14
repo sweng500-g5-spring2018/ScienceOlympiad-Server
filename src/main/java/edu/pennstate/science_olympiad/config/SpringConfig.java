@@ -87,7 +87,8 @@ public class SpringConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         //registry.addInterceptor(corsInterceptor());
-        registry.addInterceptor(localInterceptor());
-        //registry.addInterceptor(new ThemeChangeInterceptor()).addPathPatterns("/**").excludePathPatterns("/login", "/emailAvailable");
+        registry.addInterceptor(localInterceptor())
+                .addPathPatterns("/**")
+                .excludePathPatterns("/auth/**","/emailAvailable", "/users", "/testSessionStart");
     }
 }

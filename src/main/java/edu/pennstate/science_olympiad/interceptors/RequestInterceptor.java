@@ -20,7 +20,7 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
         //RETURN if options request
         if(request.getMethod().equalsIgnoreCase("OPTIONS")) return true;
 
-        if((((HandlerMethod) handler).getBean() instanceof EventController)) {
+        //if((((HandlerMethod) handler).getBean() instanceof EventController)) {
             HttpSession session = request.getSession(false);
 
             if(session == null || session.getAttribute("session") == null) {
@@ -28,9 +28,10 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return false;
             }
-        }
 
-        System.out.println("RequestInterceptor says - YO SESSION IS GOOD HOMIE; CARRY ON");
+            System.out.println("RequestInterceptor says - YO SESSION IS GOOD HOMIE; CARRY ON");
+        //}
+
         return true;
     }
 }

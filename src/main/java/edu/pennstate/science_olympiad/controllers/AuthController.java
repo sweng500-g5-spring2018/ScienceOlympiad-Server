@@ -95,25 +95,22 @@ public class AuthController {
         HttpSession userSession = request.getSession(false);
 
         if(userSession == null) {
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Session has ended.");
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Session already terminated.");
         }
 
         AUser sessionedUser = (AUser) userSession.getAttribute("user");
 
         if(sessionedUser == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, can only log yourself out ya goon.");
+            return ResponseEntity.status(HttpStatus.OK).body("Session already terminated.");
         }
 
         if(sessionedUser.getEmailAddress().equals(email)) {
-            System.out.println("SUCCESSFULLY LOGGING OUT USER " + sessionedUser.getEmailAddress());
             userSession.invalidate();
 
             return ResponseEntity.status(HttpStatus.OK).body("Successfully logged out.");
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, invalid logout authorization.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data.  You're not who you say you are...");
         }
-
-
     }
 
 }
