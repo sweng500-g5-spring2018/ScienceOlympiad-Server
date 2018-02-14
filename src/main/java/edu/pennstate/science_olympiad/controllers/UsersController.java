@@ -18,8 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.*;
-import javax.xml.ws.Response;
 import java.util.List;
 
 /**
@@ -83,6 +81,8 @@ public class UsersController implements URIConstants{
         return mongoTemplate.findAll(AUser.class);
     }
 
+
+
     /**
      * Removes all of the users from the database
      * URI is /sweng500/removeUsers
@@ -93,22 +93,6 @@ public class UsersController implements URIConstants{
     public boolean removeAllUsers() {
         userRepository.removeAllUsers();
         return true;
-    }
-
-    /**
-     * The POST request for logging in as a user
-     * URI is /sweng500/login
-     * @param loginJson the login information in the form of a JSON object containing only the emailAddress and password
-     *                  as contained in the {@link edu.pennstate.science_olympiad.LoginJsonHelper} object
-     * @return either the User object if the login is successful, or null if otherwise
-     */
-    @CrossOrigin(origins = "*")
-    @RequestMapping(value= LOGIN, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public AUser login(@RequestBody String loginJson) {
-        Gson gson = new Gson();
-        LoginJsonHelper helper = gson.fromJson(loginJson, LoginJsonHelper.class);
-
-        return userRepository.getUser(helper);
     }
 
     /**
@@ -123,7 +107,7 @@ public class UsersController implements URIConstants{
         try {
             JsonParser parser = new JsonParser();
             JsonObject jsonObj = parser.parse(emailAddressJson).getAsJsonObject();
-            String email = jsonObj.get("email").getAsString();
+            String email = jsonObj.get("emailAddress").getAsString();
 
             if (!userRepository.emailUsed(email)) {
                 return ResponseEntity.status(HttpStatus.OK).body("Email Address is Available.");

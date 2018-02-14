@@ -1,4 +1,4 @@
-package edu.pennstate.science_olympiad;
+package edu.pennstate.science_olympiad.helpers.request;
 
 public class LoginJsonHelper {
 
