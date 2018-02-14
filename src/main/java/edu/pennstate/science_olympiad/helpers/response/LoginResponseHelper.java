@@ -6,7 +6,7 @@ public class LoginResponseHelper {
     private String role;
     private String session;
 
-    public LoginResponseHelper(String emailAddress, String password, String session) {
+    public LoginResponseHelper(String emailAddress, String role, String session) {
         this.emailAddress = emailAddress;
         this.role = role;
         this.session = session;
