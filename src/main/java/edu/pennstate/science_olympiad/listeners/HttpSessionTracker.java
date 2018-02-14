@@ -13,6 +13,9 @@ public class HttpSessionTracker implements HttpSessionListener {
     private static int activeSessions = 0;
     private static final Map<String, HttpSession> sessions = new HashMap<String, HttpSession>();
 
+    /* 60 seconds * [number of minutes] */
+    private static final int timeout = 60 * 20;
+
     /**
      * Listen for session events being created and track them in a Map.
      *
@@ -20,7 +23,7 @@ public class HttpSessionTracker implements HttpSessionListener {
      */
     public void sessionCreated(HttpSessionEvent event) {
         HttpSession session = event.getSession();
-        session.setMaxInactiveInterval(60 * 5);
+        session.setMaxInactiveInterval(timeout);
 
         sessions.put(session.getId(), session);
         activeSessions++;
