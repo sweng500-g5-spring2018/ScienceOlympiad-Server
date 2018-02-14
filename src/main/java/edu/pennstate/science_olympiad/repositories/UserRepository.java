@@ -2,7 +2,10 @@ package edu.pennstate.science_olympiad.repositories;
 
 import com.mongodb.WriteResult;
 import edu.pennstate.science_olympiad.LoginJsonHelper;
+import edu.pennstate.science_olympiad.School;
 import edu.pennstate.science_olympiad.people.AUser;
+import edu.pennstate.science_olympiad.people.Coach;
+import edu.pennstate.science_olympiad.people.Student;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +77,34 @@ public class UserRepository {
         Query query = new Query();
         query.addCriteria(Criteria.where("emailAddress").is(emailAddress));
         return ( mongoTemplate.find(query, AUser.class).size() > 0 );
+    }
+
+    public boolean addCoachToStudent(Coach coach, Student student) {
+        logger.info("Attempting to add coach to student");
+        Query query = new Query();
+        query.addCriteria(Criteria.where("emailAddress").is(student.getEmailAddress()));
+        Student dbStudent = mongoTemplate.findOne(query, Student.class);
+
+        if (dbStudent != null) {
+            dbStudent.setCoach(coach);
+            mongoTemplate.save(dbStudent);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean addSchoolToCoach(School school, Coach coach) {
+        logger.info("Attempting to add school to coach");
+        Query query = new Query();
+        query.addCriteria(Criteria.where("emailAddress").is(coach.getEmailAddress()));
+        Coach dbCoach = mongoTemplate.findOne(query, Coach.class);
+
+        if (dbCoach != null) {
+            dbCoach.setSchool(school);
+            mongoTemplate.save(dbCoach);
+            return true;
+        }
+        return false;
     }
 
 }

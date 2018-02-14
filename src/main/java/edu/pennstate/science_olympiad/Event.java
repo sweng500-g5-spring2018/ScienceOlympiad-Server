@@ -29,7 +29,7 @@ public class Event {
     //event most likely has multiple judges
 
     private List<Judge_Event> judge_events;
-    //may not need this becuase when we add a team to this event we will create it in the service
+    //may not need this because when we add a team to this event we will create it in the service
     private List<Team_Event> team_events;
 
     public Event() {

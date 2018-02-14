@@ -29,7 +29,7 @@ public class EventService {
      *
      * @param studentIds - The students selected to add to the team - just testing
      * @param eventName -The event we are adding a team for, used to lookup event
-     * @return
+     * @return Success no matter what
      */
     public Object addTeamToEvent(List<String> studentIds, String eventName) {
         //The students and coaches objects should have already been entered into the database so mock them here
@@ -58,12 +58,12 @@ public class EventService {
 
     /**
      * This will have happened before any teams are added -- just adding one to test
-     * @param event
+     * @param event nobody knows
+     *              @return whether the event was created or not
      */
-    public void createNewEvent(Event event) {
+    public boolean createNewEvent(Event event) {
         //this will also create a new Team_Event Object in the DB
-        eventRepository.createNewEvent(event);
-
+        return eventRepository.createNewEvent(event);
     }
 
     public List<Event> getEvents() {

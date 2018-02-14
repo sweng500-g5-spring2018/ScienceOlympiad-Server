@@ -42,17 +42,17 @@ public class FirstController {
     }
 
 
-    @CrossOrigin(origins = "*")
-    @RequestMapping(value="newTeamEvent",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public Object createTeamEvent() {
-
-        //simulate mapping inserting an event for later
-        Event event = new Event("FirstEvent");
-        eventService.createNewEvent(event);
-
-        //add a team to the fake event created above
-        Object o = eventService.addTeamToEvent(new ArrayList<String>(),"FirstEvent");
-
-        return o;
-    }
+//    @CrossOrigin(origins = "*")
+//    @RequestMapping(value="newTeamEvent",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+//    public Object createTeamEvent() {
+//
+//        //simulate mapping inserting an event for later
+//        Event event = new Event("FirstEvent");
+//        eventService.createNewEvent(event);
+//
+//        //add a team to the fake event created above
+//        Object o = eventService.addTeamToEvent(new ArrayList<String>(),"FirstEvent");
+//
+//        return o;
+//    }
 }

@@ -5,6 +5,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import edu.pennstate.science_olympiad.LoginJsonHelper;
+import edu.pennstate.science_olympiad.School;
+import edu.pennstate.science_olympiad.URIConstants;
 import edu.pennstate.science_olympiad.people.*;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
 import edu.pennstate.science_olympiad.sms.CustomPhoneNumber;
@@ -24,7 +26,7 @@ import java.util.List;
  * This class contains all of the endpoints that can be called to add, remove, or login as a user of the system
  */
 @RestController
-public class UsersController {
+public class UsersController implements URIConstants{
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -35,7 +37,7 @@ public class UsersController {
      * @return success, true pair
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value="createTestUser",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value= TEST_USER ,method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
     public Object addUser() {
         // log.info(">>addUser()");
         Admin admin = (Admin) UserFactory.getInstance().createUser("admin");
@@ -60,7 +62,7 @@ public class UsersController {
      * @return Brandon's information
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value="users",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value= USERS, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
     public AUser getBrandon() {
         Admin admin = (Admin)UserFactory.getInstance().createUser("admin");
         admin.setFirstName("Brandon");
@@ -76,7 +78,7 @@ public class UsersController {
      * @return all of the users in the database in JSON form
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value="allUsers",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value= ALL_USERS, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
     public List<AUser> getAllUsers() {
         return mongoTemplate.findAll(AUser.class);
     }
@@ -87,7 +89,7 @@ public class UsersController {
      * @return true if the code is executed
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value="removeUsers",method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value= REMOVE_USERS, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
     public boolean removeAllUsers() {
         userRepository.removeAllUsers();
         return true;
@@ -101,7 +103,7 @@ public class UsersController {
      * @return either the User object if the login is successful, or null if otherwise
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value="login",method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value= LOGIN, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
     public AUser login(@RequestBody String loginJson) {
         Gson gson = new Gson();
         LoginJsonHelper helper = gson.fromJson(loginJson, LoginJsonHelper.class);
@@ -116,7 +118,7 @@ public class UsersController {
      * @return STATUS 200 if email address is AVAILABLE, STATUS 409 if it is TAKEN, STATUS 400 if bad JSON provided
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value="emailAvailable",method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value= EMAIL_AVAILABLE, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> emailAvailable(@RequestBody String emailAddressJson) {
         try {
             JsonParser parser = new JsonParser();
@@ -141,7 +143,7 @@ public class UsersController {
      * @return STATUS 200 if user is successfully added, STATUS 409 if user was not created, STATUS 400 if bad JSON provided
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value="addUser",method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value= ADD_USER, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> addUser(@RequestParam String userType, @RequestBody String userJson) {
         try {
             Gson gson = new Gson();
@@ -168,6 +170,60 @@ public class UsersController {
                 return ResponseEntity.status(HttpStatus.OK).body("User was added.");
             else
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists.");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
+        }
+    }
+
+    /**
+     * The POST request for adding a a coach to a student
+     * URI is /sweng500/addCoachToStudent
+     * @param coachJson the JSON of the coach to add
+     * @param studentJson the JSON of the student who is getting a new coach
+     * @return STATUS 200 if coach is successfully set, STATUS 409 if coach was not set, STATUS 400 if bad JSON provided
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= ADD_COACH_TO_STUDENT, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> addCoachToStudent(@RequestBody String coachJson, @RequestBody String studentJson) {
+        try {
+            Gson gson = new Gson();
+            Coach coach = gson.fromJson(coachJson, Coach.class);
+            Student student = gson.fromJson(studentJson, Student.class);
+
+            boolean added = userRepository.addCoachToStudent(coach, student);
+
+            if (added)
+                return ResponseEntity.status(HttpStatus.OK).body("Coach was added to student.");
+            else
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Coach was not added.");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
+        }
+    }
+
+    /**
+     * The POST request for adding a a coach to a student
+     * URI is /sweng500/addSchoolToCoach
+     * @param schoolJson the JSON of the school to add to the coach
+     * @param coachJson the JSON of the coach to add the school
+     * @return STATUS 200 if school is successfully set, STATUS 409 if school was not set, STATUS 400 if bad JSON provided
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= ADD_SCHOOL_TO_COACH , method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> addSchoolToCoach(@RequestBody String schoolJson, @RequestBody String coachJson) {
+        try {
+            Gson gson = new Gson();
+            Coach coach = gson.fromJson(coachJson, Coach.class);
+            School school = gson.fromJson(schoolJson, School.class);
+
+            boolean added = userRepository.addSchoolToCoach(school, coach);
+
+            if (added)
+                return ResponseEntity.status(HttpStatus.OK).body("School was to coach.");
+            else
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("School was not set for the coach.");
 
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");

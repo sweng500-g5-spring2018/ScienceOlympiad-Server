@@ -40,6 +40,10 @@ public class Team {
         return coach;
     }
 
+    public void setCoach(Coach coach) {
+        this.coach = coach;
+    }
+
     public List<Student> getStudents() {
         if (students == null)
             students = new ArrayList<Student>();
