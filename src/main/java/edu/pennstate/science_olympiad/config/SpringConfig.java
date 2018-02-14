@@ -4,6 +4,7 @@ import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import edu.pennstate.science_olympiad.interceptors.CorsInterceptor;
 import edu.pennstate.science_olympiad.interceptors.RequestInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -67,15 +68,26 @@ public class SpringConfig extends WebMvcConfigurerAdapter {
         return new MongoTemplate(mongo(), getDatabaseName());
     }
 
-//
+    @Bean
+    public RequestInterceptor localInterceptor() {
+        return new RequestInterceptor();
+    }
+
 //    @Bean
-//    public RequestInterceptor localInterceptor() {
-//        return new RequestInterceptor();
-//    }
+//    public CorsInterceptor corsInterceptor() {
+//        CorsInterceptor cors = new CorsInterceptor();
 //
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(localInterceptor());
-//        //registry.addInterceptor(new ThemeChangeInterceptor()).addPathPatterns("/**").excludePathPatterns("/login", "/emailAvailable");
+//        cors.setAllowMethods("GET, OPTIONS, POST, PUT, DELETE");
+//        cors.setAllowHeaders("Origin, X-Requested-With, Content-Type, Accept");
+//        cors.setOrigin("localHost:8080, sweng500.com");
+//
+//        return cors;
 //    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        //registry.addInterceptor(corsInterceptor());
+        registry.addInterceptor(localInterceptor());
+        //registry.addInterceptor(new ThemeChangeInterceptor()).addPathPatterns("/**").excludePathPatterns("/login", "/emailAvailable");
+    }
 }
