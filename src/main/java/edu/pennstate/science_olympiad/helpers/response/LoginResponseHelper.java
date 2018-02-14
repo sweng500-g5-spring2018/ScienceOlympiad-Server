@@ -1,5 +1,7 @@
 package edu.pennstate.science_olympiad.helpers.response;
 
+import edu.pennstate.science_olympiad.people.*;
+
 public class LoginResponseHelper {
 
     private String emailAddress;
@@ -23,4 +25,18 @@ public class LoginResponseHelper {
     public void setRole(String role) { this.role = role; }
 
     public void setSession(String session) { this.session = session; }
+
+    public static String getUserType(AUser user) {
+        if(user instanceof Admin) {
+            return IUserTypes.ADMIN;
+        } else if (user instanceof Coach) {
+            return IUserTypes.COACH;
+        } else if (user instanceof Judge) {
+            return IUserTypes.JUDGE;
+        } else if (user instanceof Student) {
+            return IUserTypes.STUDENT;
+        } else {
+            return "AUser";
+        }
+    }
 }

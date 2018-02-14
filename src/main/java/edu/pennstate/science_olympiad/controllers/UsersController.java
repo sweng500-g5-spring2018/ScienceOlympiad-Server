@@ -4,7 +4,6 @@ package edu.pennstate.science_olympiad.controllers;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import edu.pennstate.science_olympiad.LoginJsonHelper;
 import edu.pennstate.science_olympiad.School;
 import edu.pennstate.science_olympiad.URIConstants;
 import edu.pennstate.science_olympiad.people.*;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * This class contains all of the endpoints that can be called to add, remove, or login as a user of the system
+ * This class contains all of the endpoints that can be called to retrieve and manipulate users in the system
  */
 @RestController
 public class UsersController implements URIConstants{

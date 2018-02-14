@@ -1,7 +1,7 @@
 package edu.pennstate.science_olympiad.repositories;
 
 import com.mongodb.WriteResult;
-import edu.pennstate.science_olympiad.LoginJsonHelper;
+import edu.pennstate.science_olympiad.helpers.request.LoginJsonHelper;
 import edu.pennstate.science_olympiad.School;
 import edu.pennstate.science_olympiad.people.AUser;
 import edu.pennstate.science_olympiad.people.Coach;

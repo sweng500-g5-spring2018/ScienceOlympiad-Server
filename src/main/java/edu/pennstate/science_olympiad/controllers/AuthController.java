@@ -33,7 +33,6 @@ public class AuthController {
      * @param request Incoming Servlet request
      * @return JSON containing user information on SUCCESS
      */
-//    @CrossOrigin(origins = {"http://localhost:3000", "http://sweng500.com", "https://localhost:3000", "https://sweng500.com"})
     @CrossOrigin(origins = "*")
     @RequestMapping(value="auth/login",method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> login(@RequestBody String loginJson, HttpServletRequest request) {
@@ -58,7 +57,7 @@ public class AuthController {
             session.setAttribute("user", userFound);
 
             LoginResponseHelper loginResponse = new LoginResponseHelper(userFound.getEmailAddress(),
-                                                                        "NULLTYPEHELPER",
+                                                                        LoginResponseHelper.getUserType(userFound),
                                                                         session.getId());
 
             System.out.println("SUCCESSFULLY LOGGED IN USER " + userFound.getEmailAddress());
