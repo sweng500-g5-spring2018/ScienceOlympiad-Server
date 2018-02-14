@@ -87,6 +87,6 @@ public class SpringConfig extends WebMvcConfigurerAdapter {
         //registry.addInterceptor(corsInterceptor());
         registry.addInterceptor(localInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/auth/**","/emailAvailable", "/users", "/testSessionStart", "/addUser");
+                .excludePathPatterns("/auth/**","/emailAvailable", "/users", "/testSessionStart", "/addUser/**");
     }
 }
