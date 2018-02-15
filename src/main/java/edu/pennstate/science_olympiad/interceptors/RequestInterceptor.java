@@ -22,8 +22,9 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
 
         //if((((HandlerMethod) handler).getBean() instanceof EventController)) {
             HttpSession session = request.getSession(false);
+            System.out.println("SESSION: " + session);
 
-            if(session == null || session.getAttribute("session") == null) {
+            if(session == null || session.getAttribute("user") == null) {
                 System.out.println("Request Interceptor says - YO SESSION IS BAD OMFG");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return false;
