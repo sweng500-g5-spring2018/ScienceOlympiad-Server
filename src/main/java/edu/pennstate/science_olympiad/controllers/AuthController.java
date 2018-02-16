@@ -8,6 +8,7 @@ import edu.pennstate.science_olympiad.helpers.request.LoginJsonHelper;
 import edu.pennstate.science_olympiad.helpers.response.LoginResponseHelper;
 import edu.pennstate.science_olympiad.people.*;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
+import edu.pennstate.science_olympiad.URIConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,7 +35,7 @@ public class AuthController {
      * @return JSON containing user information on SUCCESS
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value="auth/login",method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value=URIConstants.LOGIN ,method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> login(@RequestBody String loginJson, HttpServletRequest request) {
         Gson gson = new Gson();
         LoginJsonHelper helper = gson.fromJson(loginJson, LoginJsonHelper.class);
@@ -43,7 +44,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
         }
 
-        AUser userFound = (AUser) userRepository.getUser(helper);
+        AUser userFound = userRepository.getUser(helper);
 
         if(userFound != null) {
             HttpSession session = request.getSession();
@@ -77,7 +78,7 @@ public class AuthController {
      * @return String revealing the status of the operations
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value="auth/logout",method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value=URIConstants.LOGOUT, method= RequestMethod.POST, produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> logout(@RequestBody String logoutJson, HttpServletRequest request) {
         String email = null;
 

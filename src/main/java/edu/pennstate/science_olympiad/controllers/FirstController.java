@@ -78,11 +78,28 @@ public class FirstController {
     public ResponseEntity<?> testSessionEnd(HttpServletRequest request) {
         HttpSession userSession = request.getSession(false);
         if(userSession == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("SESSION DOES NOT SEEM TO EXIST.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("SESSION DOES NOT EXIST.");
         }
 
         userSession.invalidate();
         System.out.println("TEST SESSION END");
         return ResponseEntity.status(HttpStatus.OK).body("YAY SESSION KILLED SUCCESSFULLY");
     }
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value="testCoachOnly", method= RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> testCoachOnly(HttpServletRequest request) {
+        HttpSession userSession = request.getSession(false);
+        if(userSession == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No active session exists.");
+        }
+
+        AUser user = (AUser) userSession.getAttribute("user");
+        if(user != null && user instanceof Coach) {
+            return ResponseEntity.status(HttpStatus.OK).body("YAY, you're a coach.  You may access this content.");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are NOT a coach.  You CANNOT access this content.");
+        }
+    }
+
 }

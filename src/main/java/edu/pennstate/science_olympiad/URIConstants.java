@@ -29,9 +29,13 @@ public interface URIConstants {
     String USERS                    = "/users";
     String ALL_USERS                = "/allUsers";
     String REMOVE_USERS             = "/removeUsers";
-    String LOGIN                    = "/login";
     String EMAIL_AVAILABLE          = "/emailAvailable";
     String ADD_USER                 = "/addUser";
     String ADD_COACH_TO_STUDENT     = "/addCoachToStudent";
     String ADD_SCHOOL_TO_COACH      = "/addSchoolToCoach";
+
+    //-----------------------------Auth URIs-----------------------------
+    String LOGIN                    = "/auth/login";
+    String LOGOUT                   = "/auth/logout";
+
 }
