@@ -32,18 +32,16 @@ Log logger = LogFactory.getLog(getClass());
     private String lastName;
     private String emailAddress;
     private CustomPhoneNumber phoneNumber;
-    private String userId;
     private String password;
-    private byte[] salt;
-    private int minutesBeforeEvent;
-    private Date lastLoginDate;
+    private transient byte[] salt;
+    private transient int minutesBeforeEvent;
+    private transient Date lastLoginDate;
 
     public AUser() {
         firstName = "";
         lastName = "";
         emailAddress = "";
         phoneNumber = new CustomPhoneNumber("+15555555555");
-        userId = "";
         password = "";
         minutesBeforeEvent = 10;
 
@@ -80,14 +78,6 @@ Log logger = LogFactory.getLog(getClass());
 
     public void setPhoneNumber(CustomPhoneNumber phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     /**
