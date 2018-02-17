@@ -22,8 +22,24 @@ public class SchoolRepository {
      * Gets all of the schools from the database
      * @return all of the schools
      */
-    public List<School> getSchools() {
+    public List<School> getAllSchools() {
         return mongoTemplate.findAll(School.class);
+    }
+
+    /**
+     * Retrieves a school from the database
+     * @param schoolID The school to retrieve
+     * @return the school object if found; or null
+     */
+    public School getSchool(String schoolID) {
+        Query singleQuery = new Query();
+        singleQuery.addCriteria(Criteria.where("_id").is(schoolID));
+        School dbSchool = mongoTemplate.findOne(singleQuery, School.class);
+
+        if (dbSchool != null) {
+            return dbSchool;
+        }
+        return null;
     }
 
     /**

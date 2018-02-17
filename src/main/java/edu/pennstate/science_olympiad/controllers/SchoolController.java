@@ -30,7 +30,7 @@ public class SchoolController implements URIConstants{
     @CrossOrigin(origins = "*")
     @RequestMapping(value= GET_SCHOOLS ,method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
     public List<School> getSchools() {
-        return schoolRepository.getSchools();
+        return schoolRepository.getAllSchools();
     }
 
     @CrossOrigin(origins = "*")

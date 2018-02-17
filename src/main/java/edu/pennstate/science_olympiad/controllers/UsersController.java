@@ -6,7 +6,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import edu.pennstate.science_olympiad.School;
 import edu.pennstate.science_olympiad.URIConstants;
+import edu.pennstate.science_olympiad.helpers.mongo.MongoIdVerifier;
 import edu.pennstate.science_olympiad.people.*;
+import edu.pennstate.science_olympiad.repositories.SchoolRepository;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
 import edu.pennstate.science_olympiad.sms.CustomPhoneNumber;
 import edu.pennstate.science_olympiad.util.Pair;
@@ -28,6 +30,8 @@ public class UsersController implements URIConstants{
     UserRepository userRepository;
     @Autowired
     MongoTemplate mongoTemplate;
+    @Autowired
+    SchoolRepository schoolRepository;
 
     /**
      * URI is /sweng500/createTestUser
@@ -122,43 +126,69 @@ public class UsersController implements URIConstants{
      * The POST request for adding a user to the system
      * URI is /sweng500/addUser
      * @param userType the string of the type of user to create, matches that from {@link edu.pennstate.science_olympiad.people.IUserTypes}
+     * @param schoolID (not required) the string of the schoolID for the School to add to the User if they are of type {@link edu.pennstate.science_olympiad.people.Coach}
      * @param userJson the JSON of all of the user's data
-     * @return STATUS 200 if user is successfully added, STATUS 409 if user was not created, STATUS 400 if bad JSON provided
+     * @return STATUS 200 if user is successfully added, STATUS 207 if user created but could not be added to school,
+     *                      STATUS 409 if user was not created, STATUS 400 if bad JSON provided
      */
     @CrossOrigin(origins = "*")
     @RequestMapping(value= ADD_USER, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> addUser(@RequestParam String userType, @RequestBody String userJson) {
+    public ResponseEntity<?> addUser(@RequestParam(name="userType") String userType, @RequestParam(name="schoolID",required = false) String schoolID, @RequestBody String userJson) {
         try {
-            Gson gson = new Gson();
-            boolean added = false;
-            if (userType.equalsIgnoreCase(IUserTypes.ADMIN)){
-                Admin admin = gson.fromJson(userJson, Admin.class);
-                added = userRepository.addUser(admin);
+            AUser userToAdd;
+            School foundSchool = null;
 
-            } else if (userType.equalsIgnoreCase(IUserTypes.COACH)){
-                Coach coach = gson.fromJson(userJson, Coach.class);
-                added = userRepository.addUser(coach);
+            try {
+                Gson gson = new Gson();
 
-            } else if (userType.equalsIgnoreCase(IUserTypes.JUDGE)){
-                Judge judge = gson.fromJson(userJson, Judge.class);
-                added = userRepository.addUser(judge);
-
-            } else if (userType.equalsIgnoreCase(IUserTypes.STUDENT)){
-                Student student = gson.fromJson(userJson, Student.class);
-                added = userRepository.addUser(student);
-
+                if (userType.equalsIgnoreCase(IUserTypes.ADMIN)){
+                    userToAdd = gson.fromJson(userJson, Admin.class);
+                } else if (userType.equalsIgnoreCase(IUserTypes.COACH)){
+                    userToAdd = gson.fromJson(userJson, Coach.class);
+                } else if (userType.equalsIgnoreCase(IUserTypes.JUDGE)){
+                    userToAdd = gson.fromJson(userJson, Judge.class);
+                } else if (userType.equalsIgnoreCase(IUserTypes.STUDENT)){
+                    userToAdd = gson.fromJson(userJson, Student.class);
+                } else {
+                    userToAdd = null;
+                }
+            } catch(Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
             }
 
-            if (added)
-                return ResponseEntity.status(HttpStatus.OK).body("User was added.");
+            if(userToAdd == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, invalid user type.");
+            }
+
+            if(userToAdd instanceof Coach) {
+
+                foundSchool = schoolRepository.getSchool(schoolID);
+
+                if (foundSchool == null) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid school ID.");
+                }
+            }
+
+            boolean userAdded = userRepository.addUser(userToAdd);
+
+            if (userAdded) {
+                if(userToAdd instanceof Coach) {
+                    boolean schoolAddedToUser = userRepository.addSchoolToCoach(foundSchool, (Coach) userToAdd);
+
+                    if(!schoolAddedToUser) {
+                        ResponseEntity.status(HttpStatus.MULTI_STATUS).body("User created successfully but could not be added to School.");
+                    }
+                }
+
+                return ResponseEntity.status(HttpStatus.OK).body("User created successfully");
+            }
             else
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists.");
 
         } catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
         }
     }
-
     /**
      * The POST request for adding a a coach to a student
      * URI is /sweng500/addCoachToStudent
