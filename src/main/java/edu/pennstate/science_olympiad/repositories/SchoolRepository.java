@@ -47,12 +47,12 @@ public class SchoolRepository {
 
     /**
      * Removes a school from the database
-     * @param school The school to remove
+     * @param schoolId The school to remove
      * @return whether the school was removed or not
      */
-    public boolean removeSchool (School school) {
+    public boolean removeSchool (String schoolId) {
         Query singleQuery = new Query();
-        singleQuery.addCriteria(Criteria.where("schoolName").is(school.getSchoolName()));
+        singleQuery.addCriteria(Criteria.where("_id").is(schoolId));
         School dbSchool = mongoTemplate.findOne(singleQuery, School.class);
 
         if (dbSchool != null) {

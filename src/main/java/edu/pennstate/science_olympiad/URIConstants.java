@@ -14,7 +14,7 @@ public interface URIConstants {
     String GET_SCHOOLS              = "/getSchools";
     String ADD_SCHOOL               = "/addSchool";
     String ADD_SCHOOL_WITH_COACH    = "/assSchoolWithCoach";
-    String REMOVE_SCHOOL            = "/removeSchool";
+    String REMOVE_SCHOOL            = "/removeSchool/{schoolID}";
 
     //-----------------------------Team URIs-----------------------------
     String GET_TEAMS                = "/getTeams";
@@ -37,5 +37,18 @@ public interface URIConstants {
     //-----------------------------Auth URIs-----------------------------
     String LOGIN                    = "/auth/login";
     String LOGOUT                   = "/auth/logout";
+
+
+    //-----------------------------PUBLIC URIs-----------------------------
+    String [] PUBLIC_URIS           = {
+                                        "/auth/**",
+                                        "/emailAvailable",
+                                        "/users",
+                                        "/testSessionStart",
+                                        "/addUser/**",
+                                        "/getSchools/**",
+                                        "/removeSchool/**"
+                                       };
+
 
 }

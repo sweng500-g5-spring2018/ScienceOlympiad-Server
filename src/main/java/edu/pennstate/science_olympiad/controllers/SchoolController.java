@@ -3,6 +3,7 @@ package edu.pennstate.science_olympiad.controllers;
 import com.google.gson.Gson;
 import edu.pennstate.science_olympiad.School;
 import edu.pennstate.science_olympiad.URIConstants;
+import edu.pennstate.science_olympiad.helpers.mongo.MongoIdVerifier;
 import edu.pennstate.science_olympiad.people.Coach;
 import edu.pennstate.science_olympiad.repositories.SchoolRepository;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
@@ -76,21 +77,22 @@ public class SchoolController implements URIConstants{
 
 
     @CrossOrigin(origins = "*")
-    @RequestMapping(value= REMOVE_SCHOOL, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> removeSchool(@RequestBody String schoolJson) {
+    @RequestMapping(value= URIConstants.REMOVE_SCHOOL, method= RequestMethod.DELETE ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> removeSchool(@PathVariable("schoolID") String schoolID) {
         try {
-            Gson gson = new Gson();
-            School school = gson.fromJson(schoolJson, School.class);
+            if(! MongoIdVerifier.isValidMongoId(schoolID)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid school ID.");
+            }
 
-            boolean removed = schoolRepository.removeSchool(school);
+            boolean removed = schoolRepository.removeSchool(schoolID);
 
-            if (removed)
-                return ResponseEntity.status(HttpStatus.OK).body("School was removed.");
+            if (removed){
+                return ResponseEntity.status(HttpStatus.OK).body("School was removed.");}
             else
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("School could not be removed, doesn't exist.");
 
         } catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
         }
     }
 }
