@@ -23,4 +23,9 @@ public class Admin extends AUser {
         this.siteName = siteName;
     }
 
+    @Override
+    public void copyInfo(AUser aUser) {
+        super.copyInfo(aUser);
+        this.siteName = ((Admin)aUser).getSiteName();
+    }
 }

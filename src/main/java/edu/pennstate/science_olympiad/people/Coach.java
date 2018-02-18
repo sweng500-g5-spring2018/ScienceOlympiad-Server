@@ -22,4 +22,9 @@ public class Coach extends AUser {
         this.school = school;
     }
 
+    @Override
+    public void copyInfo(AUser aUser) {
+        super.copyInfo(aUser);
+        this.school = ((Coach)aUser).getSchool();
+    }
 }

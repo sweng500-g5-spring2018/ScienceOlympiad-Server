@@ -44,4 +44,10 @@ public class School {
         this.schoolContactPhone = schoolContactPhone;
     }
 
+    public void copyInfo(School school) {
+        this.schoolName = school.getSchoolName();
+        this.schoolContactName = school.getSchoolContactName();
+        this.schoolContactPhone = school.getSchoolContactPhone();
+    }
+
 }

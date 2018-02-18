@@ -28,4 +28,11 @@ public class Student extends AUser {
     public void setCoach(Coach coach) {
         this.coach = coach;
     }
+
+    @Override
+    public void copyInfo(AUser aUser) {
+        super.copyInfo(aUser);
+        this.hasOptedOut = ((Student)aUser).hasOptedOut;
+        this.coach = ((Student)aUser).getCoach();
+    }
 }

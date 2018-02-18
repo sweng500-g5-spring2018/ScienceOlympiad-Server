@@ -37,4 +37,10 @@ public class Judge extends AUser {
         }
         return false;
     }
+
+    @Override
+    public void copyInfo(AUser aUser) {
+        super.copyInfo(aUser);
+        this.judge_events = ((Judge)aUser).getJudge_events();
+    }
 }

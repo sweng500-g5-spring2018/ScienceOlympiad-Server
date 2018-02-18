@@ -4,6 +4,7 @@ import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import edu.pennstate.science_olympiad.URIConstants;
 import edu.pennstate.science_olympiad.interceptors.RequestInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -87,6 +88,6 @@ public class SpringConfig extends WebMvcConfigurerAdapter {
         //registry.addInterceptor(corsInterceptor());
         registry.addInterceptor(localInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/auth/**","/emailAvailable", "/users", "/testSessionStart", "/addUser/**");
+                .excludePathPatterns(URIConstants.PUBLIC_URIS);
     }
 }

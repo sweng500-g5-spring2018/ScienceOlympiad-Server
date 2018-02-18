@@ -72,7 +72,7 @@ Log logger = LogFactory.getLog(getClass());
         this.emailAddress = emailAddress;
     }
 
-    public PhoneNumber getPhoneNumber() {
+    public CustomPhoneNumber getPhoneNumber() {
         return phoneNumber;
     }
 
@@ -144,6 +144,15 @@ Log logger = LogFactory.getLog(getClass());
 
     public String getName() {
         return firstName + " " + lastName;
+    }
+
+    public void copyInfo(AUser aUser) {
+        this.firstName = aUser.getFirstName();
+        this.lastName = aUser.getLastName();
+        this.emailAddress = aUser.getEmailAddress();
+        this.phoneNumber = aUser.getPhoneNumber();
+        setPassword(aUser.password);
+        this.minutesBeforeEvent = aUser.getMinutesBeforeEvent();
     }
 
 }
