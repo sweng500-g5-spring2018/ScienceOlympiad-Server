@@ -6,8 +6,10 @@ public interface URIConstants {
     String GET_EVENTS               = "/events";
     String NEW_EVENT                = "/addEvent";
     String ASSIGN_JUDGE_TO_EVENT    = "/assignJudgeToEvent";
+    String VERIFY_EVENT             = "/verifyEvent/{eventName}";
     String REMOVE_EVENT             = "/removeEvent";
     String UPDATE_EVENT             = "/updateEvent";
+
 
     //-----------------------------First Controller URIs-----------------------------
     //none

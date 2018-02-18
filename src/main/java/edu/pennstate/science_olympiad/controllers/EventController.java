@@ -86,6 +86,29 @@ public class EventController implements URIConstants{
         }
     }
 
+
+
+    /**
+     * Before creating an event, check to see if it already exists
+     * @param eventName - an event to search the db
+     * @return
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= VERIFY_EVENT, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> verifyEventUnique(@PathVariable("eventName") String eventName) {
+        try {
+
+
+            boolean unique= eventRepository.verifyEventUnique(eventName);
+
+            if (unique)
+                return ResponseEntity.status(HttpStatus.OK).body("Verified");
+            else
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Event already exists");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
+
     /**
      * Removes a specific event from the database
      * @param eventId the id of the event you want to remove
@@ -132,6 +155,7 @@ public class EventController implements URIConstants{
 
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
+
         }
     }
 
