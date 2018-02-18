@@ -172,7 +172,7 @@ public class TeamController implements URIConstants{
      * @return Whether the action was carried out or not
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value= REMOVE_STUDENT_FROM_TEAM, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value= REMOVE_STUDENT_FROM_SPECIFIC_TEAM, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> removeStudentFromTeam(@RequestBody String studentIdJson) {
         logger.info("Removing student from team");
         try {

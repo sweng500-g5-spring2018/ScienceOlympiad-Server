@@ -27,6 +27,7 @@ public interface URIConstants {
     String REMOVE_TEAM              = "/removeTeam";
     String UPDATE_TEAM              = "/updateTeam";
     String REMOVE_STUDENT_FROM_TEAM = "/removeStudentFromTeam";
+    String REMOVE_STUDENT_FROM_SPECIFIC_TEAM = "/removeStudentFromSpecificTeam";
 
     //-----------------------------Users URIs-----------------------------
     String TEST_USER                = "/createTestUser";
