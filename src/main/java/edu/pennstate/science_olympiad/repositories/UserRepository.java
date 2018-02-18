@@ -1,11 +1,10 @@
 package edu.pennstate.science_olympiad.repositories;
 
+import com.google.gson.Gson;
 import com.mongodb.WriteResult;
 import edu.pennstate.science_olympiad.helpers.request.LoginJsonHelper;
 import edu.pennstate.science_olympiad.School;
-import edu.pennstate.science_olympiad.people.AUser;
-import edu.pennstate.science_olympiad.people.Coach;
-import edu.pennstate.science_olympiad.people.Student;
+import edu.pennstate.science_olympiad.people.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.*;
 import java.util.List;
 
 /**
@@ -47,6 +47,8 @@ public class UserRepository {
         boolean exists = mongoTemplate.exists(checking,"ausers");
 
         if (!exists) {
+            logger.info("Hashing user's password");
+
             logger.info("Adding user: " + user.getName());
             mongoTemplate.insert(user, "ausers");
             return true;
@@ -65,11 +67,58 @@ public class UserRepository {
             //return null;
     }
 
+    public AUser getUser(String userId) {
+        logger.info("Looking for user");
+        Query lookup = new Query();
+        lookup.addCriteria(Criteria.where("_id").is(userId));
+        return mongoTemplate.findOne(lookup, AUser.class, "ausers");
+    }
+
+    public boolean removeUser(String userId) {
+        logger.info("Removing user");
+        AUser user = getUser(userId);
+
+        if (user != null) {
+            mongoTemplate.remove(user);
+            return true;
+        }
+        return false;
+    }
+
     public void removeAllUsers() {
         logger.info("Attempting to remove all users");
         List<AUser> users = mongoTemplate.findAll(AUser.class);
         for (AUser user : users)
             mongoTemplate.remove(user);
+    }
+
+    public boolean updateUser(String userType, String userId, String updatedUserJson) {
+        logger.info("Updating user");
+        Gson gson = new Gson();
+        AUser userToUpdate = null;
+        AUser infoToUse;
+        if (userType.equalsIgnoreCase(IUserTypes.ADMIN)){
+            userToUpdate = getUser(userId);
+            infoToUse = gson.fromJson(updatedUserJson, Admin.class);
+        } else if (userType.equalsIgnoreCase(IUserTypes.COACH)){
+            userToUpdate = getUser(userId);
+            infoToUse = gson.fromJson(updatedUserJson, Coach.class);
+        } else if (userType.equalsIgnoreCase(IUserTypes.JUDGE)){
+            userToUpdate = getUser(userId);
+            infoToUse = gson.fromJson(updatedUserJson, Judge.class);
+        } else if (userType.equalsIgnoreCase(IUserTypes.STUDENT)){
+            userToUpdate = getUser(userId);
+            infoToUse = gson.fromJson(updatedUserJson, Student.class);
+        } else {
+            infoToUse = null;
+        }
+
+        if (userToUpdate != null) {
+            userToUpdate.copyInfo(infoToUse);
+            mongoTemplate.save(userToUpdate);
+            return true;
+        }
+        return false;
     }
 
     public boolean emailUsed(String emailAddress) {
@@ -95,16 +144,24 @@ public class UserRepository {
 
     public boolean addSchoolToCoach(School school, Coach coach) {
         logger.info("Attempting to add school to coach");
-        Query query = new Query();
-        query.addCriteria(Criteria.where("emailAddress").is(coach.getEmailAddress()));
-        Coach dbCoach = mongoTemplate.findOne(query, Coach.class);
 
-        if (dbCoach != null) {
-            dbCoach.setSchool(school);
-            mongoTemplate.save(dbCoach);
+        if (coach != null) {
+            coach.setSchool(school);
+            mongoTemplate.save(coach);
             return true;
         }
         return false;
+    }
+
+    public boolean resetPassword(String userId) {
+        AUser user = mongoTemplate.findById(userId, AUser.class);
+        //password cleared
+        user.setPassword("");
+        mongoTemplate.save(user);
+        //send and email to the user telling them to change their password
+        //the link from the email should put them on a separate page that lets them set a new password
+        JOptionPane.showMessageDialog(null, "Password as been reset and email has been sent to the window licker that forgot their password");
+        return true;
     }
 
 }

@@ -1,5 +1,6 @@
 package edu.pennstate.science_olympiad.repositories;
 
+import com.google.gson.Gson;
 import edu.pennstate.science_olympiad.Event;
 import edu.pennstate.science_olympiad.Team;
 import edu.pennstate.science_olympiad.many_to_many.Team_Event;
@@ -101,14 +102,14 @@ public class EventRepository {
 
     /**
      * Gets a specified event from the database
-     * @param eventName teh event to get from the database
+     * @param eventId the eventId to get from the database
      * @return The event requested
      */
-    public Event getEvent(String eventName) {
-        logger.info("retrieving the db event " +eventName);
+    public Event getEvent(String eventId) {
+        logger.info("Retrieving the db event " + eventId);
 
         Query query = new Query();
-        query.addCriteria(Criteria.where("name").is(eventName));
+        query.addCriteria(Criteria.where("_id").is(eventId));
         logger.info("Query " + query.toString());
         Event dbEvent = mongoTemplate.findOne(query, Event.class);
 
@@ -148,13 +149,9 @@ public class EventRepository {
     public boolean assignJudgeToEvent(Judge judge, Event event) {
         logger.info("Adding judge to event");
 
-        Query query = new Query();
-        query.addCriteria(Criteria.where("name").is(event.getName()));
-        Event dbEvent = mongoTemplate.findOne(query, Event.class);
-
-        if (dbEvent != null) {
-            dbEvent.addJudgeToEvent(judge);
-            mongoTemplate.save(dbEvent);
+        if (event != null) {
+            event.addJudgeToEvent(judge);
+            mongoTemplate.save(event);
 
             logger.info("Event saved in database");
             return true;
@@ -162,4 +159,40 @@ public class EventRepository {
         return false;
     }
 
+    /**
+     * Removes an event from the database
+     * @param eventId The event to remove
+     * @return whether the event was removed or not
+     */
+    public boolean removeEvent (String eventId) {
+        Query singleQuery = new Query();
+        singleQuery.addCriteria(Criteria.where("_id").is(eventId));
+        Event dbEvent = mongoTemplate.findOne(singleQuery, Event.class);
+
+        if (dbEvent != null) {
+            mongoTemplate.remove(dbEvent);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * updates an event in the database
+     * @param eventId The event to update
+     * @return whether the event was updated or not
+     */
+    public boolean updateEvent (String eventId, String eventJson) {
+        Query singleQuery = new Query();
+        singleQuery.addCriteria(Criteria.where("_id").is(eventId));
+        Event dbEvent = mongoTemplate.findOne(singleQuery, Event.class);
+
+        Gson gson = new Gson();
+        Event tempEvent = gson.fromJson(eventJson, Event.class);
+        if (dbEvent != null) {
+            dbEvent.copyInfo(tempEvent);
+            mongoTemplate.save(dbEvent);
+            return true;
+        }
+        return false;
+    }
 }

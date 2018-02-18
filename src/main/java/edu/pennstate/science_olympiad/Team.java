@@ -82,4 +82,11 @@ public class Team {
         }
         return false;
     }
+
+    public void copyInfo(Team team) {
+        this.coach = team.getCoach();
+        this.students = team.getStudents();
+        this.school = team.getSchool();
+        this.team_events = team.getTeam_events();
+    }
 }

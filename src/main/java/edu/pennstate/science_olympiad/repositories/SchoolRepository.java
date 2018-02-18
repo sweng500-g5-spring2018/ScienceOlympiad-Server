@@ -1,5 +1,6 @@
 package edu.pennstate.science_olympiad.repositories;
 
+import com.google.gson.Gson;
 import edu.pennstate.science_olympiad.School;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -73,6 +74,26 @@ public class SchoolRepository {
 
         if (dbSchool != null) {
             mongoTemplate.remove(dbSchool);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * updates a school in the database
+     * @param schoolId The school to update
+     * @return whether the school was updated or not
+     */
+    public boolean updateSchool (String schoolId, String schoolJson) {
+        Query singleQuery = new Query();
+        singleQuery.addCriteria(Criteria.where("_id").is(schoolId));
+        School dbSchool = mongoTemplate.findOne(singleQuery, School.class);
+
+        Gson gson = new Gson();
+        School tempSchool = gson.fromJson(schoolJson, School.class);
+        if (dbSchool != null) {
+            dbSchool.copyInfo(tempSchool);
+            mongoTemplate.save(dbSchool);
             return true;
         }
         return false;

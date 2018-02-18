@@ -3,8 +3,11 @@ package edu.pennstate.science_olympiad.controllers;
 import com.google.gson.Gson;
 import edu.pennstate.science_olympiad.Event;
 import edu.pennstate.science_olympiad.URIConstants;
+import edu.pennstate.science_olympiad.helpers.mongo.MongoIdVerifier;
 import edu.pennstate.science_olympiad.people.Judge;
 import edu.pennstate.science_olympiad.repositories.EventRepository;
+import edu.pennstate.science_olympiad.repositories.UserRepository;
+import edu.pennstate.science_olympiad.helpers.json.JsonHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,8 @@ public class EventController implements URIConstants{
     private EventService eventService;
     @Autowired
     private EventRepository eventRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     Log logger = LogFactory.getLog(getClass());
 
@@ -35,7 +40,7 @@ public class EventController implements URIConstants{
      */
     @CrossOrigin(origins = "*")
     @RequestMapping(value= GET_EVENTS, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public Object createTeamEvent() {
+    public Object getEvents() {
 
         List<Event> events =  eventService.getEvents();
         logger.info("found these events " + events.toString());
@@ -64,11 +69,10 @@ public class EventController implements URIConstants{
 
     @CrossOrigin(origins = "*")
     @RequestMapping(value= ASSIGN_JUDGE_TO_EVENT, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> assignJudgeToEvent(@RequestBody String judgeJson, @RequestBody String eventJson) {
+    public ResponseEntity<?> assignJudgeToEvent(@RequestBody String judgeIdJson, @RequestBody String eventIdJson) {
         try {
-            Gson gson = new Gson();
-            Event event = gson.fromJson(eventJson, Event.class);
-            Judge judge = gson.fromJson(judgeJson, Judge.class);
+            Event event = eventRepository.getEvent(JsonHelper.getIdFromJson(eventIdJson));
+            Judge judge = (Judge) userRepository.getUser(JsonHelper.getIdFromJson(judgeIdJson));
 
             boolean added = eventRepository.assignJudgeToEvent(judge, event);
 
@@ -79,6 +83,55 @@ public class EventController implements URIConstants{
 
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
+        }
+    }
+
+    /**
+     * Removes a specific event from the database
+     * @param eventId the id of the event you want to remove
+     * @return the response of the event being deleted or not
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= REMOVE_EVENT, method= RequestMethod.DELETE ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> removeEvent(@PathVariable("eventId") String eventId) {
+        try {
+            if(! MongoIdVerifier.isValidMongoId(eventId)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid event ID.");            }
+
+            boolean removed = eventRepository.removeEvent(eventId);
+
+            if (removed){
+                return ResponseEntity.status(HttpStatus.OK).body("Event was removed.");}
+            else
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Event could not be removed, doesn't exist.");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
+        }
+    }
+
+    /**
+     * Updates a specific event in the database
+     * @param eventId the id of the event you want to update
+     * @param eventJson the json of the info you want to update the event with
+     * @return the response of the event being updated or not
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= UPDATE_EVENT, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> updateEvent(@PathVariable("eventId") String eventId, @RequestBody String eventJson) {
+        try {
+            if(! MongoIdVerifier.isValidMongoId(eventId)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid event ID.");            }
+
+            boolean update = eventRepository.updateEvent(eventId, eventJson);
+
+            if (update){
+                return ResponseEntity.status(HttpStatus.OK).body("Event was updated.");}
+            else
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Event could not be updated, doesn't exist.");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
         }
     }
 

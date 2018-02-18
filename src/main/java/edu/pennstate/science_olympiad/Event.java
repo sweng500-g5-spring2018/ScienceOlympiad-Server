@@ -126,4 +126,14 @@ public class Event {
         Gson gson = new Gson();
         return gson.toJson(this);
     }
+
+    public void copyInfo(Event event) {
+        this.name = event.getName();
+        this.description = event.getDescription();
+        this.location = event.getLocation();
+        this.startTime = event.getStartTime();
+        this.endTime = event.getEndTime();
+        this.judge_events = event.getJudge_events();
+        this.team_events = event.getTeam_events();
+    }
 }

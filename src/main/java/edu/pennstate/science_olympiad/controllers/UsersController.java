@@ -2,8 +2,6 @@ package edu.pennstate.science_olympiad.controllers;
 
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import edu.pennstate.science_olympiad.School;
 import edu.pennstate.science_olympiad.URIConstants;
 import edu.pennstate.science_olympiad.helpers.mongo.MongoIdVerifier;
@@ -12,6 +10,7 @@ import edu.pennstate.science_olympiad.repositories.SchoolRepository;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
 import edu.pennstate.science_olympiad.sms.CustomPhoneNumber;
 import edu.pennstate.science_olympiad.util.Pair;
+import edu.pennstate.science_olympiad.helpers.json.JsonHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
@@ -85,6 +84,56 @@ public class UsersController implements URIConstants{
     }
 
 
+    /**
+     * Removes a specific user from the database
+     * @param userId the id of the user you want to remove
+     * @return the response of the user beign deleted or not
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= REMOVE_USER, method= RequestMethod.DELETE ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> removeUser(@PathVariable("userId") String userId) {
+        try {
+            if(! MongoIdVerifier.isValidMongoId(userId)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid user ID.");
+            }
+
+            boolean removed = userRepository.removeUser(userId);
+
+            if (removed){
+                return ResponseEntity.status(HttpStatus.OK).body("User was removed.");}
+            else
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User could not be removed, doesn't exist.");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
+        }
+    }
+
+    /**
+     * Updates a specific user to the database
+     * @param userId the id of the user you want to update
+     * @return the response of the user being updated or not
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= UPDATE_USER, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> updateUser(@RequestParam(name="userType") String userType, @PathVariable("userId") String userId, @RequestBody String updatedUserJson) {
+        try {
+            if(! MongoIdVerifier.isValidMongoId(userId)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid user ID.");
+            }
+
+            boolean update = userRepository.updateUser(userType, userId, updatedUserJson);
+
+            if (update){
+                return ResponseEntity.status(HttpStatus.OK).body("User was updated.");}
+            else
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User could not be updated, doesn't exist.");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
+        }
+    }
+
 
     /**
      * Removes all of the users from the database
@@ -92,7 +141,7 @@ public class UsersController implements URIConstants{
      * @return true if the code is executed
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value= REMOVE_USERS, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value= REMOVE_USERS, method= RequestMethod.DELETE ,produces={MediaType.APPLICATION_JSON_VALUE})
     public boolean removeAllUsers() {
         userRepository.removeAllUsers();
         return true;
@@ -108,9 +157,7 @@ public class UsersController implements URIConstants{
     @RequestMapping(value= EMAIL_AVAILABLE, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> emailAvailable(@RequestBody String emailAddressJson) {
         try {
-            JsonParser parser = new JsonParser();
-            JsonObject jsonObj = parser.parse(emailAddressJson).getAsJsonObject();
-            String email = jsonObj.get("emailAddress").getAsString();
+            String email = JsonHelper.getJsonString(emailAddressJson, "emailAddress");
 
             if (!userRepository.emailUsed(email)) {
                 return ResponseEntity.status(HttpStatus.OK).body("Email Address is Available.");
@@ -189,20 +236,21 @@ public class UsersController implements URIConstants{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
         }
     }
+
     /**
      * The POST request for adding a a coach to a student
      * URI is /sweng500/addCoachToStudent
-     * @param coachJson the JSON of the coach to add
-     * @param studentJson the JSON of the student who is getting a new coach
+     * @param coachIdJson the JSON of the coach to add
+     * @param studentIdJson the JSON of the student who is getting a new coach
      * @return STATUS 200 if coach is successfully set, STATUS 409 if coach was not set, STATUS 400 if bad JSON provided
      */
     @CrossOrigin(origins = "*")
     @RequestMapping(value= ADD_COACH_TO_STUDENT, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> addCoachToStudent(@RequestBody String coachJson, @RequestBody String studentJson) {
+    public ResponseEntity<?> addCoachToStudent(@RequestBody String coachIdJson, @RequestBody String studentIdJson) {
         try {
-            Gson gson = new Gson();
-            Coach coach = gson.fromJson(coachJson, Coach.class);
-            Student student = gson.fromJson(studentJson, Student.class);
+
+            Coach coach = (Coach) userRepository.getUser(JsonHelper.getIdFromJson(coachIdJson));
+            Student student = (Student) userRepository.getUser(JsonHelper.getIdFromJson(studentIdJson));
 
             boolean added = userRepository.addCoachToStudent(coach, student);
 
@@ -219,17 +267,17 @@ public class UsersController implements URIConstants{
     /**
      * The POST request for adding a a coach to a student
      * URI is /sweng500/addSchoolToCoach
-     * @param schoolJson the JSON of the school to add to the coach
-     * @param coachJson the JSON of the coach to add the school
+     * @param schoolIdJson the id in JSON format of the school to add to the coach
+     * @param coachIdJson the id in JSON format of the coach to add the school
      * @return STATUS 200 if school is successfully set, STATUS 409 if school was not set, STATUS 400 if bad JSON provided
      */
     @CrossOrigin(origins = "*")
     @RequestMapping(value= ADD_SCHOOL_TO_COACH , method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> addSchoolToCoach(@RequestBody String schoolJson, @RequestBody String coachJson) {
+    public ResponseEntity<?> addSchoolToCoach(@RequestBody String schoolIdJson, @RequestBody String coachIdJson) {
         try {
-            Gson gson = new Gson();
-            Coach coach = gson.fromJson(coachJson, Coach.class);
-            School school = gson.fromJson(schoolJson, School.class);
+
+            Coach coach = (Coach) userRepository.getUser(JsonHelper.getIdFromJson(coachIdJson));
+            School school = schoolRepository.getSchool(JsonHelper.getIdFromJson(schoolIdJson));
 
             boolean added = userRepository.addSchoolToCoach(school, coach);
 
@@ -240,6 +288,31 @@ public class UsersController implements URIConstants{
 
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
+        }
+    }
+
+    /**
+     * Resets a user's password
+     * @param userId the id of the user whos password is being reset
+     * @return the response of the password being reset or not
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= RESET_PASSWORD, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> resetUserPassword(@PathVariable("userId") String userId) {
+        try {
+            if(! MongoIdVerifier.isValidMongoId(userId)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid user ID.");
+            }
+
+            boolean removed = userRepository.resetPassword(userId);
+
+            if (removed){
+                return ResponseEntity.status(HttpStatus.OK).body("User was removed.");}
+            else
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User could not be removed, doesn't exist.");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
         }
     }
 
