@@ -171,6 +171,7 @@ public class EventRepository {
         return mongoTemplate.findOne(query, Event.class) == null;
     }
 
+    /**
      * Removes an event from the database
      * @param eventId The event to remove
      * @return whether the event was removed or not
