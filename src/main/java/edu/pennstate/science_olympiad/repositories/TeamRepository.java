@@ -1,5 +1,6 @@
 package edu.pennstate.science_olympiad.repositories;
 
+import com.google.gson.Gson;
 import edu.pennstate.science_olympiad.Team;
 import edu.pennstate.science_olympiad.people.Coach;
 import edu.pennstate.science_olympiad.people.Student;
@@ -36,7 +37,7 @@ public class TeamRepository {
     public boolean addNewTeam(Team team) {
 
         Query query = new Query();
-        query.addCriteria(Criteria.where("id").is(team.id));
+        query.addCriteria(Criteria.where("_id").is(team.id));
         boolean exists = mongoTemplate.exists(query, Team.class);
 
         if (!exists) {
@@ -56,36 +57,28 @@ public class TeamRepository {
      *        0 - Student was added
      *        1 - Student already on this team
      *        2 - Student already on another team
-     *        3 - Team not found
      */
     public short addStudentToTeam(Student student, Team team) {
-        Query singleQuery = new Query();
-        singleQuery.addCriteria(Criteria.where("id").is(team.id));
-        Team dbTeam = mongoTemplate.findOne(singleQuery, Team.class);
-
-        if (dbTeam != null) {
-            //if the student is already on the team
-            if (dbTeam.getStudents().contains(student))
-                return 1;
-            else {
-                //Check to make sure the student is not already on another team
-                List<Team> allTeams = mongoTemplate.findAll(Team.class);
-                allTeams.remove(team);
-                boolean onAnotherTeam = false;
-                for (Team aTeam : allTeams) {
-                    if (aTeam.getStudents().contains(student))
-                        onAnotherTeam = true;
-                }
-
-                if (onAnotherTeam)
-                    return 2;
-
-                dbTeam.getStudents().add(student);
-                mongoTemplate.save(dbTeam);
-                return 0;
+        if (team.getStudents().contains(student))
+            return 1;
+        else {
+            //Check to make sure the student is not already on another team
+            List<Team> allTeams = mongoTemplate.findAll(Team.class);
+            allTeams.remove(team);
+            boolean onAnotherTeam = false;
+            for (Team aTeam : allTeams) {
+                if (aTeam.getStudents().contains(student))
+                    onAnotherTeam = true;
             }
+
+            if (onAnotherTeam)
+                return 2;
+
+            team.getStudents().add(student);
+            mongoTemplate.save(team);
+            return 0;
+
         }
-        return 3;
     }
 
     /**
@@ -95,16 +88,12 @@ public class TeamRepository {
      * @return if the coach was added
      */
     public boolean addCoachToTeam(Coach coach, Team team) {
-        Query singleQuery = new Query();
-        singleQuery.addCriteria(Criteria.where("id").is(team.id));
-        Team dbTeam = mongoTemplate.findOne(singleQuery, Team.class);
-
-        if (dbTeam != null) {
-            dbTeam.setCoach(coach);
-            mongoTemplate.save(dbTeam);
-            return true;
-        }
-        return false;
+       team.setCoach(coach);
+       mongoTemplate.save(team);
+       Team dbTeam = getTeam(team.id);
+       if (dbTeam.getCoach() == coach)
+           return true;
+       return false;
     }
 
     /**
@@ -114,7 +103,7 @@ public class TeamRepository {
      */
     public boolean removeTeam(Team team) {
         Query singleQuery = new Query();
-        singleQuery.addCriteria(Criteria.where("id").is(team.id));
+        singleQuery.addCriteria(Criteria.where("_id").is(team.id));
         Team dbTeam = mongoTemplate.findOne(singleQuery, Team.class);
 
         if (dbTeam != null) {
@@ -125,21 +114,65 @@ public class TeamRepository {
     }
 
     /**
-     * Reoves a student from a specified team
+     * Removes a student from a specified team
      * @param student Student to remove from the team
      * @param team Team in which to remove the student
      * @return if the student was removed from the team
      */
     public boolean removeStudentFromTeam(Student student, Team team) {
-        Query singleQuery = new Query();
-        singleQuery.addCriteria(Criteria.where("id").is(team.id));
-        Team dbTeam = mongoTemplate.findOne(singleQuery, Team.class);
-
-        if (dbTeam != null) {
-            if (dbTeam.getStudents().contains(student)) {
-                dbTeam.getStudents().remove(student);
+        if (team != null) {
+            if (team.getStudents().contains(student)) {
+                team.getStudents().remove(student);
+                mongoTemplate.save(team);
                 return true;
             }
+        }
+        return false;
+    }
+
+    /**
+     * Removes a student from a specified team
+     * @param student Student to remove from the team
+     * @return if the student was removed from the team
+     */
+    public boolean removeStudentFromTeam(Student student) {
+        for (Team team : getTeams()) {
+            if (team.getStudents().contains(student)) {
+                removeStudentFromTeam(student, team);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Gets a specific team from the database
+     * @param teamId the id number of the team to get
+     * @return the team from the database
+     */
+    public Team getTeam(String teamId) {
+        Query singleQuery = new Query();
+        singleQuery.addCriteria(Criteria.where("_id").is(teamId));
+        return mongoTemplate.findOne(singleQuery, Team.class);
+    }
+
+    /**
+     * updates a team in the database
+     * @param teamId The team to update
+     * @param teamJson the info to update the team with
+     * @return whether the team was updated or not
+     */
+    public boolean updateTeam (String teamId, String teamJson) {
+        Query singleQuery = new Query();
+        singleQuery.addCriteria(Criteria.where("_id").is(teamId));
+        Team dbTeam = mongoTemplate.findOne(singleQuery, Team.class);
+
+        Gson gson = new Gson();
+        Team tempSchool = gson.fromJson(teamJson, Team.class);
+        if (dbTeam != null) {
+            dbTeam.copyInfo(tempSchool);
+            mongoTemplate.save(dbTeam);
+            return true;
         }
         return false;
     }

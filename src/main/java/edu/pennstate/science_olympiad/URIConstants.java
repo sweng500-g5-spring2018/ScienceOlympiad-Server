@@ -7,6 +7,9 @@ public interface URIConstants {
     String NEW_EVENT                = "/addEvent";
     String ASSIGN_JUDGE_TO_EVENT    = "/assignJudgeToEvent";
     String VERIFY_EVENT             = "/verifyEvent/{eventName}";
+    String REMOVE_EVENT             = "/removeEvent";
+    String UPDATE_EVENT             = "/updateEvent";
+
 
     //-----------------------------First Controller URIs-----------------------------
     //none
@@ -14,8 +17,9 @@ public interface URIConstants {
     //-----------------------------School URIs-----------------------------
     String GET_SCHOOLS              = "/getSchools";
     String ADD_SCHOOL               = "/addSchool";
-    String ADD_SCHOOL_WITH_COACH    = "/assSchoolWithCoach";
+    String ADD_SCHOOL_WITH_COACH    = "/addSchoolWithCoach";
     String REMOVE_SCHOOL            = "/removeSchool/{schoolID}";
+    String UPDATE_SCHOOL            = "/updateSchool";
 
     //-----------------------------Team URIs-----------------------------
     String GET_TEAMS                = "/getTeams";
@@ -23,17 +27,22 @@ public interface URIConstants {
     String ADD_STUDENT_TO_TEAM      = "/addStudentToTeam";
     String ADD_COACH_TO_TEAM        = "/addCoachToTeam";
     String REMOVE_TEAM              = "/removeTeam";
+    String UPDATE_TEAM              = "/updateTeam";
     String REMOVE_STUDENT_FROM_TEAM = "/removeStudentFromTeam";
+    String REMOVE_STUDENT_FROM_SPECIFIC_TEAM = "/removeStudentFromSpecificTeam";
 
     //-----------------------------Users URIs-----------------------------
     String TEST_USER                = "/createTestUser";
     String USERS                    = "/users";
     String ALL_USERS                = "/allUsers";
+    String REMOVE_USER              = "/removeUser";
+    String UPDATE_USER              = "/updateUser";
     String REMOVE_USERS             = "/removeUsers";
     String EMAIL_AVAILABLE          = "/emailAvailable";
     String ADD_USER                 = "/addUser";
     String ADD_COACH_TO_STUDENT     = "/addCoachToStudent";
     String ADD_SCHOOL_TO_COACH      = "/addSchoolToCoach";
+    String RESET_PASSWORD           = "/resetPassword";
 
     //-----------------------------Auth URIs-----------------------------
     String LOGIN                    = "/auth/login";
@@ -48,7 +57,8 @@ public interface URIConstants {
                                         "/testSessionStart",
                                         "/addUser/**",
                                         "/getSchools/**",
-                                        "/removeSchool/**"
+                                        "/removeSchool/**",
+                                        "/resetPassword"
                                        };
 
 
