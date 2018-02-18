@@ -114,7 +114,6 @@ public class EventRepository {
 
         logger.info("returning the db event " +dbEvent.getName());
         return dbEvent;
-
     }
 
     /**
@@ -160,6 +159,19 @@ public class EventRepository {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Verify an event already exists
+     * @param eventName an event attempting to be verified
+     * @return If the event exists or not
+     */
+    public boolean verifyEventUnique(String eventName) {
+        logger.info("verifying the event is unique " + eventName);
+        Query query = new Query();
+        query.addCriteria(Criteria.where("name").is(eventName));
+        logger.info("Query " + query.toString());
+        return mongoTemplate.findOne(query, Event.class) == null;
     }
 
 }
