@@ -108,7 +108,8 @@ public class EventController implements URIConstants{
 
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
-
+        }
+    }
     /**
      * Removes a specific event from the database
      * @param eventId the id of the event you want to remove
