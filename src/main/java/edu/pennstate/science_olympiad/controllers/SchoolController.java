@@ -105,12 +105,12 @@ public class SchoolController implements URIConstants{
      */
     @CrossOrigin(origins = "*")
     @RequestMapping(value= UPDATE_SCHOOL, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> updateSchool(@PathVariable("schoolId") String schoolId, @RequestBody String schoolJson) {
+    public ResponseEntity<?> updateSchool(@PathVariable("schoolID") String schoolID, @RequestBody String schoolJson) {
         try {
-            if(! MongoIdVerifier.isValidMongoId(schoolId)) {
+            if(! MongoIdVerifier.isValidMongoId(schoolID)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid event ID.");            }
 
-            boolean update = schoolRepository.updateSchool(schoolId, schoolJson);
+            boolean update = schoolRepository.updateSchool(schoolID, schoolJson);
 
             if (update){
                 return ResponseEntity.status(HttpStatus.OK).body("Event was updated.");}

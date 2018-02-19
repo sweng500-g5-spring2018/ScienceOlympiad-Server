@@ -19,7 +19,7 @@ public interface URIConstants {
     String ADD_SCHOOL               = "/addSchool";
     String ADD_SCHOOL_WITH_COACH    = "/addSchoolWithCoach";
     String REMOVE_SCHOOL            = "/removeSchool/{schoolID}";
-    String UPDATE_SCHOOL            = "/updateSchool";
+    String UPDATE_SCHOOL            = "/updateSchool/{schoolID}";
 
     //-----------------------------Team URIs-----------------------------
     String GET_TEAMS                = "/getTeams";
