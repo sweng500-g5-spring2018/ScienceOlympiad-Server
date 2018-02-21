@@ -9,6 +9,7 @@ public interface URIConstants {
     String VERIFY_EVENT             = "/verifyEvent/{eventName}";
     String REMOVE_EVENT             = "/removeEvent";
     String UPDATE_EVENT             = "/updateEvent";
+    String GET_AN_EVENT             = "/event/{eventId}";
 
 
     //-----------------------------First Controller URIs-----------------------------
