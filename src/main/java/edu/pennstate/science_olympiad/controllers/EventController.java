@@ -160,4 +160,22 @@ public class EventController implements URIConstants{
         }
     }
 
+    /**
+     * Grabs a specific event to view
+     * @param eventId the id of the event you want to update
+     * @return the Event object c
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= GET_AN_EVENT, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> getAEvent(@PathVariable("eventId") String eventId) {
+            Event event = eventRepository.getEvent(eventId);
+            logger.info("Got the event " + event.getName());
+            if (event != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(event);
+            } else {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Event could not be found");
+            }
+
+    }
+
 }
