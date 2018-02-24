@@ -36,6 +36,7 @@ public interface URIConstants {
     String TEST_USER                = "/createTestUser";
     String USERS                    = "/users";
     String ALL_USERS                = "/allUsers";
+    String GET_JUDGES               = "/getJudges";
     String REMOVE_USER              = "/removeUser";
     String UPDATE_USER              = "/updateUser";
     String REMOVE_USERS             = "/removeUsers";
@@ -59,7 +60,8 @@ public interface URIConstants {
                                         "/addUser/**",
                                         "/getSchools/**",
                                         "/removeSchool/**",
-                                        "/resetPassword"
+                                        "/resetPassword",
+                                        "/getJudges"
                                        };
 
 

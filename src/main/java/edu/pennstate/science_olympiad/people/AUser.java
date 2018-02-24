@@ -24,7 +24,7 @@ import java.util.Date;
 
 @Document(collection="ausers")
 public abstract class AUser {
-Log logger = LogFactory.getLog(getClass());
+//Log logger = LogFactory.getLog(getClass());
 
     @Id
     public String id;
@@ -114,7 +114,7 @@ Log logger = LogFactory.getLog(getClass());
             sr.nextBytes(salt);
             return salt;
         } catch (NoSuchAlgorithmException ex) {
-            logger.warn("Could not generate salt");
+           // logger.warn("Could not generate salt");
         }
         return null;
     }

@@ -164,4 +164,14 @@ public class UserRepository {
         return true;
     }
 
+    /**
+     * Returns the judges from the db, right now just show coaches for testing
+     * @return
+     * @throws Exception
+     */
+    public List<Coach> getAllJudges() throws Exception{ ;
+        List<Coach> u = mongoTemplate.findAll(Coach.class);
+        logger.info("found some judge");
+        return u;
+    }
 }

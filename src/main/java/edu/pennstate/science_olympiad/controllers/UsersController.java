@@ -13,6 +13,8 @@ import edu.pennstate.science_olympiad.util.Pair;
 import edu.pennstate.science_olympiad.helpers.json.JsonHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -84,6 +86,24 @@ public class UsersController implements URIConstants{
     }
 
 
+    /**
+     * Returns a list of judges in the system
+     * URI is /sweng500/getJudges
+     * @return all of the judges in JSON
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= GET_JUDGES, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> getAllJudges() {
+        try {
+            //eventually change to judge
+            List<Coach> judges = userRepository.getAllJudges();
+
+            return ResponseEntity.status(HttpStatus.OK).body(judges);
+
+        }catch(Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
+            }
+    }
     /**
      * Removes a specific user from the database
      * @param userId the id of the user you want to remove
