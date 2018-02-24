@@ -48,7 +48,7 @@ public class UserRepository {
 
         if (!exists) {
             logger.info("Hashing user's password");
-
+            user.hashPassword();
             logger.info("Adding user: " + user.getName());
             mongoTemplate.insert(user, "ausers");
             return true;

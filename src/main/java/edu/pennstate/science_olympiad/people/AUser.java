@@ -119,6 +119,10 @@ Log logger = LogFactory.getLog(getClass());
         return null;
     }
 
+    public void hashPassword() {
+        setPassword(this.password);
+    }
+
     private String get_SHA_512_SecurePassword(String passwordToHash, String salt){
         String generatedPassword = null;
         try {
