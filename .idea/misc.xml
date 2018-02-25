@@ -31,4 +31,20 @@
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
+  <component name="UMLDiagramComponent">
+    <diagram name="science_olympiad">
+      <command command-class="de.frag.umlplugin.uml.command.AddClassCommand" psi-class="edu.pennstate.science_olympiad.School" />
+      <command command-class="de.frag.umlplugin.uml.command.AddClassCommand" psi-class="edu.pennstate.science_olympiad.Team" />
+      <command command-class="de.frag.umlplugin.uml.command.AddClassCommand" psi-class="edu.pennstate.science_olympiad.Event" />
+      <command command-class="de.frag.umlplugin.uml.command.AddClassCommand" psi-class="edu.pennstate.science_olympiad.Location" />
+      <command command-class="de.frag.umlplugin.uml.command.AddClassCommand" psi-class="edu.pennstate.science_olympiad.Olympiad" />
+      <compartment-visibility />
+    </diagram>
+    <diagram name="Users">
+      <command command-class="de.frag.umlplugin.uml.command.AddClassCommand" psi-class="edu.pennstate.science_olympiad.people.AUser" />
+      <command command-class="de.frag.umlplugin.uml.command.AddClassCommand" psi-class="edu.pennstate.science_olympiad.people.Admin" />
+      <command command-class="de.frag.umlplugin.uml.command.AddClassCommand" psi-class="edu.pennstate.science_olympiad.people.Coach" />
+      <compartment-visibility />
+    </diagram>
+  </component>
 </project>

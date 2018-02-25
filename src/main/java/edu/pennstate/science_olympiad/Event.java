@@ -23,7 +23,7 @@ public class Event {
 
     private String name;
     private String description;
-    private Location location;
+    private Building building;
     private Date startTime;
     private Date endTime;
     //event most likely has multiple judges
@@ -57,12 +57,12 @@ public class Event {
         this.description = description;
     }
 
-    public Location getLocation() {
-        return location;
+    public Building getBuilding() {
+        return building;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void setLocation(Building building) {
+        this.building = building;
     }
 
     public Date getStartTime() {
@@ -130,7 +130,7 @@ public class Event {
     public void copyInfo(Event event) {
         this.name = event.getName();
         this.description = event.getDescription();
-        this.location = event.getLocation();
+        this.building = event.getBuilding();
         this.startTime = event.getStartTime();
         this.endTime = event.getEndTime();
         this.judge_events = event.getJudge_events();

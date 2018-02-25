@@ -1,8 +1,14 @@
 package edu.pennstate.science_olympiad;
 
 public interface URIConstants {
-    //-----------------------------Event URIs-----------------------------
 
+    //-----------------------------Building URIs--------------------------
+    String GET_BUILDINGS            = "/getBuildings";
+    String ADD_BUILDING             = "/addBuilding";
+    String REMOVE_BUILDING          = "/removeBuilding/{buildingID}";
+    String UPDATE_BUILDING          = "/updateBuilding/{buildingID}";
+
+    //-----------------------------Event URIs-----------------------------
     String GET_EVENTS               = "/events";
     String NEW_EVENT                = "/addEvent";
     String ASSIGN_JUDGE_TO_EVENT    = "/assignJudgeToEvent";
@@ -10,7 +16,6 @@ public interface URIConstants {
     String REMOVE_EVENT             = "/removeEvent";
     String UPDATE_EVENT             = "/updateEvent";
     String GET_AN_EVENT             = "/event/{eventId}";
-
 
     //-----------------------------First Controller URIs-----------------------------
     //none

@@ -43,8 +43,7 @@ public class TextMessage {
         if (user != null && event != null) {
             String message = user.getFirstName() + ", you have an event starting soon. " +
                     event.getName() + " is starting at " + dateFormat.format(event.getStartTime()) +
-                    " and is at Building " + event.getLocation().getBuilding() +
-                    " Room " + event.getLocation().getRoomNumber() + ".";
+                    " and is at Building " + event.getBuilding() + ".";
             text(user, message);
         }
     }
