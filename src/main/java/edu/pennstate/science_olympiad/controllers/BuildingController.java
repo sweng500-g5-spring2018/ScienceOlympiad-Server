@@ -1,0 +1,74 @@
+package edu.pennstate.science_olympiad.controllers;
+
+import com.google.gson.Gson;
+import edu.pennstate.science_olympiad.Building;
+import edu.pennstate.science_olympiad.School;
+import edu.pennstate.science_olympiad.URIConstants;
+import edu.pennstate.science_olympiad.helpers.json.JsonHelper;
+import edu.pennstate.science_olympiad.helpers.mongo.MongoIdVerifier;
+import edu.pennstate.science_olympiad.people.Coach;
+import edu.pennstate.science_olympiad.repositories.BuildingRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * This contains all of the endpoints on the web server for managing School objects
+ */
+@RestController
+public class BuildingController implements URIConstants{
+
+    @Autowired
+    BuildingRepository buildingRepository;
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= GET_BUILDINGS ,method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public List<Building> getBuildings() {
+        return buildingRepository.getAllBuildings();
+    }
+
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= ADD_BUILDING , method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> addBuilding(@RequestBody String buildingJson) {
+        try {
+            Gson gson = new Gson();
+            Building building = gson.fromJson(buildingJson, Building.class);
+
+            boolean added = buildingRepository.addNewBuilding(building);
+
+            if (added)
+                return ResponseEntity.status(HttpStatus.OK).body("Building was added.");
+            else
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Building could not be added, already exists.");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
+        }
+    }
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= REMOVE_BUILDING, method= RequestMethod.DELETE ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> removeSchool(@PathVariable("buildingID") String buildingID) {
+        try {
+            if(! MongoIdVerifier.isValidMongoId(buildingID)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid school ID.");
+            }
+
+            boolean removed = buildingRepository.removeBuilding(buildingID);
+
+            if (removed){
+                return ResponseEntity.status(HttpStatus.OK).body("Building was removed.");}
+            else
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Building could not be removed, doesn't exist.");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
+        }
+    }
+
+}
