@@ -27,25 +27,25 @@ public class Building {
         this.building = building;
     }
 
-    public Double getLatitiude() {
+    public Double getLat() {
         return lat;
     }
 
-    public void setLatitiude(Double lat) {
+    public void setLat(Double lat) {
         this.lat = lat;
     }
 
-    public Double getLongitude() {
+    public Double getLng() {
         return lng;
     }
 
-    public void setLongitude(Double lng) {
+    public void setLng(Double lng) {
         this.lng = lng;
     }
 
     public void copyInfo(Building building) {
         this.building = building.getBuilding();
-        this.lat = building.getLatitiude();
-        this.lng = building.getLongitude();
+        this.lat = building.getLat();
+        this.lng = building.getLng();
     }
 }
