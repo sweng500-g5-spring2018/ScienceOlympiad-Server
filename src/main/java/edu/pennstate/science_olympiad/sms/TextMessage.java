@@ -36,7 +36,7 @@ public class TextMessage {
 
     public void text(AUser user, String message) {
         if (user != null && user.getPhoneNumber()!= null)
-            Message.creator(user.getPhoneNumber(), FROM_NUMBER, message).create();
+            Message.creator(new PhoneNumber(user.getPhoneNumber()), FROM_NUMBER, message).create();
     }
 
     public void textEventTime(AUser user, Event event) {

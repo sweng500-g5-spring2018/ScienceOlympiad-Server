@@ -164,6 +164,22 @@ public class UserRepository {
         return true;
     }
 
+    public boolean changePassword(String userId, String newPassword) {
+        AUser user = mongoTemplate.findById(userId, AUser.class);
+
+        if(user!=null) {
+            user.setPassword(newPassword);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean validate(String userId, String password) {
+        AUser user = mongoTemplate.findById(userId, AUser.class);
+
+        return user != null && user.isPasswordEqual(password);
+    }
+
     /**
      * Returns the judges from the db, right now just show coaches for testing
      * @return

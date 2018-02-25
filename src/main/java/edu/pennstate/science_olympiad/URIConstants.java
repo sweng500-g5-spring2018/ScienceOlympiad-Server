@@ -50,6 +50,8 @@ public interface URIConstants {
     String ADD_COACH_TO_STUDENT     = "/addCoachToStudent";
     String ADD_SCHOOL_TO_COACH      = "/addSchoolToCoach";
     String RESET_PASSWORD           = "/resetPassword";
+    String CHANGE_PASSWORD          = "/changePassword";
+    String VALIDATE                 = "/validate";
 
     //-----------------------------Auth URIs-----------------------------
     String LOGIN                    = "/auth/login";
