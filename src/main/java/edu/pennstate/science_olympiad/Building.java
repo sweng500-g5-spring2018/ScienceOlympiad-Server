@@ -12,8 +12,6 @@ public class Building {
 
     @Id
     public String id;
-
-
     private String building;
     private Double lat;
     private Double lng;
