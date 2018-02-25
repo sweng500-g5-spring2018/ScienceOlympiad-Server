@@ -46,7 +46,7 @@ public class UsersController implements URIConstants{
         admin.setFirstName("Kyle");
         admin.setLastName("H");
         admin.setEmailAddress("test@email");
-        admin.setPhoneNumber(new CustomPhoneNumber("+12345678910"));
+        admin.setPhoneNumber("+12345678910");
         userRepository.addUser(admin);
 
         Coach coach = (Coach) UserFactory.getInstance().createUser("coach");
@@ -143,6 +143,31 @@ public class UsersController implements URIConstants{
             }
 
             boolean update = userRepository.updateUser(userType, userId, updatedUserJson);
+
+            if (update){
+                return ResponseEntity.status(HttpStatus.OK).body("User was updated.");}
+            else
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User could not be updated, doesn't exist.");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
+        }
+    }
+
+    /**
+     * Changes a user's password
+     * @param userId the id of the user you want to update
+     * @return the response of the user being updated or not
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= CHANGE_PASSWORD, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> changePassword(@PathVariable("userId") String userId, @RequestBody String passwordJson) {
+        try {
+            if(! MongoIdVerifier.isValidMongoId(userId)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid user ID.");
+            }
+
+            boolean update = userRepository.changePassword(userId, JsonHelper.getJsonString(passwordJson, "newPassword"));
 
             if (update){
                 return ResponseEntity.status(HttpStatus.OK).body("User was updated.");}
@@ -330,6 +355,31 @@ public class UsersController implements URIConstants{
                 return ResponseEntity.status(HttpStatus.OK).body("User was removed.");}
             else
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("User could not be removed, doesn't exist.");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
+        }
+    }
+
+    /**
+     * Validates a user's password is correct
+     * @param userId the id of the user whos password is being reset
+     * @return the response of the password being reset or not
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= VALIDATE, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> validatePassword(@PathVariable("userId") String userId, @RequestBody String passwordJson) {
+        try {
+            if(! MongoIdVerifier.isValidMongoId(userId)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid user ID.");
+            }
+
+            boolean valid = userRepository.validate(userId, JsonHelper.getJsonString(passwordJson, "password"));
+
+            if (valid){
+                return ResponseEntity.status(HttpStatus.OK).body("Validated");}
+            else
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalidated");
 
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");

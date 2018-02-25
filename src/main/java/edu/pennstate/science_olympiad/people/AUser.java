@@ -31,7 +31,7 @@ public abstract class AUser {
     private String firstName;
     private String lastName;
     private String emailAddress;
-    private CustomPhoneNumber phoneNumber;
+    private String phoneNumber;
     private String password;
     private transient byte[] salt;
     private transient int minutesBeforeEvent;
@@ -41,7 +41,7 @@ public abstract class AUser {
         firstName = "";
         lastName = "";
         emailAddress = "";
-        phoneNumber = new CustomPhoneNumber("+15555555555");
+        phoneNumber = "";
         password = "";
         minutesBeforeEvent = 10;
 
@@ -72,11 +72,11 @@ public abstract class AUser {
         this.emailAddress = emailAddress;
     }
 
-    public CustomPhoneNumber getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(CustomPhoneNumber phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -155,7 +155,6 @@ public abstract class AUser {
         this.lastName = aUser.getLastName();
         this.emailAddress = aUser.getEmailAddress();
         this.phoneNumber = aUser.getPhoneNumber();
-        setPassword(aUser.password);
         this.minutesBeforeEvent = aUser.getMinutesBeforeEvent();
     }
 
