@@ -52,6 +52,7 @@ public interface URIConstants {
     String RESET_PASSWORD           = "/resetPassword";
     String CHANGE_PASSWORD          = "/changePassword";
     String VALIDATE                 = "/validate";
+    String GET_USER_PROFILE         = "/getUserProfile";
 
     //-----------------------------Auth URIs-----------------------------
     String LOGIN                    = "/auth/login";
@@ -66,9 +67,13 @@ public interface URIConstants {
                                         "/testSessionStart",
                                         "/addUser/**",
                                         "/getSchools/**",
-                                        "/removeSchool/**",
                                         "/resetPassword",
-                                        "/getJudges"
+                                        "/getJudges",
+                                        "/removeBuilding/**",
+                                        "/removeEvent",
+                                        "/removeSchool/**",
+                                        "/removeTeam",
+                                        "/removeUser"
                                        };
 
 

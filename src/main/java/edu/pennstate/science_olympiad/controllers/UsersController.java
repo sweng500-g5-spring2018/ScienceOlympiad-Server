@@ -8,18 +8,17 @@ import edu.pennstate.science_olympiad.helpers.mongo.MongoIdVerifier;
 import edu.pennstate.science_olympiad.people.*;
 import edu.pennstate.science_olympiad.repositories.SchoolRepository;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
-import edu.pennstate.science_olympiad.sms.CustomPhoneNumber;
 import edu.pennstate.science_olympiad.util.Pair;
 import edu.pennstate.science_olympiad.helpers.json.JsonHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -85,6 +84,26 @@ public class UsersController implements URIConstants{
         return mongoTemplate.findAll(AUser.class);
     }
 
+    /**
+     * Returns a user from their email address
+     * URI is /sweng500/getUser
+     * @return the user in JSON form
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= GET_USER_PROFILE, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> getUser(HttpServletRequest request) {
+        try {
+            HttpSession userSession = request.getSession(false);
+            if(userSession == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No active session exists.");
+            }
+
+            AUser user = (AUser) userSession.getAttribute("user");
+            return ResponseEntity.status(HttpStatus.OK).body(user);
+        }catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
+        }
+    }
 
     /**
      * Returns a list of judges in the system
