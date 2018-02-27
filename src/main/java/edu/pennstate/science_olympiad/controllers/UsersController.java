@@ -115,7 +115,7 @@ public class UsersController implements URIConstants{
     public ResponseEntity<?> getAllJudges() {
         try {
             //eventually change to judge
-            List<Coach> judges = userRepository.getAllJudges();
+            List<Judge> judges = userRepository.getAllJudges();
 
             return ResponseEntity.status(HttpStatus.OK).body(judges);
 

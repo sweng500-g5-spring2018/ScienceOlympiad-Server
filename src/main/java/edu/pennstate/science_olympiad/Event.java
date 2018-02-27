@@ -24,11 +24,10 @@ public class Event {
     private String name;
     private String description;
     private Building building;
+    private Date eventDate;
     private Date startTime;
     private Date endTime;
-    //event most likely has multiple judges
 
-    private List<Judge_Event> judge_events;
     //may not need this because when we add a team to this event we will create it in the service
     private List<Team_Event> team_events;
 
@@ -38,6 +37,14 @@ public class Event {
 
     public Event(String name) {
         this.name = name;
+    }
+
+    public Date getEventDate() {
+        return eventDate;
+    }
+
+    public void setEventDate(Date eventDate) {
+        this.eventDate = eventDate;
     }
 
     public String getId(){return id;}
@@ -81,25 +88,6 @@ public class Event {
         this.endTime = endTime;
     }
 
-    public List<Judge_Event> getJudge_events() {
-        if (judge_events == null)
-            judge_events = new ArrayList<Judge_Event>();
-        return judge_events;
-    }
-
-    public void addJudgeToEvent(Judge judge) {
-        getJudge_events().add(new Judge_Event(judge, this));
-    }
-
-    public boolean removeJudge(Judge judge) {
-        for (Iterator<Judge_Event> judge_event_Iter = judge_events.iterator(); judge_event_Iter.hasNext();) {
-            if (judge_event_Iter.next().getJudge() == judge) {
-                judge_event_Iter.remove();
-                return true;
-            }
-        }
-        return false;
-    }
 
     public List<Team_Event> getTeam_events() {
         if (team_events == null)
@@ -133,7 +121,6 @@ public class Event {
         this.building = event.getBuilding();
         this.startTime = event.getStartTime();
         this.endTime = event.getEndTime();
-        this.judge_events = event.getJudge_events();
         this.team_events = event.getTeam_events();
     }
 }

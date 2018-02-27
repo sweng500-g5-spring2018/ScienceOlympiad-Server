@@ -185,9 +185,25 @@ public class UserRepository {
      * @return
      * @throws Exception
      */
-    public List<Coach> getAllJudges() throws Exception{ ;
-        List<Coach> u = mongoTemplate.findAll(Coach.class);
+    public List<Judge> getAllJudges() throws Exception{
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_class").is("edu.pennstate.science_olympiad.people.Judge"));
+        //findall doesnt seem to work ?
+        List<Judge> u = mongoTemplate.find(query,Judge.class);
         logger.info("found some judge");
+        return u;
+    }
+
+    /**
+     * Get a judge from the db
+     * @param jid
+     * @return
+     */
+    public AUser getJudge(String jid) {
+        Query lookup = new Query();
+        lookup.addCriteria(Criteria.where("_id").is(jid).and("_class").is("edu.pennstate.science_olympiad.people.Judge"));
+        AUser u = mongoTemplate.findOne(lookup, AUser.class, "ausers");
+        logger.info("in the use rrepository found " + u.toString());
         return u;
     }
 }
