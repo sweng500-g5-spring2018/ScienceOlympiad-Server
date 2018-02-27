@@ -16,6 +16,7 @@ public interface URIConstants {
     String REMOVE_EVENT             = "/removeEvent";
     String UPDATE_EVENT             = "/updateEvent";
     String GET_AN_EVENT             = "/event/{eventId}";
+    String GET_EVENT_JUDGES         = "/event/judges/{eventId}";
 
     //-----------------------------First Controller URIs-----------------------------
     //none
