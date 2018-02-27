@@ -3,6 +3,7 @@ package edu.pennstate.science_olympiad.repositories;
 import com.google.gson.Gson;
 import edu.pennstate.science_olympiad.Event;
 import edu.pennstate.science_olympiad.Team;
+import edu.pennstate.science_olympiad.many_to_many.Judge_Event;
 import edu.pennstate.science_olympiad.many_to_many.Team_Event;
 import edu.pennstate.science_olympiad.people.Coach;
 import edu.pennstate.science_olympiad.people.Judge;
@@ -16,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -144,7 +146,7 @@ public class EventRepository {
      * @param judge The judge to be assigned
      * @param event The event in which to assign the judge
      * @return Whether the assignment was a sucess or not
-     */
+
     public boolean assignJudgeToEvent(Judge judge, Event event) {
         logger.info("Adding judge to event");
 
@@ -157,7 +159,7 @@ public class EventRepository {
         }
         return false;
     }
-
+     */
     /**
      * Verify an event already exists
      * @param eventName an event attempting to be verified
@@ -208,4 +210,27 @@ public class EventRepository {
         return false;
     }
 
+    /**
+     * Created the many to many mapping of events to judges
+     */
+    public void mapJudgeToEvent(Judge_Event je) {
+        mongoTemplate.insert(je);
+    }
+
+    /**
+     * Get the judges for this event
+     * @param id
+     * @return
+     */
+    public List<String> getEventJudges(String id) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("eventId").is(id));
+        List<Judge_Event> judgeE = mongoTemplate.find(query, Judge_Event.class);
+        List<String> judgeIds = new ArrayList<String>();
+        for(Judge_Event je : judgeE) {
+            judgeIds.add(je.getJudge());
+        }
+
+        return judgeIds;
+    }
 }

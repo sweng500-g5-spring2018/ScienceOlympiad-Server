@@ -1,9 +1,13 @@
 package edu.pennstate.science_olympiad.controllers;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import edu.pennstate.science_olympiad.Event;
 import edu.pennstate.science_olympiad.URIConstants;
 import edu.pennstate.science_olympiad.helpers.mongo.MongoIdVerifier;
+import edu.pennstate.science_olympiad.helpers.request.NewJudgeHelper;
 import edu.pennstate.science_olympiad.people.Judge;
 import edu.pennstate.science_olympiad.repositories.EventRepository;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
@@ -52,21 +56,18 @@ public class EventController implements URIConstants{
     @RequestMapping(value= NEW_EVENT, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> addNewEvent(@RequestBody String eventJson) {
         try {
-            Gson gson = new Gson();
-            Event event = gson.fromJson(eventJson, Event.class);
-
-            boolean added = eventService.createNewEvent(event);
+            boolean added = eventService.addEvent(eventJson);
 
             if (added)
-                return ResponseEntity.status(HttpStatus.OK).body("User was added.");
+                return ResponseEntity.status(HttpStatus.OK).body("Event was created");
             else
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists.");
-
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("An error occured while creating event");
         } catch(Exception e) {
+            logger.info("exception " + e.toString());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
         }
     }
-
+/**
     @CrossOrigin(origins = "*")
     @RequestMapping(value= ASSIGN_JUDGE_TO_EVENT, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> assignJudgeToEvent(@RequestBody String judgeIdJson, @RequestBody String eventIdJson) {
@@ -85,6 +86,7 @@ public class EventController implements URIConstants{
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
         }
     }
+    */
 
 
 
@@ -116,7 +118,7 @@ public class EventController implements URIConstants{
      * @return the response of the event being deleted or not
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value= REMOVE_EVENT, method= RequestMethod.DELETE ,produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value= REMOVE_EVENT, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> removeEvent(@PathVariable("eventId") String eventId) {
         try {
             if(! MongoIdVerifier.isValidMongoId(eventId)) {
@@ -176,6 +178,18 @@ public class EventController implements URIConstants{
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Event could not be found");
             }
 
+    }
+
+    /**
+     * Get this events judges, this is in the works and not working currently
+     * @param eventId the id of the event you want to update
+     * @return the Event object c
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= GET_EVENT_JUDGES, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> getEventJudges(@PathVariable("eventId") String eventId) {
+        List<Judge> judges = eventService.getEventJudges(eventId);
+        return ResponseEntity.status(HttpStatus.OK).body(judges);
     }
 
 }

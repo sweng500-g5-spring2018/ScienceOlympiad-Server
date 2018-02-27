@@ -26,6 +26,8 @@ import java.util.Date;
 public abstract class AUser {
 //Log logger = LogFactory.getLog(getClass());
 
+
+
     @Id
     public String id;
     private String firstName;
@@ -46,6 +48,10 @@ public abstract class AUser {
         minutesBeforeEvent = 10;
 
         salt = generateSalt();
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getFirstName() {

@@ -15,19 +15,19 @@ public class Judge_Event {
     @Id
     public String id;
 
-    private Judge judge;
-    private Event event;
+    private String judgeId;
+    private String eventId;
 
-    public Judge_Event(Judge judge, Event event) {
-        this.judge = judge;
-        this.event = event;
+    public Judge_Event(String eventId, String judgeId) {
+        this.judgeId = judgeId;
+        this.eventId = eventId;
     }
 
-    public Judge getJudge() {
-        return judge;
+    public String getJudge() {
+        return judgeId;
     }
 
-    public Event getEvent() {
-        return event;
+    public String getEvent() {
+        return eventId;
     }
 }
