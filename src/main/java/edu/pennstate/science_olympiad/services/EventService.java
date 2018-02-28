@@ -37,6 +37,10 @@ public class EventService {
         return eventRepository;
     }
 
+    public UserRepository getUserRepository() {
+        return userRepository;
+    }
+
     /**
      * @param studentIds - The students selected to add to the team - just testing
      * @param eventName  -The event we are adding a team for, used to lookup event
@@ -106,7 +110,8 @@ public class EventService {
         JsonArray currentJudges = JsonHelper.getJsonList(eventJson, "existingJudgeValues");
         for (int i = 0; i < currentJudges.size(); i++) {
             logger.info("getting currentJudges" + currentJudges.get(i));
-            addedJudges.add(currentJudges.get(i).toString());
+            //strip off the quotes for some reason the json comes with in the json list
+            addedJudges.add(currentJudges.get(i).toString().replace("\"",""));
         }
 
         JsonArray newJudges = JsonHelper.getJsonList(eventJson, "newJudgeValues");
@@ -117,6 +122,7 @@ public class EventService {
             ((Judge) newJudge).copyInfoFromJson(judge);
             newJudge.setPassword("default123");
             boolean added = userRepository.addUser(newJudge);
+            //send email eventually
             if (added)
                 addedJudges.add(newJudge.getId());
             else {
@@ -143,7 +149,7 @@ public class EventService {
         //grab the actual judge object
         logger.info("found some judgeIds for this event --" + judgeIds.size());
         for(String jid : judgeIds) {
-            Judge jud = (Judge) userRepository.getJudge(jid);
+            Judge jud = userRepository.getJudge(jid);
             logger.info("Getting the event judges " + jud.getFirstName());
             judges.add(jud);
         }
