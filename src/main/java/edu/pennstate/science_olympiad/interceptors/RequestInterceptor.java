@@ -21,20 +21,21 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
         if(request.getMethod().equalsIgnoreCase("OPTIONS")) return true;
 
         HttpSession session = request.getSession(false);
+        System.out.println("CHECKING SESSION: " + session);
 
         if(session == null || session.getAttribute("user") == null) {
+
+
             System.out.println("Request Interceptor says - YO SESSION IS BAD OMFG");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//            response.setHeader(ORIGIN, request.getHeader("referer"));
 
-            //WRITE RESPONSE
-//            response.getWriter().write("UNAUTHORIZED: A valid session is required.");
-//            response.getWriter().flush();
-//            response.getWriter().close();
             return false;
         }
 
-        System.out.println("RequestInterceptor says - YO SESSION IS GOOD HOMIE; CARRY ON");
+        System.out.println("----- Session Status -----");
+        System.out.println("SESSION here: " + session.getId());
+        System.out.println("RequestInterceptor says - YO SESSION IS GOOD; CARRY ON");
+        System.out.println("---------------------------");
 
         return true;
     }
