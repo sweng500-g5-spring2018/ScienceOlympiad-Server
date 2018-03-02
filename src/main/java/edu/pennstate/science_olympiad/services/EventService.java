@@ -149,7 +149,7 @@ public class EventService {
         //grab the actual judge object
         logger.info("found some judgeIds for this event --" + judgeIds.size());
         for(String jid : judgeIds) {
-            Judge jud = userRepository.getJudge(jid);
+            Judge jud = (Judge) userRepository.getJudge(jid);
             logger.info("Getting the event judges " + jud.getFirstName());
             judges.add(jud);
         }
