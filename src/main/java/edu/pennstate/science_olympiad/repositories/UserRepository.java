@@ -199,10 +199,13 @@ public class UserRepository {
      * @param jid
      * @return
      */
-    public AUser getJudge(String jid) {
+    public Judge getJudge(String jid) {
         Query lookup = new Query();
         lookup.addCriteria(Criteria.where("_id").is(jid).and("_class").is("edu.pennstate.science_olympiad.people.Judge"));
-        AUser u = mongoTemplate.findOne(lookup, AUser.class, "ausers");
+        Judge u = mongoTemplate.findOne(lookup, Judge.class);
+        if(u== null) {
+            logger.info(jid + "    THe getJudge user is null!!!!");
+        }
         logger.info("in the use rrepository found " + u.toString());
         return u;
     }
