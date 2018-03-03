@@ -98,7 +98,7 @@ public class FirstController {
         if(user != null && user instanceof Coach) {
             return ResponseEntity.status(HttpStatus.OK).body("YAY, you're a coach.  You may access this content.");
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are NOT a coach.  You CANNOT access this content.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are NOT a coach.  You CANNOT access this content.");
         }
     }
 
