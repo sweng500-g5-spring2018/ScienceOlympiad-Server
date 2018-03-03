@@ -61,7 +61,6 @@ public class AuthController {
                                                                         LoginResponseHelper.getUserType(userFound),
                                                                         session.getId());
 
-            System.out.println("SUCCESSFULLY LOGGED IN USER " + userFound.getEmailAddress());
             return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The Email Address or Password provided is incorrect");
