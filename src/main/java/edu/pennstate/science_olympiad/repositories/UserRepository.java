@@ -61,7 +61,7 @@ public class UserRepository {
         Query lookup = new Query();
         lookup.addCriteria(Criteria.where("emailAddress").is(loginHelper.getEmailAddress()));
         AUser user = mongoTemplate.findOne(lookup, AUser.class, "ausers");
-        if (user.isPasswordEqual(loginHelper.getPassword()))
+        if (user != null && user.isPasswordEqual(loginHelper.getPassword()))
             return user;
         else
             return null;
