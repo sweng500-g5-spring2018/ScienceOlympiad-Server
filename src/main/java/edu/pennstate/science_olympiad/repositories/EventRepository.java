@@ -184,9 +184,11 @@ public class EventRepository {
         Event dbEvent = mongoTemplate.findOne(singleQuery, Event.class);
 
         if (dbEvent != null) {
+            logger.info("trying to remove event");
             mongoTemplate.remove(dbEvent);
             return true;
         }
+        logger.info("event does not exist");
         return false;
     }
 

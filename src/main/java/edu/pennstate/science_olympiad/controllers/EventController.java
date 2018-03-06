@@ -118,8 +118,9 @@ public class EventController implements URIConstants{
      * @return the response of the event being deleted or not
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value= REMOVE_EVENT, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value= REMOVE_EVENT, method= RequestMethod.DELETE ,produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> removeEvent(@PathVariable("eventId") String eventId) {
+        logger.info("got to delete event");
         try {
             if(! MongoIdVerifier.isValidMongoId(eventId)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid event ID.");            }
