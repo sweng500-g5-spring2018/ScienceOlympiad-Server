@@ -125,7 +125,7 @@ public class EventController implements URIConstants{
             if(! MongoIdVerifier.isValidMongoId(eventId)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid event ID.");            }
 
-            boolean removed = eventRepository.removeEvent(eventId);
+            boolean removed = eventService.removeEvent(eventId);
 
             if (removed){
                 return ResponseEntity.status(HttpStatus.OK).body("Event was removed.");}

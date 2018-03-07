@@ -235,4 +235,23 @@ public class EventRepository {
 
         return judgeIds;
     }
+
+    /**
+     * Remove the judges assigned to an event
+     * @param eventId
+     * @return
+     */
+    public boolean removeEventJudges(String eventId) {
+        Query singleQuery = new Query();
+        singleQuery.addCriteria(Criteria.where("eventId").is(eventId));
+        List<Judge_Event> judges = mongoTemplate.find(singleQuery, Judge_Event.class);
+        logger.info("Found some judges --- " + judges.size());
+        if (judges != null && judges.size() >0 ) {
+            logger.info("trying to remove the judges ");
+            for(Judge_Event je : judges) {
+                mongoTemplate.remove(je);
+            }
+        }
+        return true;
+    }
 }
