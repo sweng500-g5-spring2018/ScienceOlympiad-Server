@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.swing.*;
 import java.util.List;
 
 /**
@@ -382,23 +383,26 @@ public class UsersController implements URIConstants{
 
     /**
      * Validates a user's password is correct
-     * @param userId the id of the user whos password is being reset
      * @return the response of the password being reset or not
      */
     @CrossOrigin(origins = "*")
     @RequestMapping(value= VALIDATE, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> validatePassword(@PathVariable("userId") String userId, @RequestBody String passwordJson) {
+    public ResponseEntity<?> validatePassword(@RequestBody String passwordString, HttpServletRequest request) {
         try {
-            if(! MongoIdVerifier.isValidMongoId(userId)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid user ID.");
-            }
 
-            boolean valid = userRepository.validate(userId, JsonHelper.getJsonString(passwordJson, "password"));
+            HttpSession userSession = request.getSession(false);
+            AUser user = (AUser) userSession.getAttribute("user");
+
+            boolean valid = user.getPassword().equals(user.get_SHA_512_SecurePassword(passwordString));
+
+//            boolean valid = userRepository.validate(userId, passwordString);
+
+            Pair pws = userRepository.getPw(user, passwordString);
 
             if (valid){
                 return ResponseEntity.status(HttpStatus.OK).body("Validated");}
             else
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalidated");
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Old = " + pws.getLeft() + " | New = " + pws.getRight());
 
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");

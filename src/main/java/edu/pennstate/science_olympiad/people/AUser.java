@@ -91,7 +91,7 @@ public abstract class AUser {
      * @param password the String that a user will type in
      */
     public void setPassword(String password) {
-        this.password = get_SHA_512_SecurePassword(password, Arrays.toString(salt));
+        this.password = get_SHA_512_SecurePassword(password);
     }
 
     public int getMinutesBeforeEvent() {
@@ -125,11 +125,16 @@ public abstract class AUser {
         return null;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public void hashPassword() {
         setPassword(this.password);
     }
 
-    private String get_SHA_512_SecurePassword(String passwordToHash, String salt){
+    public String get_SHA_512_SecurePassword(String passwordToHash){
+        String salt = Arrays.toString(this.salt);
         String generatedPassword = null;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-512");
@@ -148,7 +153,7 @@ public abstract class AUser {
     }
 
     public boolean isPasswordEqual(String passwordToCheck) {
-        String securePasswordToCheck = get_SHA_512_SecurePassword(passwordToCheck, Arrays.toString(this.salt));
+        String securePasswordToCheck = get_SHA_512_SecurePassword(passwordToCheck);
         return securePasswordToCheck.equals(this.password);
     }
 

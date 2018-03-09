@@ -5,6 +5,7 @@ import com.mongodb.WriteResult;
 import edu.pennstate.science_olympiad.helpers.request.LoginJsonHelper;
 import edu.pennstate.science_olympiad.School;
 import edu.pennstate.science_olympiad.people.*;
+import edu.pennstate.science_olympiad.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -178,6 +179,14 @@ public class UserRepository {
         AUser user = mongoTemplate.findById(userId, AUser.class);
 
         return user != null && user.isPasswordEqual(password);
+    }
+
+    public Pair getPw(AUser user, String password) {
+
+        String oldPw = user.getPassword();
+        String newPw = user.get_SHA_512_SecurePassword(password);
+
+        return new Pair(oldPw, newPw);
     }
 
     /**

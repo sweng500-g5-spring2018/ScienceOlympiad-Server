@@ -99,7 +99,7 @@ public class SchoolController implements URIConstants{
 
     /**
      * Updates a specific school in the database
-     * @param schoolId the id of the school you want to update
+     * @param schoolID the id of the school you want to update
      * @param schoolJson the json of the info you want to update the school with
      * @return the response of the event being updated or not
      */

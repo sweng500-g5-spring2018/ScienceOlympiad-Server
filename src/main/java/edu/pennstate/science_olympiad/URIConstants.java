@@ -69,7 +69,8 @@ public interface URIConstants {
                                         "/addUser/**",
                                         "/getSchools/**",
                                         "/resetPassword",
-                                        "/getJudges"
+                                        "/getJudges",
+                                        "/validate"
                                        };
 
 
