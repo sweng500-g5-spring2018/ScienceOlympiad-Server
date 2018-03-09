@@ -8,12 +8,12 @@ public interface URIConstants {
     String REMOVE_BUILDING          = "/removeBuilding/{buildingID}";
     String UPDATE_BUILDING          = "/updateBuilding/{buildingID}";
 
-    //-----------------------------Event URIs-----------------------------
+    //-----------------------------Event URIs------------------------------
     String GET_EVENTS               = "/events";
     String NEW_EVENT                = "/addEvent";
     String ASSIGN_JUDGE_TO_EVENT    = "/assignJudgeToEvent";
     String VERIFY_EVENT             = "/verifyEvent/{eventName}";
-    String REMOVE_EVENT             = "/removeEvent";
+    String REMOVE_EVENT             = "/removeEvent/{eventId}";
     String UPDATE_EVENT             = "/updateEvent";
     String GET_AN_EVENT             = "/event/{eventId}";
     String GET_EVENT_JUDGES         = "/event/judges/{eventId}";

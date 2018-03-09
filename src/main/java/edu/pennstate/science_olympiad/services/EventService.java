@@ -2,6 +2,7 @@ package edu.pennstate.science_olympiad.services;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import edu.pennstate.science_olympiad.Building;
 import edu.pennstate.science_olympiad.Event;
 import edu.pennstate.science_olympiad.Team;
 import edu.pennstate.science_olympiad.helpers.json.JsonHelper;
@@ -9,6 +10,7 @@ import edu.pennstate.science_olympiad.helpers.request.NewJudgeHelper;
 import edu.pennstate.science_olympiad.many_to_many.Judge_Event;
 import edu.pennstate.science_olympiad.many_to_many.Team_Event;
 import edu.pennstate.science_olympiad.people.*;
+import edu.pennstate.science_olympiad.repositories.BuildingRepository;
 import edu.pennstate.science_olympiad.repositories.EventRepository;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
 import edu.pennstate.science_olympiad.util.Pair;
@@ -31,6 +33,9 @@ public class EventService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    BuildingRepository buildingRepository;
+
     Log logger = LogFactory.getLog(getClass());
 
     public EventRepository getEventRepository() {
@@ -39,6 +44,10 @@ public class EventService {
 
     public UserRepository getUserRepository() {
         return userRepository;
+    }
+
+    public BuildingRepository getBuildingRepository(){
+        return buildingRepository;
     }
 
     /**
@@ -88,6 +97,8 @@ public class EventService {
 
     /**
      * Add an event created from the events page
+     * Get the building id and existing judges from the db
+     * Create any new judges added in the form
      *
      * @param eventJson The json passed into the request containing event,existing judge ids, new judge info
      * @return true if event is added
@@ -99,10 +110,16 @@ public class EventService {
         //logger.info("got into add event -- " + eventJson);
 
         Gson gson = new Gson();
-        String eventj = JsonHelper.getJsonObject(eventJson, "eventJson");
-        //logger.info("event json " + eventj);
+        String tempevent = JsonHelper.getJsonObject(eventJson, "eventJson");
 
-        Event event = gson.fromJson(eventj, Event.class);
+        //this returns the building element
+        String buildingString = JsonHelper.getJsonPrimitive(tempevent,"building");
+        String actualEvent = JsonHelper.removeAndGetElement(eventJson,"building","eventJson");
+        logger.info("got the building!!! " + buildingString);
+
+        Building eventBuilding = buildingRepository.getBuilding(buildingString);
+        Event event = gson.fromJson(actualEvent, Event.class);
+        event.setLocation(eventBuilding);
         eventRepository.addEvent(event);
         // logger.info("created the event ok "+ event.getId());
 
@@ -114,6 +131,7 @@ public class EventService {
             addedJudges.add(currentJudges.get(i).toString().replace("\"",""));
         }
 
+        //create any new judges found
         JsonArray newJudges = JsonHelper.getJsonList(eventJson, "newJudgeValues");
         for (int i = 0; i < newJudges.size(); i++) {
             NewJudgeHelper judge = gson.fromJson(newJudges.get(i), NewJudgeHelper.class);
@@ -154,5 +172,19 @@ public class EventService {
             judges.add(jud);
         }
         return judges;
+    }
+
+    /**
+     * Remove an event and all of its event_judges (eventually remove teams)
+     * @param eventId
+     * @return
+     */
+    public boolean removeEvent(String eventId) {
+        boolean eventRemove = eventRepository.removeEvent(eventId);
+        if(eventRemove) {
+            boolean judgesRemoved = eventRepository.removeEventJudges(eventId);
+            return judgesRemoved;
+        }
+        return false;
     }
 }
