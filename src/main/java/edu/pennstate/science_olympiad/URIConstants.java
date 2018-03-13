@@ -49,7 +49,7 @@ public interface URIConstants {
     String EMAIL_AVAILABLE          = "/emailAvailable";
     String ADD_USER                 = "/addUser";
     String ADD_COACH_TO_STUDENT     = "/addCoachToStudent";
-    String ADD_SCHOOL_TO_COACH      = "/addSchoolToCoach";
+    String ADD_SCHOOL_TO_USER       = "/addSchoolToUser";
     String RESET_PASSWORD           = "/resetPassword";
     String CHANGE_PASSWORD          = "/changePassword";
     String VALIDATE                 = "/validate";

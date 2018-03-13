@@ -25,7 +25,7 @@ import java.util.Date;
 
 @Document(collection="ausers")
 public abstract class AUser {
-Log logger = LogFactory.getLog(getClass());
+//Log logger = LogFactory.getLog(getClass());
 
     @Id
     public String id;
@@ -167,7 +167,7 @@ Log logger = LogFactory.getLog(getClass());
     }
 
     public void copyInfo(AUser aUser) {
-        logger.info("Copying user info");
+//        logger.info("Copying user info");
         this.firstName = aUser.getFirstName();
         this.lastName = aUser.getLastName();
         this.emailAddress = aUser.getEmailAddress();

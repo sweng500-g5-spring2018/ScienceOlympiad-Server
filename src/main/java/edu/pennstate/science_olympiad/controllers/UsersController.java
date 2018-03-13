@@ -246,7 +246,7 @@ public class UsersController implements URIConstants{
      * The POST request for adding a user to the system
      * URI is /sweng500/addUser
      * @param userType the string of the type of user to create, matches that from {@link edu.pennstate.science_olympiad.people.IUserTypes}
-     * @param schoolID (not required) the string of the schoolID for the School to add to the User if they are of type {@link edu.pennstate.science_olympiad.people.Coach}
+     * @param schoolID (not required) the string of the schoolID for the School to add to the User if they are of type {@link edu.pennstate.science_olympiad.people.Coach} or {@link edu.pennstate.science_olympiad.people.Student}
      * @param userJson the JSON of all of the user's data
      * @return STATUS 200 if user is successfully added, STATUS 207 if user created but could not be added to school,
      *                      STATUS 409 if user was not created, STATUS 400 if bad JSON provided
@@ -292,8 +292,8 @@ public class UsersController implements URIConstants{
             boolean userAdded = userRepository.addUser(userToAdd);
 
             if (userAdded) {
-                if(userToAdd instanceof Coach) {
-                    boolean schoolAddedToUser = userRepository.addSchoolToCoach(foundSchool, (Coach) userToAdd);
+                if(userToAdd instanceof Coach || userToAdd instanceof Student) {
+                    boolean schoolAddedToUser = userRepository.addSchoolToUser(foundSchool, userToAdd);
 
                     if(!schoolAddedToUser) {
                         ResponseEntity.status(HttpStatus.MULTI_STATUS).body("User created successfully but could not be added to School.");
@@ -339,25 +339,25 @@ public class UsersController implements URIConstants{
 
     /**
      * The POST request for adding a a coach to a student
-     * URI is /sweng500/addSchoolToCoach
+     * URI is /sweng500/addSchoolToUser
      * @param schoolIdJson the id in JSON format of the school to add to the coach
-     * @param coachIdJson the id in JSON format of the coach to add the school
+     * @param userIdJson the id in JSON format of the coach to add the school
      * @return STATUS 200 if school is successfully set, STATUS 409 if school was not set, STATUS 400 if bad JSON provided
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value= ADD_SCHOOL_TO_COACH , method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> addSchoolToCoach(@RequestBody String schoolIdJson, @RequestBody String coachIdJson) {
+    @RequestMapping(value= ADD_SCHOOL_TO_USER , method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> addSchoolToUser(@RequestBody String schoolIdJson, @RequestBody String userIdJson) {
         try {
 
-            Coach coach = (Coach) userRepository.getUser(JsonHelper.getIdFromJson(coachIdJson));
+            AUser user = userRepository.getUser(JsonHelper.getIdFromJson(userIdJson));
             School school = schoolRepository.getSchool(JsonHelper.getIdFromJson(schoolIdJson));
 
-            boolean added = userRepository.addSchoolToCoach(school, coach);
+            boolean added = userRepository.addSchoolToUser(school, user);
 
             if (added)
-                return ResponseEntity.status(HttpStatus.OK).body("School was to coach.");
+                return ResponseEntity.status(HttpStatus.OK).body("The user was assigned to the specified school.");
             else
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("School was not set for the coach.");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("The user was NOT assigned to the specified school.  Only Student/Coach can be assigned a school.");
 
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");

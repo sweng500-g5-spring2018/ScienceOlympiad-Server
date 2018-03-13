@@ -140,14 +140,19 @@ public class UserRepository {
         return false;
     }
 
-    public boolean addSchoolToCoach(School school, Coach coach) {
-        logger.info("Attempting to add school to coach");
+    public boolean addSchoolToUser(School school, AUser user) {
+        logger.info("Attempting to add school to coach or student");
 
-        if (coach != null) {
-            coach.setSchool(school);
-            mongoTemplate.save(coach);
+        if(user instanceof Coach) {
+            ((Coach) user).setSchool(school);
+            mongoTemplate.save(user);
+            return true;
+        } else if(user instanceof Student) {
+            ((Student) user).setSchool(school);
+            mongoTemplate.save(user);
             return true;
         }
+
         return false;
     }
 
