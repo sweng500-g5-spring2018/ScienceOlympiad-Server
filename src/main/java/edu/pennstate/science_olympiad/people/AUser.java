@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -24,9 +25,7 @@ import java.util.Date;
 
 @Document(collection="ausers")
 public abstract class AUser {
-//Log logger = LogFactory.getLog(getClass());
-
-
+Log logger = LogFactory.getLog(getClass());
 
     @Id
     public String id;
@@ -35,8 +34,9 @@ public abstract class AUser {
     private String emailAddress;
     private String phoneNumber;
     private String password;
+    private int minutesBeforeEvent;
+    private boolean receiveText;
     private transient byte[] salt;
-    private transient int minutesBeforeEvent;
     private transient Date lastLoginDate;
 
     public AUser() {
@@ -46,6 +46,7 @@ public abstract class AUser {
         phoneNumber = "";
         password = "";
         minutesBeforeEvent = 10;
+        receiveText = false;
 
         salt = generateSalt();
     }
@@ -88,10 +89,10 @@ public abstract class AUser {
 
     /**
      * Being passed in should be the String password, in here we will hash and salt it before setting it
-     * @param password the String that a user will type in
+     * @param passwordStr the String that a user will type in
      */
-    public void setPassword(String password) {
-        this.password = get_SHA_512_SecurePassword(password, Arrays.toString(salt));
+    public void setPassword(String passwordStr) {
+        this.password = get_SHA_512_SecurePassword(passwordStr);
     }
 
     public int getMinutesBeforeEvent() {
@@ -108,6 +109,14 @@ public abstract class AUser {
 
     public void setLastLoginDate(Date lastLoginDate) {
         this.lastLoginDate = lastLoginDate;
+    }
+
+    public boolean isReceiveText() {
+        return receiveText;
+    }
+
+    public void setReceiveText(boolean receiveText) {
+        this.receiveText = receiveText;
     }
 
     private byte[] generateSalt() {
@@ -129,12 +138,13 @@ public abstract class AUser {
         setPassword(this.password);
     }
 
-    private String get_SHA_512_SecurePassword(String passwordToHash, String salt){
+    public String get_SHA_512_SecurePassword(String passwordToHash){
+        String salt = Arrays.toString(this.salt);
         String generatedPassword = null;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-512");
             md.update(salt.getBytes());
-            byte[] bytes = md.digest(passwordToHash.getBytes());
+            byte[] bytes = md.digest(passwordToHash.getBytes(StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
             for(int i=0; i< bytes.length ;i++){
                 sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
@@ -148,7 +158,7 @@ public abstract class AUser {
     }
 
     public boolean isPasswordEqual(String passwordToCheck) {
-        String securePasswordToCheck = get_SHA_512_SecurePassword(passwordToCheck, Arrays.toString(this.salt));
+        String securePasswordToCheck = get_SHA_512_SecurePassword(passwordToCheck);
         return securePasswordToCheck.equals(this.password);
     }
 
@@ -157,11 +167,13 @@ public abstract class AUser {
     }
 
     public void copyInfo(AUser aUser) {
+        logger.info("Copying user info");
         this.firstName = aUser.getFirstName();
         this.lastName = aUser.getLastName();
         this.emailAddress = aUser.getEmailAddress();
         this.phoneNumber = aUser.getPhoneNumber();
         this.minutesBeforeEvent = aUser.getMinutesBeforeEvent();
+        this.receiveText = aUser.isReceiveText();
     }
 
 }

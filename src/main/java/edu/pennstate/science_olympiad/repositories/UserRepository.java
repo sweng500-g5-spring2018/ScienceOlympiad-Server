@@ -5,6 +5,7 @@ import com.mongodb.WriteResult;
 import edu.pennstate.science_olympiad.helpers.request.LoginJsonHelper;
 import edu.pennstate.science_olympiad.School;
 import edu.pennstate.science_olympiad.people.*;
+import edu.pennstate.science_olympiad.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,30 +93,27 @@ public class UserRepository {
             mongoTemplate.remove(user);
     }
 
-    public boolean updateUser(String userType, String userId, String updatedUserJson) {
+    public boolean updateUser(AUser user, String updatedUserJson) {
         logger.info("Updating user");
         Gson gson = new Gson();
-        AUser userToUpdate = null;
         AUser infoToUse;
-        if (userType.equalsIgnoreCase(IUserTypes.ADMIN)){
-            userToUpdate = getUser(userId);
+        if (user instanceof Admin){
             infoToUse = gson.fromJson(updatedUserJson, Admin.class);
-        } else if (userType.equalsIgnoreCase(IUserTypes.COACH)){
-            userToUpdate = getUser(userId);
+        } else if (user instanceof Coach){
             infoToUse = gson.fromJson(updatedUserJson, Coach.class);
-        } else if (userType.equalsIgnoreCase(IUserTypes.JUDGE)){
-            userToUpdate = getUser(userId);
+        } else if (user instanceof Judge){
             infoToUse = gson.fromJson(updatedUserJson, Judge.class);
-        } else if (userType.equalsIgnoreCase(IUserTypes.STUDENT)){
-            userToUpdate = getUser(userId);
+        } else if (user instanceof Student){
             infoToUse = gson.fromJson(updatedUserJson, Student.class);
         } else {
             infoToUse = null;
         }
+        logger.info(infoToUse);
 
-        if (userToUpdate != null) {
-            userToUpdate.copyInfo(infoToUse);
-            mongoTemplate.save(userToUpdate);
+        if (user != null) {
+            user.copyInfo(infoToUse);
+            logger.info(user);
+            mongoTemplate.save(user);
             return true;
         }
         return false;
@@ -164,11 +162,10 @@ public class UserRepository {
         return true;
     }
 
-    public boolean changePassword(String userId, String newPassword) {
-        AUser user = mongoTemplate.findById(userId, AUser.class);
-
+    public boolean changePassword(AUser user, String newPassword) {
         if(user!=null) {
             user.setPassword(newPassword);
+            mongoTemplate.save(user);
             return true;
         }
         return false;

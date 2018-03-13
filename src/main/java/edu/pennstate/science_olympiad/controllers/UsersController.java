@@ -10,6 +10,8 @@ import edu.pennstate.science_olympiad.repositories.SchoolRepository;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
 import edu.pennstate.science_olympiad.util.Pair;
 import edu.pennstate.science_olympiad.helpers.json.JsonHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.swing.*;
 import java.util.List;
 
 /**
@@ -26,6 +29,8 @@ import java.util.List;
  */
 @RestController
 public class UsersController implements URIConstants{
+    Log logger = LogFactory.getLog(getClass());
+
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -150,18 +155,17 @@ public class UsersController implements URIConstants{
 
     /**
      * Updates a specific user to the database
-     * @param userId the id of the user you want to update
      * @return the response of the user being updated or not
      */
     @CrossOrigin(origins = "*")
     @RequestMapping(value= UPDATE_USER, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> updateUser(@RequestParam(name="userType") String userType, @PathVariable("userId") String userId, @RequestBody String updatedUserJson) {
+    public ResponseEntity<?> updateUser(@RequestBody String updatedUserJson, HttpServletRequest request) {
         try {
-            if(! MongoIdVerifier.isValidMongoId(userId)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid user ID.");
-            }
 
-            boolean update = userRepository.updateUser(userType, userId, updatedUserJson);
+            HttpSession userSession = request.getSession(false);
+            AUser user = (AUser) userSession.getAttribute("user");
+
+            boolean update = userRepository.updateUser(user, updatedUserJson);
 
             if (update){
                 return ResponseEntity.status(HttpStatus.OK).body("User was updated.");}
@@ -175,18 +179,22 @@ public class UsersController implements URIConstants{
 
     /**
      * Changes a user's password
-     * @param userId the id of the user you want to update
+     * @param passwordJson the new password
+     * @param request the session credentials which includes the user object
      * @return the response of the user being updated or not
      */
     @CrossOrigin(origins = "*")
     @RequestMapping(value= CHANGE_PASSWORD, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> changePassword(@PathVariable("userId") String userId, @RequestBody String passwordJson) {
-        try {
-            if(! MongoIdVerifier.isValidMongoId(userId)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid user ID.");
-            }
+    public ResponseEntity<?> changePassword(@RequestBody String passwordJson, HttpServletRequest request) {
 
-            boolean update = userRepository.changePassword(userId, JsonHelper.getJsonString(passwordJson, "newPassword"));
+        logger.info("Changing password");
+        try {
+            String passwordString = JsonHelper.getJsonString(passwordJson, "password");
+
+            HttpSession userSession = request.getSession(false);
+            AUser user = (AUser) userSession.getAttribute("user");
+
+            boolean update = userRepository.changePassword(user, passwordString);
 
             if (update){
                 return ResponseEntity.status(HttpStatus.OK).body("User was updated.");}
@@ -382,23 +390,28 @@ public class UsersController implements URIConstants{
 
     /**
      * Validates a user's password is correct
-     * @param userId the id of the user whos password is being reset
      * @return the response of the password being reset or not
      */
     @CrossOrigin(origins = "*")
     @RequestMapping(value= VALIDATE, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> validatePassword(@PathVariable("userId") String userId, @RequestBody String passwordJson) {
+    public ResponseEntity<?> validatePassword(@RequestBody String passwordJson, HttpServletRequest request) {
         try {
-            if(! MongoIdVerifier.isValidMongoId(userId)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid user ID.");
-            }
 
-            boolean valid = userRepository.validate(userId, JsonHelper.getJsonString(passwordJson, "password"));
+            String passwordString = JsonHelper.getJsonString(passwordJson, "password");
+
+            logger.info("Attempting to validate with: -" + passwordString+"-");
+
+            HttpSession userSession = request.getSession(false);
+            AUser user = (AUser) userSession.getAttribute("user");
+
+            boolean valid = user.isPasswordEqual(passwordString);
+//            boolean valid = user.getPassword().equals(user.get_SHA_512_SecurePassword(passwordString));
+//            boolean valid = userRepository.validate(userId, passwordString);
 
             if (valid){
                 return ResponseEntity.status(HttpStatus.OK).body("Validated");}
             else
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalidated");
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Invalid password");
 
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
