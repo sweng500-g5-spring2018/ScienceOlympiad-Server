@@ -128,6 +128,7 @@ public class UsersController implements URIConstants{
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
             }
     }
+
     /**
      * Removes a specific user from the database
      * @param userId the id of the user you want to remove
@@ -279,7 +280,7 @@ public class UsersController implements URIConstants{
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, invalid user type.");
             }
 
-            if(userToAdd instanceof Coach) {
+            if(userToAdd instanceof Coach || userToAdd instanceof Student) {
 
                 foundSchool = schoolRepository.getSchool(schoolID);
 
