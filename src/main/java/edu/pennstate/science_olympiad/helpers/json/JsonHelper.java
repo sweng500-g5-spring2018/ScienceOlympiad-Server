@@ -10,7 +10,7 @@ public class JsonHelper {
         JsonParser parser = new JsonParser();
         JsonObject jsonObj = parser.parse(jsonString).getAsJsonObject();
 
-        return jsonObj.get(strToExtract).toString();
+        return jsonObj.get(strToExtract).getAsString();
     }
 
     public static String getJsonObject (String jsonString, String strToExtract) {

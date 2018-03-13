@@ -93,30 +93,27 @@ public class UserRepository {
             mongoTemplate.remove(user);
     }
 
-    public boolean updateUser(String userType, String userId, String updatedUserJson) {
+    public boolean updateUser(AUser user, String updatedUserJson) {
         logger.info("Updating user");
         Gson gson = new Gson();
-        AUser userToUpdate = null;
         AUser infoToUse;
-        if (userType.equalsIgnoreCase(IUserTypes.ADMIN)){
-            userToUpdate = getUser(userId);
+        if (user instanceof Admin){
             infoToUse = gson.fromJson(updatedUserJson, Admin.class);
-        } else if (userType.equalsIgnoreCase(IUserTypes.COACH)){
-            userToUpdate = getUser(userId);
+        } else if (user instanceof Coach){
             infoToUse = gson.fromJson(updatedUserJson, Coach.class);
-        } else if (userType.equalsIgnoreCase(IUserTypes.JUDGE)){
-            userToUpdate = getUser(userId);
+        } else if (user instanceof Judge){
             infoToUse = gson.fromJson(updatedUserJson, Judge.class);
-        } else if (userType.equalsIgnoreCase(IUserTypes.STUDENT)){
-            userToUpdate = getUser(userId);
+        } else if (user instanceof Student){
             infoToUse = gson.fromJson(updatedUserJson, Student.class);
         } else {
             infoToUse = null;
         }
+        logger.info(infoToUse);
 
-        if (userToUpdate != null) {
-            userToUpdate.copyInfo(infoToUse);
-            mongoTemplate.save(userToUpdate);
+        if (user != null) {
+            user.copyInfo(infoToUse);
+            logger.info(user);
+            mongoTemplate.save(user);
             return true;
         }
         return false;
@@ -165,11 +162,10 @@ public class UserRepository {
         return true;
     }
 
-    public boolean changePassword(String userId, String newPassword) {
-        AUser user = mongoTemplate.findById(userId, AUser.class);
-
+    public boolean changePassword(AUser user, String newPassword) {
         if(user!=null) {
             user.setPassword(newPassword);
+            mongoTemplate.save(user);
             return true;
         }
         return false;
@@ -179,14 +175,6 @@ public class UserRepository {
         AUser user = mongoTemplate.findById(userId, AUser.class);
 
         return user != null && user.isPasswordEqual(password);
-    }
-
-    public Pair getPw(AUser user, String password) {
-
-        String oldPw = user.getPassword();
-        String newPw = user.get_SHA_512_SecurePassword(password);
-
-        return new Pair(oldPw, newPw);
     }
 
     /**
