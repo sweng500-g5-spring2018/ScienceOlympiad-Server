@@ -29,10 +29,11 @@ public class EmailSenderTest {
 
         /**
         * Run a simple test to make sure the email server is running correctly
+         * Test.com will not actually send anything right now..
         */
         @Test
         public void testEmailConnection() throws Exception {
-            emailSender.sendMail("kyle.hughes025@gmail.com","Test","This is a test email");
+            emailSender.sendMail("kyle.hughes025@test.com","Test","This is a test email");
 
         }
     }

@@ -26,7 +26,7 @@ public class Judge extends AUser {
 
     public void copyInfoFromJson(NewJudgeHelper helper) {
         this.setFirstName(helper.getFname());
-        this.setLastName(helper.getFname());
+        this.setLastName(helper.getLname());
         this.setEmailAddress(helper.getEmail());
 
     }

@@ -141,23 +141,23 @@ public class EventService {
         JsonArray newJudges = JsonHelper.getJsonList(eventJson, "newJudgeValues");
         for (int i = 0; i < newJudges.size(); i++) {
             NewJudgeHelper judge = gson.fromJson(newJudges.get(i), NewJudgeHelper.class);
-           // logger.info("got a new jduge !!! " + judge.getEmail());
             AUser newJudge = new Judge();
             ((Judge) newJudge).copyInfoFromJson(judge);
-            newJudge.setPassword("default123");
+            //password is hashed in addUser method
+            String defaultPass = "default123";
+            newJudge.setPasswordPlainText(defaultPass);
             boolean added = userRepository.addUser(newJudge);
-            //send email eventually
+            //password will now be hashed if the user doesnt already exist
             if (added) {
                 String emailToSend = newJudge.getEmailAddress();
                 String firstName = newJudge.getFirstName();
                 String emailText="Dear, " +firstName+"\n\n"+
                         " Please Login to the Science Olympiad System to complete your profile" +
-                        "\n\n Password : default123 ";
-                if(!emailToSend.contains("@test.com")) {
+                        "\n\n Password : " +defaultPass;
                     //send the email to the user
                     emailSender.sendMail(emailToSend,"Account Creation",emailText);
                     logger.info("account creation email has been sent");
-                }
+
                 addedJudges.add(newJudge.getId());
             } else {
                 logger.info("an error occured creating a new judge " + newJudge.getEmailAddress());
