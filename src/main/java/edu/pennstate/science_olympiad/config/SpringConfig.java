@@ -11,9 +11,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.servlet.config.annotation.*;
 
 import java.util.Arrays;
+import java.util.Properties;
 
 /**
  * The xml version was giving me problems for some reason so i just did the java way
@@ -21,7 +24,8 @@ import java.util.Arrays;
  */
 @EnableWebMvc
 @Configuration
-@ComponentScan(basePackages = {"edu.pennstate.science_olympiad.services","edu.pennstate.science_olympiad.repositories",
+@ComponentScan(basePackages = {"edu.pennstate.science_olympiad.sms",
+        "edu.pennstate.science_olympiad.services","edu.pennstate.science_olympiad.repositories",
         "edu.pennstate.science_olympiad.controllers",
         "edu.pennstate.science_olympiad.listeners"})
 @EnableMongoRepositories(basePackages = "edu.pennstate.science_olympiad.repositories")
@@ -60,6 +64,25 @@ public class SpringConfig extends WebMvcConfigurerAdapter {
     public @Bean
     MongoTemplate mongoTemplate() throws Exception {
         return new MongoTemplate(mongo(), getDatabaseName());
+    }
+
+    public @Bean
+    JavaMailSender getMailSenderImpl() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost("email-smtp.us-east-1.amazonaws.com");
+        mailSender.setPort(465);
+        mailSender.setProtocol("smtps");
+
+        mailSender.setUsername("AKIAIBMEOB3VNO4TGPPA");
+        mailSender.setPassword("AlX4YsPaMhBq8yWh7CN8XNW6QmNvhG9vYQUJF5d319mf");
+
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.smtps.auth", "true");
+        props.put("mail.smtp.ssl.enable", "true");
+        props.put("mail.transport.protocol", "smtps");
+        props.put("mail.debug", "true");
+
+        return mailSender;
     }
 
     @Bean

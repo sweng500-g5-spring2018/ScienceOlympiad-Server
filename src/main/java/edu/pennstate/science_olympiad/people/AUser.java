@@ -159,6 +159,7 @@ Log logger = LogFactory.getLog(getClass());
 
     public boolean isPasswordEqual(String passwordToCheck) {
         String securePasswordToCheck = get_SHA_512_SecurePassword(passwordToCheck);
+        logger.info("pw " + securePasswordToCheck + " === " + this.password);
         return securePasswordToCheck.equals(this.password);
     }
 
@@ -174,6 +175,14 @@ Log logger = LogFactory.getLog(getClass());
         this.phoneNumber = aUser.getPhoneNumber();
         this.minutesBeforeEvent = aUser.getMinutesBeforeEvent();
         this.receiveText = aUser.isReceiveText();
+    }
+
+    /**
+     * This should only be called before calling addUser in userRepository.
+     * @param password
+     */
+    public void setPasswordPlainText(String password) {
+        this.password = password;
     }
 
 }
