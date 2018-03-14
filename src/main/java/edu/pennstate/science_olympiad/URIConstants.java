@@ -43,6 +43,7 @@ public interface URIConstants {
     String USERS                    = "/users";
     String ALL_USERS                = "/allUsers";
     String GET_JUDGES               = "/getJudges";
+    String GET_COACHES              = "/getCoaches";
     String REMOVE_USER              = "/removeUser";
     String UPDATE_USER              = "/updateUser";
     String REMOVE_USERS             = "/removeUsers";

@@ -130,6 +130,25 @@ public class UsersController implements URIConstants{
     }
 
     /**
+     * Returns a list of coaches in the system
+     * URI is /sweng500/getCoaches
+     * @return all of the coaches in JSON
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= GET_COACHES, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> getAllCoaches() {
+        try {
+            //eventually change to judge
+            List<Coach> coaches = userRepository.getAllCoaches();
+
+            return ResponseEntity.status(HttpStatus.OK).body(coaches);
+
+        }catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
+        }
+    }
+
+    /**
      * Removes a specific user from the database
      * @param userId the id of the user you want to remove
      * @return the response of the user beign deleted or not

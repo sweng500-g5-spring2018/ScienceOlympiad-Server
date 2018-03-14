@@ -197,6 +197,20 @@ public class UserRepository {
     }
 
     /**
+     * Returns the coaches from the db
+     * @return
+     * @throws Exception
+     */
+    public List<Coach> getAllCoaches() throws Exception{
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_class").is("edu.pennstate.science_olympiad.people.Coach"));
+        //findall doesnt seem to work ?
+        List<Coach> coaches = mongoTemplate.find(query, Coach.class);
+        logger.info("found some coaches");
+        return coaches;
+    }
+
+    /**
      * Get a judge from the db
      * @param jid
      * @return

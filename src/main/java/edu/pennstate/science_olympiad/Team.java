@@ -20,14 +20,18 @@ public class Team {
 
     @Id
     public String id;
+
+    private String name;
+
     //The advisor or coach to the team
     @DBRef
     private Coach coach;
 
+    @DBRef
+    private School school;
+
     //All of the members of this team
     private List<Student> students;
-
-    private School school;
 
     // This is a list of Pairs. Each Pair is an event paired with the team's score at that event.
     private List<Team_Event> team_events;
