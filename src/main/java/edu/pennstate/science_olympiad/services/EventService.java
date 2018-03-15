@@ -13,12 +13,13 @@ import edu.pennstate.science_olympiad.people.*;
 import edu.pennstate.science_olympiad.repositories.BuildingRepository;
 import edu.pennstate.science_olympiad.repositories.EventRepository;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
+import edu.pennstate.science_olympiad.sms.EmailSender;
 import edu.pennstate.science_olympiad.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,8 +37,14 @@ public class EventService {
     @Autowired
     BuildingRepository buildingRepository;
 
+    @Autowired
+    EmailSender emailSender;
+
     Log logger = LogFactory.getLog(getClass());
 
+    public EmailSender getEmailSender() {
+        return emailSender;
+    }
     public EventRepository getEventRepository() {
         return eventRepository;
     }
@@ -57,7 +64,6 @@ public class EventService {
      */
     public Object addTeamToEvent(List<String> studentIds, String eventName) {
         //The students and coaches objects should have already been entered into the database so mock them here
-
         //The coach would be grabbed from the database based on a session of whos logged in
         Coach coach = new Coach();
         eventRepository.saveTestCoach(coach);
@@ -98,7 +104,7 @@ public class EventService {
     /**
      * Add an event created from the events page
      * Get the building id and existing judges from the db
-     * Create any new judges added in the form
+     * Create any new judges added in the form and send them emails
      *
      * @param eventJson The json passed into the request containing event,existing judge ids, new judge info
      * @return true if event is added
@@ -135,15 +141,25 @@ public class EventService {
         JsonArray newJudges = JsonHelper.getJsonList(eventJson, "newJudgeValues");
         for (int i = 0; i < newJudges.size(); i++) {
             NewJudgeHelper judge = gson.fromJson(newJudges.get(i), NewJudgeHelper.class);
-           // logger.info("got a new jduge !!! " + judge.getEmail());
             AUser newJudge = new Judge();
             ((Judge) newJudge).copyInfoFromJson(judge);
-            newJudge.setPassword("default123");
+            //password is hashed in addUser method
+            String defaultPass = "default123";
+            newJudge.setPasswordPlainText(defaultPass);
             boolean added = userRepository.addUser(newJudge);
-            //send email eventually
-            if (added)
+            //password will now be hashed if the user doesnt already exist
+            if (added) {
+                String emailToSend = newJudge.getEmailAddress();
+                String firstName = newJudge.getFirstName();
+                String emailText="Dear, " +firstName+"\n\n"+
+                        " Please Login to the Science Olympiad System to complete your profile" +
+                        "\n\n Password : " +defaultPass;
+                    //send the email to the user
+                    emailSender.sendMail(emailToSend,"Account Creation",emailText);
+                    logger.info("account creation email has been sent");
+
                 addedJudges.add(newJudge.getId());
-            else {
+            } else {
                 logger.info("an error occured creating a new judge " + newJudge.getEmailAddress());
             }
 
