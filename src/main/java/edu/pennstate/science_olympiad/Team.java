@@ -40,6 +40,10 @@ public class Team {
         this.coach = coach;
     }
 
+    public String getName() { return name; }
+
+    public void setName(String name) { this.name = name; }
+
     public Coach getCoach() {
         return coach;
     }

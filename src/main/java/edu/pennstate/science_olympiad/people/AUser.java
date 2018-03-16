@@ -159,7 +159,7 @@ public abstract class AUser {
 
     public boolean isPasswordEqual(String passwordToCheck) {
         String securePasswordToCheck = get_SHA_512_SecurePassword(passwordToCheck);
-        logger.info("pw " + securePasswordToCheck + " === " + this.password);
+//        logger.info("pw " + securePasswordToCheck + " === " + this.password);
         return securePasswordToCheck.equals(this.password);
     }
 

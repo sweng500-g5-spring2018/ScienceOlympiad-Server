@@ -308,6 +308,13 @@ public class UsersController implements URIConstants{
                 }
             }
 
+            //If no password provided - set a default
+            String passwordString = JsonHelper.getJsonString(userJson, "password");
+            if(passwordString == null) {
+                System.out.println("OMG PASSWORD WAS NULL");
+                userToAdd.setPasswordPlainText("Password1");
+            }
+
             boolean userAdded = userRepository.addUser(userToAdd);
 
             if (userAdded) {

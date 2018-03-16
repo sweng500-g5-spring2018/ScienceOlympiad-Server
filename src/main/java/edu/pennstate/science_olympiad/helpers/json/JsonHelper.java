@@ -1,6 +1,7 @@
 package edu.pennstate.science_olympiad.helpers.json;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -8,10 +9,22 @@ public class JsonHelper {
 
     public static String getJsonString (String jsonString, String strToExtract) {
         JsonParser parser = new JsonParser();
-        JsonObject jsonObj = parser.parse(jsonString).getAsJsonObject();
 
-        return jsonObj.get(strToExtract).getAsString();
+        try {
+            JsonElement found = parser.parse(jsonString).getAsJsonObject().get(strToExtract);
+
+            if(found != null) {
+                return found.getAsString();
+            }
+        }catch(Exception e) {
+            return null;
+        }
+
+        return null;
     }
+
+
+
 
     public static String getJsonObject (String jsonString, String strToExtract) {
         JsonParser parser = new JsonParser();
