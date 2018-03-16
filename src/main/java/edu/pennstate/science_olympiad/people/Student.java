@@ -1,12 +1,18 @@
 package edu.pennstate.science_olympiad.people;
 
+import edu.pennstate.science_olympiad.School;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+
 /**
  * A student is the participant in the Olympiad and the
  *  {@link edu.pennstate.science_olympiad.Event}s therein. There will be more of these actors than any other.
  */
 public class Student extends AUser {
-    //This is a variable to keep track of whether a student has opted out of SMS messages
+    @DBRef
     private Coach coach;
+
+    @DBRef
+    private School school;
 
     public Student() {
         super();
@@ -20,9 +26,14 @@ public class Student extends AUser {
         this.coach = coach;
     }
 
+    public School getSchool() { return school; }
+
+    public void setSchool(School school) { this.school = school; }
+
     @Override
     public void copyInfo(AUser aUser) {
         super.copyInfo(aUser);
         this.coach = ((Student)aUser).getCoach();
+        this.school = ((Student) aUser).getSchool();
     }
 }

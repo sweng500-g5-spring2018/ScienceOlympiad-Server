@@ -140,14 +140,19 @@ public class UserRepository {
         return false;
     }
 
-    public boolean addSchoolToCoach(School school, Coach coach) {
-        logger.info("Attempting to add school to coach");
+    public boolean addSchoolToUser(School school, AUser user) {
+        logger.info("Attempting to add school to coach or student");
 
-        if (coach != null) {
-            coach.setSchool(school);
-            mongoTemplate.save(coach);
+        if(user instanceof Coach) {
+            ((Coach) user).setSchool(school);
+            mongoTemplate.save(user);
+            return true;
+        } else if(user instanceof Student) {
+            ((Student) user).setSchool(school);
+            mongoTemplate.save(user);
             return true;
         }
+
         return false;
     }
 
@@ -189,6 +194,20 @@ public class UserRepository {
         List<Judge> u = mongoTemplate.find(query,Judge.class);
         logger.info("found some judge");
         return u;
+    }
+
+    /**
+     * Returns the coaches from the db
+     * @return
+     * @throws Exception
+     */
+    public List<Coach> getAllCoaches() throws Exception{
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_class").is("edu.pennstate.science_olympiad.people.Coach"));
+        //findall doesnt seem to work ?
+        List<Coach> coaches = mongoTemplate.find(query, Coach.class);
+        logger.info("found some coaches");
+        return coaches;
     }
 
     /**

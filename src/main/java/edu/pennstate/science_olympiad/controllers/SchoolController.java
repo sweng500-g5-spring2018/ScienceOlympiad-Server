@@ -63,7 +63,7 @@ public class SchoolController implements URIConstants{
 
             boolean added = schoolRepository.addNewSchool(school);
             if (added) {
-                added = userRepository.addSchoolToCoach(school, coach);
+                added = userRepository.addSchoolToUser(school, coach);
             }
 
             if (added)

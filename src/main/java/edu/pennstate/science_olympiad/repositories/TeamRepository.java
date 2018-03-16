@@ -37,7 +37,7 @@ public class TeamRepository {
     public boolean addNewTeam(Team team) {
 
         Query query = new Query();
-        query.addCriteria(Criteria.where("_id").is(team.id));
+        query.addCriteria(Criteria.where("name").is(team.getName()));
         boolean exists = mongoTemplate.exists(query, Team.class);
 
         if (!exists) {

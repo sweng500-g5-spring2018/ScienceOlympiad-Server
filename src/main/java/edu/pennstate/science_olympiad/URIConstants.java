@@ -43,13 +43,14 @@ public interface URIConstants {
     String USERS                    = "/users";
     String ALL_USERS                = "/allUsers";
     String GET_JUDGES               = "/getJudges";
+    String GET_COACHES              = "/getCoaches";
     String REMOVE_USER              = "/removeUser";
     String UPDATE_USER              = "/updateUser";
     String REMOVE_USERS             = "/removeUsers";
     String EMAIL_AVAILABLE          = "/emailAvailable";
     String ADD_USER                 = "/addUser";
     String ADD_COACH_TO_STUDENT     = "/addCoachToStudent";
-    String ADD_SCHOOL_TO_COACH      = "/addSchoolToCoach";
+    String ADD_SCHOOL_TO_USER       = "/addSchoolToUser";
     String RESET_PASSWORD           = "/resetPassword";
     String CHANGE_PASSWORD          = "/changePassword";
     String VALIDATE                 = "/validate";

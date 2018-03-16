@@ -25,7 +25,7 @@ import java.util.Date;
 
 @Document(collection="ausers")
 public abstract class AUser {
-Log logger = LogFactory.getLog(getClass());
+//Log logger = LogFactory.getLog(getClass());
 
     @Id
     public String id;
@@ -159,7 +159,7 @@ Log logger = LogFactory.getLog(getClass());
 
     public boolean isPasswordEqual(String passwordToCheck) {
         String securePasswordToCheck = get_SHA_512_SecurePassword(passwordToCheck);
-        logger.info("pw " + securePasswordToCheck + " === " + this.password);
+//        logger.info("pw " + securePasswordToCheck + " === " + this.password);
         return securePasswordToCheck.equals(this.password);
     }
 
@@ -168,7 +168,7 @@ Log logger = LogFactory.getLog(getClass());
     }
 
     public void copyInfo(AUser aUser) {
-        logger.info("Copying user info");
+//        logger.info("Copying user info");
         this.firstName = aUser.getFirstName();
         this.lastName = aUser.getLastName();
         this.emailAddress = aUser.getEmailAddress();
