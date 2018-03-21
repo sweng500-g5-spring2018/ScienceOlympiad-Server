@@ -50,14 +50,4 @@ public class FirstControllerTest {
         brandon.setPassword("password");
         assert brandon.isPasswordEqual("password");
     }
-
-    @Test
-    public void checkJudgesExist() throws Exception {
-        MvcResult result = this.mockMvc.perform(get("/getJudges")
-                .accept(MediaType.parseMediaType("application/json;charset=UTF-8")))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn();
-
-    }
 }
