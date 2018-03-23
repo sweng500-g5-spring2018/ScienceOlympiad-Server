@@ -2,6 +2,9 @@ import com.google.gson.Gson;
 import edu.pennstate.science_olympiad.config.SpringConfig;
 import edu.pennstate.science_olympiad.people.AUser;
 import edu.pennstate.science_olympiad.people.Admin;
+import edu.pennstate.science_olympiad.people.UserFactory;
+import edu.pennstate.science_olympiad.sms.EmailSender;
+import edu.pennstate.science_olympiad.sms.TextMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +31,8 @@ public class FirstControllerTest {
     private WebApplicationContext webApplicationContext;
 
     private MockMvc mockMvc;
+
+    private Admin brandon;
     @Before
     public void setup() throws Exception {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
@@ -58,6 +63,17 @@ public class FirstControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn();
+    }
 
+    @Test
+    public void sendText() throws Exception {
+        brandon = (Admin)UserFactory.getInstance().createUser("admin");
+        brandon.setFirstName("Brandon");
+        brandon.setLastName("Hessler");
+        brandon.setPhoneNumber("+19092136132");
+        brandon.setEmailAddress("test@brandonhessler.com");
+        brandon.setSiteName("Camp Couch");
+        brandon.setReceiveText(true);
+        TextMessage.getInstance().text(brandon, "This is a test");
     }
 }
