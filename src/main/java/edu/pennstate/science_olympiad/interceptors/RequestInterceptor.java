@@ -14,6 +14,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Enumeration;
 
 public class RequestInterceptor extends HandlerInterceptorAdapter {
     Log log = LogFactory.getLog(getClass());
@@ -28,7 +29,12 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
         if(request.getMethod().equalsIgnoreCase("OPTIONS")) return true;
 
         HttpSession session = request.getSession(false);
-        log.info(request.getAttribute("SmsSid") + " \n" + request.getAttributeNames().toString());
+        String printer = "";
+        Enumeration<String> em = request.getParameterNames();
+        while(em.hasMoreElements()) {
+            printer+= em.nextElement();
+        }
+        log.info(request.getParameter("SmsSid") + " \n" + printer);
         if(session == null || session.getAttribute("user") == null) {
             System.out.println("Request Interceptor says - YO SESSION IS BAD HOMIE GET OUTTA HERE");
 
