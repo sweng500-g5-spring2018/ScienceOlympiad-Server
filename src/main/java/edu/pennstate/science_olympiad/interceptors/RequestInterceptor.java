@@ -28,7 +28,7 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
         if(request.getMethod().equalsIgnoreCase("OPTIONS")) return true;
 
         HttpSession session = request.getSession(false);
-        log.info(request.getHeader("SmsSid"));
+        log.info(request.getAttribute("SmsSid") + " \n" + request.getAttributeNames().toString());
         if(session == null || session.getAttribute("user") == null) {
             System.out.println("Request Interceptor says - YO SESSION IS BAD HOMIE GET OUTTA HERE");
 
