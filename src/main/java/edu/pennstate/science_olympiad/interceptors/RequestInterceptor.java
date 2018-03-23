@@ -35,7 +35,8 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
             printer+= em.nextElement();
         }
         log.info(request.getParameter("SmsSid") + " \n" + printer);
-        if(session == null || session.getAttribute("user") == null) {
+        //if receiving message from twilio ignore this check
+        if(request.getParameter("SmsSid") == null && (session == null || session.getAttribute("user") == null)) {
             System.out.println("Request Interceptor says - YO SESSION IS BAD HOMIE GET OUTTA HERE");
 
             //Build valid response that CORS can handle before returning
@@ -52,7 +53,7 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
         }
 
         System.out.println("----- Session Status -----");
-        System.out.println("SESSION ID here: " + session.getId());
+       // System.out.println("SESSION ID here: " + session.getId());
         System.out.println("RequestInterceptor says - YO SESSION IS GOOD; CARRY ON");
         System.out.println("---------------------------");
 
