@@ -11,6 +11,8 @@ import edu.pennstate.science_olympiad.services.EventService;
 import edu.pennstate.science_olympiad.sms.CustomPhoneNumber;
 import edu.pennstate.science_olympiad.sms.TextMessage;
 import edu.pennstate.science_olympiad.util.Pair;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +40,7 @@ import java.util.List;
  */
 @RestController
 public class FirstController {
-    //Log log = LogFactory.getLog(getClass());
+    Log log = LogFactory.getLog(getClass());
     @Autowired
     MongoTemplate mongoTemplate;
     @Autowired
@@ -118,8 +121,9 @@ public class FirstController {
 
     @CrossOrigin(origins = "*")
     @RequestMapping(value="returnSms", method= RequestMethod.POST, produces={MediaType.APPLICATION_JSON_VALUE})
-    public void returnSms(String messageSid, String smsId, String accountSid, String messagingServiceSid,
-                          String from, String to, String messageBody, int numMedia) {
-        TextMessage.getInstance().text("+18056162550", "Text Received, with parameters");
+    public void returnSms(HttpServletRequest request, HttpServletResponse response) {
+        log.info("Got to the return sms endpoint");
+
+        TextMessage.getInstance().text("+19086165430", "Text Received, with parameters");
     }
 }
