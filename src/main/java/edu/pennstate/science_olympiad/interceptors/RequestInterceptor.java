@@ -2,6 +2,8 @@ package edu.pennstate.science_olympiad.interceptors;
 
 import com.google.gson.JsonObject;
 import edu.pennstate.science_olympiad.controllers.EventController;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 public class RequestInterceptor extends HandlerInterceptorAdapter {
+    Log log = LogFactory.getLog(getClass());
+
     private static final String AC_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
     private static final String AC_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials";
 
@@ -24,7 +28,7 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
         if(request.getMethod().equalsIgnoreCase("OPTIONS")) return true;
 
         HttpSession session = request.getSession(false);
-
+        log.info(request.getHeader("SmsSid"));
         if(session == null || session.getAttribute("user") == null) {
             System.out.println("Request Interceptor says - YO SESSION IS BAD HOMIE GET OUTTA HERE");
 
