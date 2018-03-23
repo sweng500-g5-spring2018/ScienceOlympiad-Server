@@ -9,8 +9,12 @@ import edu.pennstate.science_olympiad.people.UserFactory;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
 import edu.pennstate.science_olympiad.services.EventService;
 import edu.pennstate.science_olympiad.sms.CustomPhoneNumber;
+import edu.pennstate.science_olympiad.sms.TextMessage;
 import edu.pennstate.science_olympiad.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Set up all the end points, RestController automatically add
@@ -33,6 +38,8 @@ import java.util.ArrayList;
 @RestController
 public class FirstController {
     //Log log = LogFactory.getLog(getClass());
+    @Autowired
+    MongoTemplate mongoTemplate;
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -102,4 +109,17 @@ public class FirstController {
         }
     }
 
+//    @CrossOrigin(origins = "*")
+//    @RequestMapping(value="returnSms", method= RequestMethod.POST, produces={MediaType.APPLICATION_JSON_VALUE})
+//    public String returnSms() {
+//        TextMessage.getInstance().text("+18056162550", "Text Received");
+//        return "We received your message and here is your response";
+//    }
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value="returnSms", method= RequestMethod.POST, produces={MediaType.APPLICATION_JSON_VALUE})
+    public void returnSms(String messageSid, String smsId, String accountSid, String messagingServiceSid,
+                          String from, String to, String messageBody, int numMedia) {
+        TextMessage.getInstance().text("+18056162550", "Text Received, with parameters");
+    }
 }

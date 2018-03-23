@@ -36,7 +36,11 @@ public class TextMessage {
 
     public void text(AUser user, String message) {
         if (user != null && user.getPhoneNumber()!= null)
-            Message.creator(new PhoneNumber(user.getPhoneNumber()), FROM_NUMBER, message).create();
+            text(user.getPhoneNumber(), message);
+    }
+
+    public void text(String phoneNumber, String message) {
+        Message.creator(new PhoneNumber(phoneNumber), FROM_NUMBER, message).create();
     }
 
     public void textEventTime(AUser user, Event event) {
@@ -48,7 +52,7 @@ public class TextMessage {
         }
     }
 
-    private static void textBrandon(String message) {
+    public static void textBrandon(String message) {
         if (message == null)
             message = "Let's crush this course!";
 
