@@ -109,11 +109,17 @@ public class FirstController {
         }
     }
 
+//    @CrossOrigin(origins = "*")
+//    @RequestMapping(value="returnSms", method= RequestMethod.POST, produces={MediaType.APPLICATION_JSON_VALUE})
+//    public String returnSms() {
+//        TextMessage.getInstance().text("+18056162550", "Text Received");
+//        return "We received your message and here is your response";
+//    }
+
     @CrossOrigin(origins = "*")
     @RequestMapping(value="returnSms", method= RequestMethod.POST, produces={MediaType.APPLICATION_JSON_VALUE})
-    public String returnSms() {
-        TextMessage.getInstance().text("+18056162550", "Text Received");
-        return "We received your message and here is your response";
+    public void returnSms(String messageSid, String smsId, String accountSid, String messagingServiceSid,
+                          String from, String to, String messageBody, int numMedia) {
+        TextMessage.getInstance().text("+18056162550", "Text Received, with parameters");
     }
-
 }
