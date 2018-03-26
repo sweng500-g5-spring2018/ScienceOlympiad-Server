@@ -55,6 +55,7 @@ public interface URIConstants {
     String CHANGE_PASSWORD          = "/changePassword";
     String VALIDATE                 = "/validate";
     String GET_USER_PROFILE         = "/getUserProfile";
+    String GET_STUDENTS_FROM_SCHOOL = "/getStudentsFromSchool";
 
     //-----------------------------Auth URIs-----------------------------
     String LOGIN                    = "/auth/login";

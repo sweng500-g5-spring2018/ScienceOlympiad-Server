@@ -31,6 +31,7 @@ public class Team {
     private School school;
 
     //All of the members of this team
+    @DBRef
     private List<Student> students;
 
     // This is a list of Pairs. Each Pair is an event paired with the team's score at that event.

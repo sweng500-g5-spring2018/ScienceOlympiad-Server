@@ -8,6 +8,7 @@ import edu.pennstate.science_olympiad.people.*;
 import edu.pennstate.science_olympiad.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -126,19 +127,19 @@ public class UserRepository {
         return ( mongoTemplate.find(query, AUser.class).size() > 0 );
     }
 
-    public boolean addCoachToStudent(Coach coach, Student student) {
-        logger.info("Attempting to add coach to student");
-        Query query = new Query();
-        query.addCriteria(Criteria.where("emailAddress").is(student.getEmailAddress()));
-        Student dbStudent = mongoTemplate.findOne(query, Student.class);
-
-        if (dbStudent != null) {
-            dbStudent.setCoach(coach);
-            mongoTemplate.save(dbStudent);
-            return true;
-        }
-        return false;
-    }
+//    public boolean addCoachToStudent(Coach coach, Student student) {
+//        logger.info("Attempting to add coach to student");
+//        Query query = new Query();
+//        query.addCriteria(Criteria.where("emailAddress").is(student.getEmailAddress()));
+//        Student dbStudent = mongoTemplate.findOne(query, Student.class);
+//
+//        if (dbStudent != null) {
+//            dbStudent.setCoach(coach);
+//            mongoTemplate.save(dbStudent);
+//            return true;
+//        }
+//        return false;
+//    }
 
     public boolean addSchoolToUser(School school, AUser user) {
         logger.info("Attempting to add school to coach or student");
@@ -208,6 +209,26 @@ public class UserRepository {
         List<Coach> coaches = mongoTemplate.find(query, Coach.class);
         logger.info("found some coaches");
         return coaches;
+    }
+
+    /**
+     * Returns the students that attend the specific school
+     *
+     * @param schoolId the mongoID of the school
+     * @return a list of Students
+     * @throws Exception
+     */
+    public List<Student> getStudentsFromSchool(String schoolId) throws Exception{
+        Query query = new Query();
+
+        query.addCriteria( new Criteria().andOperator(
+                Criteria.where("_class").is("edu.pennstate.science_olympiad.people.Student"),
+                Criteria.where("school._id").is(new ObjectId(schoolId))
+        ));
+
+        List<Student> students = mongoTemplate.find(query, Student.class);
+
+        return students;
     }
 
     /**
