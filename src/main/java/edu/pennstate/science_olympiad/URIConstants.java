@@ -21,6 +21,13 @@ public interface URIConstants {
     //-----------------------------First Controller URIs-----------------------------
     //none
 
+    //-----------------------------Room URIs--------------------------
+    String GET_ROOMS                = "/getRooms/{buildingID}";
+    String GET_ALL_ROOMS            = "/getAllRooms";
+    String ADD_ROOM                 = "/addRoom";
+    String REMOVE_ROOM              = "/removeRoom/{roomID}";
+    String UPDATE_ROOM              = "/updateRoom/{roomID}";
+
     //-----------------------------School URIs-----------------------------
     String GET_SCHOOLS              = "/getSchools";
     String ADD_SCHOOL               = "/addSchool";
