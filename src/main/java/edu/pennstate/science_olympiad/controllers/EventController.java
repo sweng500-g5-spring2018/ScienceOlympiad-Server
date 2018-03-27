@@ -150,7 +150,7 @@ public class EventController implements URIConstants{
             if(! MongoIdVerifier.isValidMongoId(eventId)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid event ID.");            }
 
-            boolean update = eventRepository.updateEvent(eventId, eventJson);
+            boolean update = eventService.updateEvent(eventId, eventJson);
 
             if (update){
                 return ResponseEntity.status(HttpStatus.OK).body("Event was updated.");}
