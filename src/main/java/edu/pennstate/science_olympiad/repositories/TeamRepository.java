@@ -6,12 +6,12 @@ import edu.pennstate.science_olympiad.people.Coach;
 import edu.pennstate.science_olympiad.people.Student;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 @Repository("teamRepository")
@@ -80,6 +80,41 @@ public class TeamRepository {
 
         }
     }
+
+    /** @DEPRECATED probably
+     *
+     * Adds student to a team
+     * @param students students to add to the team
+     * @param team team to add the student to
+     * @return whether the student was added to the team or not
+     *        0 - Students were added
+     *        1 - A student is already on this team
+     *        2 - A Student is already on another team
+     */
+//    public short addStudentsToTeam(List<String> students, Team team) {
+//        List<Student> common = new ArrayList<Student>(team.getStudents());
+//        common.retainAll(students);
+//
+//        if (common.size() > 0)
+//            return 1;
+//        else {
+//            //Check to make sure the student is not already on another team
+//            List<Team> allTeams = mongoTemplate.findAll(Team.class);
+//            allTeams.remove(team);
+//
+//            for (Team aTeam : allTeams) {
+//                common = new ArrayList<Student>(team.getStudents());
+//                common.retainAll(students);
+//                if (common.size() > 0)
+//                    return 2;
+//            }
+//
+//            team.addStudents(students);
+//            mongoTemplate.save(team);
+//            return 0;
+//        }
+//    }
+
 
     /**
      * Adds a coach to a specified team
@@ -157,6 +192,23 @@ public class TeamRepository {
     }
 
     /**
+     * Returns the teams that belong to the specific school
+     *
+     * @param schoolId the mongoID of the school
+     * @return a list of Teams
+     * @throws Exception
+     */
+    public List<Team> getTeamsFromSchool(String schoolId) throws Exception{
+        Query query = new Query();
+
+        query.addCriteria(Criteria.where("school.$id").is(new ObjectId(schoolId)));
+
+        List<Team> teams = mongoTemplate.find(query, Team.class);
+
+        return teams;
+    }
+
+    /**
      * updates a team in the database
      * @param teamId The team to update
      * @param teamJson the info to update the team with
@@ -168,9 +220,9 @@ public class TeamRepository {
         Team dbTeam = mongoTemplate.findOne(singleQuery, Team.class);
 
         Gson gson = new Gson();
-        Team tempSchool = gson.fromJson(teamJson, Team.class);
+        Team tempTeam = gson.fromJson(teamJson, Team.class);
         if (dbTeam != null) {
-            dbTeam.copyInfo(tempSchool);
+            dbTeam.copyInfo(tempTeam);
             mongoTemplate.save(dbTeam);
             return true;
         }

@@ -8,6 +8,7 @@ import edu.pennstate.science_olympiad.helpers.mongo.MongoIdVerifier;
 import edu.pennstate.science_olympiad.people.*;
 import edu.pennstate.science_olympiad.repositories.SchoolRepository;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
+import edu.pennstate.science_olympiad.services.TeamService;
 import edu.pennstate.science_olympiad.util.Pair;
 import edu.pennstate.science_olympiad.helpers.json.JsonHelper;
 import org.apache.commons.logging.Log;
@@ -37,6 +38,8 @@ public class UsersController implements URIConstants{
     MongoTemplate mongoTemplate;
     @Autowired
     SchoolRepository schoolRepository;
+    @Autowired
+    TeamService teamService;
 
     /**
      * URI is /sweng500/createTestUser
@@ -159,8 +162,9 @@ public class UsersController implements URIConstants{
     @RequestMapping(value=GET_STUDENTS_FROM_SCHOOL, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> getStudentsFromSchool(@RequestParam(name="schoolId") String schoolId) {
         try {
-            //eventually change to judge
+            //Get students in school district and filter any that already belong to team
             List<Student> students = userRepository.getStudentsFromSchool(schoolId);
+            students = teamService.filterStudentsOnTeam(students, schoolId);
 
             return ResponseEntity.status(HttpStatus.OK).body(students);
 

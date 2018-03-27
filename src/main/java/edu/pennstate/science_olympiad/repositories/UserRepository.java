@@ -1,11 +1,9 @@
 package edu.pennstate.science_olympiad.repositories;
 
 import com.google.gson.Gson;
-import com.mongodb.WriteResult;
 import edu.pennstate.science_olympiad.helpers.request.LoginJsonHelper;
 import edu.pennstate.science_olympiad.School;
 import edu.pennstate.science_olympiad.people.*;
-import edu.pennstate.science_olympiad.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.bson.types.ObjectId;
@@ -223,7 +221,7 @@ public class UserRepository {
 
         query.addCriteria( new Criteria().andOperator(
                 Criteria.where("_class").is("edu.pennstate.science_olympiad.people.Student"),
-                Criteria.where("school._id").is(new ObjectId(schoolId))
+                Criteria.where("school.$id").is(new ObjectId(schoolId))
         ));
 
         List<Student> students = mongoTemplate.find(query, Student.class);

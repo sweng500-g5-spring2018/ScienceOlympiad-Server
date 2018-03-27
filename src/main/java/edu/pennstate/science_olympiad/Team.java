@@ -59,6 +59,10 @@ public class Team {
         return students;
     }
 
+    public void addStudents(List<Student> students) {
+        this.students.addAll(students);
+    }
+
     public void setStudents(List<Student> students) {
         this.students = students;
     }
