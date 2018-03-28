@@ -93,4 +93,22 @@ public class BuildingController implements URIConstants{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
         }
     }
+
+    /**
+     * Get a specific building
+     * @param buildingID the id of the school you want to update
+     * @return the response containing the building
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= GET_A_BUILDING, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> getABuilding(@PathVariable("buildingID") String buildingID) {
+        Building building = buildingRepository.getBuilding(buildingID);
+        if (building != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(building);
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Building could not be found");
+        }
+
+
+    }
 }

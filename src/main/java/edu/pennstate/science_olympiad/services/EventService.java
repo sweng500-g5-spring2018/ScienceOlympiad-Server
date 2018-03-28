@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import edu.pennstate.science_olympiad.Building;
 import edu.pennstate.science_olympiad.Event;
+import edu.pennstate.science_olympiad.Room;
 import edu.pennstate.science_olympiad.Team;
 import edu.pennstate.science_olympiad.helpers.json.JsonHelper;
 import edu.pennstate.science_olympiad.helpers.request.NewJudgeHelper;
@@ -12,6 +13,7 @@ import edu.pennstate.science_olympiad.many_to_many.Team_Event;
 import edu.pennstate.science_olympiad.people.*;
 import edu.pennstate.science_olympiad.repositories.BuildingRepository;
 import edu.pennstate.science_olympiad.repositories.EventRepository;
+import edu.pennstate.science_olympiad.repositories.RoomRepository;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
 import edu.pennstate.science_olympiad.sms.EmailSender;
 import edu.pennstate.science_olympiad.util.Pair;
@@ -35,7 +37,7 @@ public class EventService {
     UserRepository userRepository;
 
     @Autowired
-    BuildingRepository buildingRepository;
+    RoomRepository roomRepository;
 
     @Autowired
     EmailSender emailSender;
@@ -53,8 +55,8 @@ public class EventService {
         return userRepository;
     }
 
-    public BuildingRepository getBuildingRepository(){
-        return buildingRepository;
+    public RoomRepository getBuildingRepository(){
+        return roomRepository;
     }
 
     /**
@@ -117,12 +119,14 @@ public class EventService {
         Gson gson = new Gson();
 
         //this returns the building element
-        String buildingString = getBuildingFromJson(eventJson);
-        String actualEvent = JsonHelper.removeAndGetElement(eventJson,"building","eventJson");
+        String roomString = getBuildingFromJson(eventJson);
+        String actualEvent = JsonHelper.removeAndGetElement(eventJson,"room","eventJson");
 
-        Building eventBuilding = buildingRepository.getBuilding(buildingString);
+        logger.info("got the room string");
+        Room eventRoom = roomRepository.getRoom(roomString);
+        logger.info("found the room " + eventRoom.getRoomName());
         Event event = gson.fromJson(actualEvent, Event.class);
-        event.setLocation(eventBuilding);
+        event.setLocation(eventRoom);
         eventRepository.addEvent(event);
         // logger.info("created the event ok "+ event.getId());
 
@@ -169,14 +173,14 @@ public class EventService {
         Gson gson = new Gson();
 
 
-        String buildingString = getBuildingFromJson(eventJson);
+        String roomString = getBuildingFromJson(eventJson);
         //remove the building and return the rest of the json which will be the full event
-        String actualEvent = JsonHelper.removeAndGetElement(eventJson,"building","eventJson");
+        String actualEvent = JsonHelper.removeAndGetElement(eventJson,"room","eventJson");
 
        // save the building with the event
-        Building eventBuilding = buildingRepository.getBuilding(buildingString);
+        Room eventRoom = roomRepository.getRoom(roomString);
         Event event = gson.fromJson(actualEvent, Event.class);
-        event.setLocation(eventBuilding);
+        event.setLocation(eventRoom);
         eventRepository.updateEvent(eventId,event);
         // logger.info("created the event ok "+ event.getId());
 
@@ -198,8 +202,8 @@ public class EventService {
         String tempevent = JsonHelper.getJsonObject(eventJson, "eventJson");
 
         //this returns the building element
-        String buildingString = JsonHelper.getJsonPrimitive(tempevent, "building");
-        return buildingString;
+        String roomString = JsonHelper.getJsonPrimitive(tempevent, "room");
+        return roomString;
     }
 
     /**

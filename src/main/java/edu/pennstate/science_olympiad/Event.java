@@ -23,7 +23,8 @@ public class Event {
 
     private String name;
     private String description;
-    private Building building;
+    //private Building building;
+    private Room room;
     private Date eventDate;
     private Date startTime;
     private Date endTime;
@@ -61,12 +62,12 @@ public class Event {
         this.description = description;
     }
 
-    public Building getBuilding() {
-        return building;
+    public Room getRoom() {
+        return room;
     }
 
-    public void setLocation(Building building) {
-        this.building = building;
+    public void setLocation(Room room) {
+        this.room = room;
     }
 
     public Date getStartTime() {
@@ -94,7 +95,7 @@ public class Event {
     public void copyInfo(Event event) {
         this.name = event.getName();
         this.description = event.getDescription();
-        this.building = event.getBuilding();
+        this.room = event.getRoom();
         this.eventDate = event.getEventDate();
         this.startTime = event.getStartTime();
         this.endTime = event.getEndTime();
