@@ -14,12 +14,19 @@ public interface URIConstants {
     String ASSIGN_JUDGE_TO_EVENT    = "/assignJudgeToEvent";
     String VERIFY_EVENT             = "/verifyEvent/{eventName}";
     String REMOVE_EVENT             = "/removeEvent/{eventId}";
-    String UPDATE_EVENT             = "/updateEvent";
+    String UPDATE_EVENT             = "/updateEvent/{eventId}";
     String GET_AN_EVENT             = "/event/{eventId}";
     String GET_EVENT_JUDGES         = "/event/judges/{eventId}";
 
     //-----------------------------First Controller URIs-----------------------------
     //none
+
+    //-----------------------------Room URIs--------------------------
+    String GET_ROOMS                = "/getRooms/{buildingID}";
+    String GET_ALL_ROOMS            = "/getAllRooms";
+    String ADD_ROOM                 = "/addRoom";
+    String REMOVE_ROOM              = "/removeRoom/{roomID}";
+    String UPDATE_ROOM              = "/updateRoom/{roomID}";
 
     //-----------------------------School URIs-----------------------------
     String GET_SCHOOLS              = "/getSchools";

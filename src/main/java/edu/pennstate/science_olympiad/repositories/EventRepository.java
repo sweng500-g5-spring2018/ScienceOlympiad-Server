@@ -197,15 +197,13 @@ public class EventRepository {
      * @param eventId The event to update
      * @return whether the event was updated or not
      */
-    public boolean updateEvent (String eventId, String eventJson) {
+    public boolean updateEvent (String eventId, Event event) {
         Query singleQuery = new Query();
         singleQuery.addCriteria(Criteria.where("_id").is(eventId));
         Event dbEvent = mongoTemplate.findOne(singleQuery, Event.class);
 
-        Gson gson = new Gson();
-        Event tempEvent = gson.fromJson(eventJson, Event.class);
         if (dbEvent != null) {
-            dbEvent.copyInfo(tempEvent);
+            dbEvent.copyInfo(event);
             mongoTemplate.save(dbEvent);
             return true;
         }
@@ -254,4 +252,5 @@ public class EventRepository {
         }
         return true;
     }
+
 }
