@@ -40,7 +40,7 @@ public interface URIConstants {
     String ADD_TEAM                 = "/addTeam";
     String ADD_STUDENT_TO_TEAM      = "/addStudentToTeam";
     String ADD_COACH_TO_TEAM        = "/addCoachToTeam";
-    String REMOVE_TEAM              = "/removeTeam";
+    String REMOVE_TEAM              = "/removeTeam/{teamId}";
     String UPDATE_TEAM              = "/updateTeam";
     String REMOVE_STUDENT_FROM_TEAM = "/removeStudentFromTeam";
     String REMOVE_STUDENT_FROM_SPECIFIC_TEAM = "/removeStudentFromSpecificTeam";
