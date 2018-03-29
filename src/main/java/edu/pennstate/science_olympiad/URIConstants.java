@@ -63,6 +63,10 @@ public interface URIConstants {
     String VALIDATE                 = "/validate";
     String GET_USER_PROFILE         = "/getUserProfile";
 
+    //-----------------------------Communication URIs-----------------------------
+    String SEND_TEST_EMAIL          = "/sendTestEmail";
+    String SEND_TEST_TEXT           = "/sendTestText";
+
     //-----------------------------Auth URIs-----------------------------
     String LOGIN                    = "/auth/login";
     String LOGOUT                   = "/auth/logout";

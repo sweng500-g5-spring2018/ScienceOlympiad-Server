@@ -20,14 +20,20 @@ public class EmailSender {
      * @param subject the subject line
      * @param text the text of the email message
      */
-    public void sendMail(String to, String subject, String text) {
-        if(!to.contains("@test.com")) {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(text);
-            message.setFrom("group5capstone@sweng500.com");
-            mailSender.send(message);
+    public boolean sendMail(String to, String subject, String text) {
+        try {
+            if (!to.contains("@test.com")) {
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo(to);
+                message.setSubject(subject);
+                message.setText(text);
+                message.setFrom("group5capstone@sweng500.com");
+                mailSender.send(message);
+                return true;
+            }
+        } catch (Exception e) {
+            return false;
         }
+        return false;
     }
 }

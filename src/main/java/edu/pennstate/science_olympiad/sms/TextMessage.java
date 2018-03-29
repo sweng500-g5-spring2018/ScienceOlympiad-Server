@@ -5,9 +5,11 @@ import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import edu.pennstate.science_olympiad.Event;
 import edu.pennstate.science_olympiad.people.AUser;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 
+@Component
 public class TextMessage {
 
     // Find your Account Sid and Token at twilio.com/user/account
@@ -34,13 +36,22 @@ public class TextMessage {
         return INSTANCE;
     }
 
-    public void text(AUser user, String message) {
-        if (user != null && user.getPhoneNumber()!= null)
-            text(user.getPhoneNumber(), message);
+    public boolean text(AUser user, String message) {
+        try {
+            if (user != null && user.getPhoneNumber() != null) {
+                text(user.getPhoneNumber(), message);
+                return true;
+            }
+        } catch (Exception e){}
+        return false;
     }
 
-    public void text(String phoneNumber, String message) {
-        Message.creator(new PhoneNumber(phoneNumber), FROM_NUMBER, message).create();
+    public boolean text(String phoneNumber, String message) {
+        try {
+            Message.creator(new PhoneNumber(phoneNumber), FROM_NUMBER, message).create();
+            return true;
+        } catch (Exception e) {}
+        return false;
     }
 
     public void textEventTime(AUser user, Event event) {
