@@ -198,6 +198,39 @@ public class UsersController implements URIConstants{
         }
     }
 
+
+
+    /**
+     * Removes a specific user from the database
+     * @param userId the id of the user you want to remove
+     * @return the response of the user beign deleted or not
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= "/deleteStudent/{studentId}", method= RequestMethod.DELETE ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> deleteStudent(@PathVariable("studentId") String studentId) {
+        try {
+            if(! MongoIdVerifier.isValidMongoId(studentId)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid user ID.");
+            }
+
+            Student student = (Student) userRepository.getUser(studentId);
+//            boolean removed = userRepository.(userId);
+
+            boolean result = teamService.removeStudentFromAnyTeam(student);
+            System.out.println("team service remove student from team result: " + result);
+
+            boolean deleteResult = userRepository.removeUser(student);
+
+            if (deleteResult){
+                return ResponseEntity.status(HttpStatus.OK).body("User was removed.");}
+            else
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User could not be removed, doesn't exist.");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
+        }
+    }
+
     /**
      * Updates a specific user to the database
      * @return the response of the user being updated or not

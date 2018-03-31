@@ -99,7 +99,13 @@ public class TeamService {
             logger.info("Failed to filter students on team by school");
             return null;
         }
+    }
 
+    public boolean removeStudentFromAnyTeam(Student student) {
+
+        //Check if student on a team... if so, remove student
+        boolean returned = teamRepository.removeStudentFromTeam(student);
+        return returned;
     }
 
 }

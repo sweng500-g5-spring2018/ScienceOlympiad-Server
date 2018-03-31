@@ -85,6 +85,13 @@ public class UserRepository {
         return false;
     }
 
+    public boolean removeUser(AUser user) {
+        logger.info("Removing user");
+
+        mongoTemplate.remove(user);
+        return true;
+    }
+
     public void removeAllUsers() {
         logger.info("Attempting to remove all users");
         List<AUser> users = mongoTemplate.findAll(AUser.class);
