@@ -53,7 +53,7 @@ public class TeamService {
      * @param studentsToTeamJson - The JSON string containing an eventID and a list of studentIDs
      * @return Success no matter what
      */
-    public Team addStudentsToTeam(String studentsToTeamJson) {
+    public Team updateTeamWithNewStudents(String studentsToTeamJson) {
         try{
             Gson gson = new Gson();
             String teamId = JsonHelper.getIdFromJson(studentsToTeamJson);

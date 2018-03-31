@@ -94,20 +94,20 @@ public class TeamController implements URIConstants{
 
     /**
      * Adds the students to the team by updating the team using the provided JSON
-     * @param studentsToTeamJson the JSON string containing a team object with new students to add
+     * @param studentsToTeamJson the JSON string containing a team object with updated students JSON
      * @return the success or failure of the request
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value= "/addStudentsToTeam", method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value= "/updateStudentsInTeam", method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> addStudentToTeam(@RequestBody String studentsToTeamJson) {
         logger.info("Adding students to team");
         try {
-            Team updatedTeam = teamService.addStudentsToTeam(studentsToTeamJson);
+            Team updatedTeam = teamService.updateTeamWithNewStudents(studentsToTeamJson);
 
             if(updatedTeam != null) {
                 return ResponseEntity.status(HttpStatus.OK).body(updatedTeam);
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add students to team.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update team.");
             }
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
