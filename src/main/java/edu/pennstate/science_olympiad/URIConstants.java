@@ -44,6 +44,7 @@ public interface URIConstants {
     String UPDATE_TEAM              = "/updateTeam";
     String REMOVE_STUDENT_FROM_TEAM = "/removeStudentFromTeam";
     String REMOVE_STUDENT_FROM_SPECIFIC_TEAM = "/removeStudentFromSpecificTeam";
+    String UPDATE_STUDENTS_IN_TEAM  = "updateStudentsInTeam";
 
     //-----------------------------Users URIs-----------------------------
     String TEST_USER                = "/createTestUser";
@@ -63,6 +64,7 @@ public interface URIConstants {
     String VALIDATE                 = "/validate";
     String GET_USER_PROFILE         = "/getUserProfile";
     String GET_STUDENTS_FROM_SCHOOL = "/getStudentsFromSchool";
+    String DELETE_STUDENT           = "/deleteStudent/{studentId}";
 
     //-----------------------------Auth URIs-----------------------------
     String LOGIN                    = "/auth/login";

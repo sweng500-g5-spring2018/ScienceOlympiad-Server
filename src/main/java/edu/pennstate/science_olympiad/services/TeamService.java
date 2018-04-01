@@ -104,8 +104,7 @@ public class TeamService {
     public boolean removeStudentFromAnyTeam(Student student) {
 
         //Check if student on a team... if so, remove student
-        boolean returned = teamRepository.removeStudentFromTeam(student);
-        return returned;
+        return teamRepository.removeStudentFromTeam(student);
     }
 
 }

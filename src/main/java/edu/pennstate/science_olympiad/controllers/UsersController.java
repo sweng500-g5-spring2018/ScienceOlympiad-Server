@@ -202,11 +202,11 @@ public class UsersController implements URIConstants{
 
     /**
      * Removes a specific user from the database
-     * @param userId the id of the user you want to remove
+     * @param studentId the id of the user you want to remove
      * @return the response of the user beign deleted or not
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value= "/deleteStudent/{studentId}", method= RequestMethod.DELETE ,produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value= DELETE_STUDENT, method= RequestMethod.DELETE ,produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> deleteStudent(@PathVariable("studentId") String studentId) {
         try {
             if(! MongoIdVerifier.isValidMongoId(studentId)) {
@@ -214,10 +214,16 @@ public class UsersController implements URIConstants{
             }
 
             Student student = (Student) userRepository.getUser(studentId);
-//            boolean removed = userRepository.(userId);
 
-            boolean result = teamService.removeStudentFromAnyTeam(student);
-            System.out.println("team service remove student from team result: " + result);
+            if(student == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Student does not exist.");
+            }
+
+            boolean studentNotReferenced = teamService.removeStudentFromAnyTeam(student);
+
+            if( ! studentNotReferenced) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("The student is referenced and this could not be resolved.");
+            }
 
             boolean deleteResult = userRepository.removeUser(student);
 

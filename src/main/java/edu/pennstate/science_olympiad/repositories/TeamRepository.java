@@ -12,6 +12,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository("teamRepository")
@@ -155,13 +157,17 @@ public class TeamRepository {
      * @return if the student was removed from the team
      */
     public boolean removeStudentFromTeam(Student student, Team team) {
-        if (team != null) {
-            if (team.getStudents().contains(student)) {
-                team.getStudents().remove(student);
+        if(student != null && team != null) {
+            boolean isDeleted = team.getStudents().remove(student);
+
+            if(isDeleted) {
                 mongoTemplate.save(team);
                 return true;
+            } else {
+                return false;
             }
         }
+
         return false;
     }
 
@@ -171,13 +177,24 @@ public class TeamRepository {
      * @return if the student was removed from the team
      */
     public boolean removeStudentFromTeam(Student student) {
-        for (Team team : getTeams()) {
-            if (team.getStudents().contains(student)) {
-                removeStudentFromTeam(student, team);
-                return true;
+
+        List<Team> teamsForSchool = getTeamsFromSchool(student.getSchool().getId());
+
+        for (Team team : teamsForSchool) {
+
+            Student studToRemove = null;
+            for(Student stud : team.getStudents()) {
+                if(stud.getId().equals(student.getId())) {
+                    studToRemove = stud;
+                }
+            }
+
+            if(studToRemove != null) {
+                return removeStudentFromTeam(studToRemove, team);
             }
         }
-        return false;
+
+        return true;
     }
 
     /**
@@ -198,14 +215,19 @@ public class TeamRepository {
      * @return a list of Teams
      * @throws Exception
      */
-    public List<Team> getTeamsFromSchool(String schoolId) throws Exception{
-        Query query = new Query();
+    public List<Team> getTeamsFromSchool(String schoolId) {
+        try {
+            Query query = new Query();
 
-        query.addCriteria(Criteria.where("school.$id").is(new ObjectId(schoolId)));
+            query.addCriteria(Criteria.where("school.$id").is(new ObjectId(schoolId)));
 
-        List<Team> teams = mongoTemplate.find(query, Team.class);
+            List<Team> teams = mongoTemplate.find(query, Team.class);
 
-        return teams;
+            return teams;
+        } catch (Exception e) {
+            return new ArrayList<Team>();
+        }
+
     }
 
     /**

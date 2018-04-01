@@ -20,6 +20,8 @@ public class School {
         this.schoolName = schoolName;
     }
 
+    public String getId() { return this.id; }
+
     public String getSchoolName() {
         return schoolName;
     }

@@ -12,9 +12,6 @@ public class MongoIdVerifier {
      * @return whether or not it has the valid structure of a mongoId
      */
     public static boolean isValidMongoId(String mongoId) {
-        System.out.println(mongoId);
-        System.out.println(mongoId.length());
-
         if(mongoId == null) {
             return false;
         } else if (mongoId.length() != 24) {
