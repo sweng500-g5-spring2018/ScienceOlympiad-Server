@@ -7,6 +7,7 @@ public interface URIConstants {
     String ADD_BUILDING             = "/addBuilding";
     String REMOVE_BUILDING          = "/removeBuilding/{buildingID}";
     String UPDATE_BUILDING          = "/updateBuilding/{buildingID}";
+    String GET_A_BUILDING           = "/getBuilding/{buildingID}";
 
     //-----------------------------Event URIs------------------------------
     String GET_EVENTS               = "/events";
