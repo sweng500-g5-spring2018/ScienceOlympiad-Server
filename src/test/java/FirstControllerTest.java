@@ -74,6 +74,6 @@ public class FirstControllerTest {
         brandon.setEmailAddress("test@brandonhessler.com");
         brandon.setSiteName("Camp Couch");
         brandon.setReceiveText(true);
-        TextMessage.getInstance().text(brandon, "This is a test");
+//        TextMessage.getInstance().text(brandon, "This is a test");
     }
 }
