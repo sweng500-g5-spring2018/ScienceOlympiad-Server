@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import edu.pennstate.science_olympiad.Building;
 import edu.pennstate.science_olympiad.Event;
+import edu.pennstate.science_olympiad.Room;
 import edu.pennstate.science_olympiad.Team;
 import edu.pennstate.science_olympiad.helpers.json.JsonHelper;
 import edu.pennstate.science_olympiad.helpers.request.NewJudgeHelper;
@@ -12,6 +13,7 @@ import edu.pennstate.science_olympiad.many_to_many.Team_Event;
 import edu.pennstate.science_olympiad.people.*;
 import edu.pennstate.science_olympiad.repositories.BuildingRepository;
 import edu.pennstate.science_olympiad.repositories.EventRepository;
+import edu.pennstate.science_olympiad.repositories.RoomRepository;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
 import edu.pennstate.science_olympiad.sms.EmailSender;
 import edu.pennstate.science_olympiad.util.Pair;
@@ -35,7 +37,7 @@ public class EventService {
     UserRepository userRepository;
 
     @Autowired
-    BuildingRepository buildingRepository;
+    RoomRepository roomRepository;
 
     @Autowired
     EmailSender emailSender;
@@ -53,8 +55,8 @@ public class EventService {
         return userRepository;
     }
 
-    public BuildingRepository getBuildingRepository(){
-        return buildingRepository;
+    public RoomRepository getBuildingRepository(){
+        return roomRepository;
     }
 
     /**
@@ -113,66 +115,26 @@ public class EventService {
     public boolean addEvent(String eventJson) throws Exception {
         //store all existing judge ids and new judge ids for mapping
         List<String> addedJudges = new ArrayList<String>();
-        //logger.info("got into add event -- " + eventJson);
 
         Gson gson = new Gson();
-        String tempevent = JsonHelper.getJsonObject(eventJson, "eventJson");
 
         //this returns the building element
-        String buildingString = JsonHelper.getJsonPrimitive(tempevent,"building");
-        String actualEvent = JsonHelper.removeAndGetElement(eventJson,"building","eventJson");
-        logger.info("got the building!!! " + buildingString);
+        String roomString = getBuildingFromJson(eventJson);
+        String actualEvent = JsonHelper.removeAndGetElement(eventJson,"room","eventJson");
 
-        Building eventBuilding = buildingRepository.getBuilding(buildingString);
+        logger.info("got the room string");
+        Room eventRoom = roomRepository.getRoom(roomString);
+        logger.info("found the room " + eventRoom.getRoomName());
         Event event = gson.fromJson(actualEvent, Event.class);
-        event.setLocation(eventBuilding);
+        event.setLocation(eventRoom);
         eventRepository.addEvent(event);
         // logger.info("created the event ok "+ event.getId());
 
-        //get any existing judges selected in the json request
-        JsonArray currentJudges = JsonHelper.getJsonList(eventJson, "existingJudgeValues");
-        for (int i = 0; i < currentJudges.size(); i++) {
-            logger.info("getting currentJudges" + currentJudges.get(i));
-            //strip off the quotes for some reason the json comes with in the json list
-            addedJudges.add(currentJudges.get(i).toString().replace("\"",""));
-        }
-
         //create any new judges found
-        JsonArray newJudges = JsonHelper.getJsonList(eventJson, "newJudgeValues");
-        for (int i = 0; i < newJudges.size(); i++) {
-            NewJudgeHelper judge = gson.fromJson(newJudges.get(i), NewJudgeHelper.class);
-            AUser newJudge = new Judge();
-            ((Judge) newJudge).copyInfoFromJson(judge);
-            //password is hashed in addUser method
-            String defaultPass = "default123";
-            newJudge.setPasswordPlainText(defaultPass);
-            boolean added = userRepository.addUser(newJudge);
-            //password will now be hashed if the user doesnt already exist
-            if (added) {
-                String emailToSend = newJudge.getEmailAddress();
-                String firstName = newJudge.getFirstName();
-                String emailText="Dear, " +firstName+"\n\n"+
-                        " Please Login to the Science Olympiad System to complete your profile" +
-                        "\n\n Password : " +defaultPass;
-                    //send the email to the user
-                    emailSender.sendMail(emailToSend,"Account Creation",emailText);
-                    logger.info("account creation email has been sent");
-
-                addedJudges.add(newJudge.getId());
-            } else {
-                logger.info("an error occured creating a new judge " + newJudge.getEmailAddress());
-            }
-
-        }
-        //map all of the added/existing judges ids to the event id
-        for (String aJudge : addedJudges) {
-            Judge_Event je = new Judge_Event(event.getId(), aJudge);
-            eventRepository.mapJudgeToEvent(je);
-            logger.info("mapping this judge " + aJudge);
-        }
+        addedJudges = getOldNewJudges(eventJson);
+        mapJudgesToEvent(event.getId(),addedJudges);
 
         return true;
-
     }
 
     public List<Judge> getEventJudges(String eventId) {
@@ -202,5 +164,105 @@ public class EventService {
             return judgesRemoved;
         }
         return false;
+    }
+
+    public boolean updateEvent(String eventId, String eventJson) {
+
+        List<String> addedJudges = new ArrayList<String>();
+
+        Gson gson = new Gson();
+
+
+        String roomString = getBuildingFromJson(eventJson);
+        //remove the building and return the rest of the json which will be the full event
+        String actualEvent = JsonHelper.removeAndGetElement(eventJson,"room","eventJson");
+
+       // save the building with the event
+        Room eventRoom = roomRepository.getRoom(roomString);
+        Event event = gson.fromJson(actualEvent, Event.class);
+        event.setLocation(eventRoom);
+        eventRepository.updateEvent(eventId,event);
+        // logger.info("created the event ok "+ event.getId());
+
+        //remove all judge_Events
+        eventRepository.removeEventJudges(eventId);
+        //insert the new judges
+        addedJudges = getOldNewJudges(eventJson);
+        mapJudgesToEvent(eventId,addedJudges);
+
+        return true;
+    }
+
+    /**
+     * Extract the building from the json request
+     * @param eventJson
+     * @return
+     */
+    private String getBuildingFromJson(String eventJson) {
+        String tempevent = JsonHelper.getJsonObject(eventJson, "eventJson");
+
+        //this returns the building element
+        String roomString = JsonHelper.getJsonPrimitive(tempevent, "room");
+        return roomString;
+    }
+
+    /**
+     * Extract the old judges and new judges from the json request
+     * @param eventJson
+     * @return
+     */
+    private List<String> getOldNewJudges(String eventJson) {
+        List<String> addedJudges = new ArrayList<String> ();
+        //create any new judges found
+        Gson gson = new Gson();
+        //get any existing judges selected in the json request
+        JsonArray currentJudges = JsonHelper.getJsonList(eventJson, "existingJudgeValues");
+        for (int i = 0; i < currentJudges.size(); i++) {
+            logger.info("getting currentJudges" + currentJudges.get(i));
+            //strip off the quotes for some reason the json comes with in the json list
+            addedJudges.add(currentJudges.get(i).toString().replace("\"",""));
+        }
+        //get any new judges
+        JsonArray newJudges = JsonHelper.getJsonList(eventJson, "newJudgeValues");
+        for (int i = 0; i < newJudges.size(); i++) {
+            NewJudgeHelper judge = gson.fromJson(newJudges.get(i), NewJudgeHelper.class);
+            AUser newJudge = new Judge();
+            ((Judge) newJudge).copyInfoFromJson(judge);
+            //password is hashed in addUser method
+            String defaultPass = "default123";
+            newJudge.setPasswordPlainText(defaultPass);
+            boolean added = userRepository.addUser(newJudge);
+            //password will now be hashed if the user doesnt already exist
+            if (added) {
+                addedJudges.add(newJudge.getId());
+                String emailToSend = newJudge.getEmailAddress();
+                String firstName = newJudge.getFirstName();
+                String emailText="Dear, " +firstName+"\n\n"+
+                        " Please Login to the Science Olympiad System to complete your profile" +
+                        "\n\n Password : " +defaultPass;
+                //send the email to the user
+                emailSender.sendMail(emailToSend,"Account Creation",emailText);
+                logger.info("account creation email has been sent");
+            } else {
+                logger.info("an error occured creating a new judge " + newJudge.getEmailAddress());
+            }
+
+        }
+
+        return addedJudges;
+    }
+
+    /**
+     * Create the many to many mapping of judges to events
+     * @param eventId
+     * @param judges
+     */
+    private void mapJudgesToEvent(String eventId,List<String> judges) {
+        //map all of the added/existing judges ids to the event id
+        for (String aJudge : judges) {
+            Judge_Event je = new Judge_Event(eventId, aJudge);
+            eventRepository.mapJudgeToEvent(je);
+            logger.info("mapping this judge " + aJudge);
+        }
     }
 }
