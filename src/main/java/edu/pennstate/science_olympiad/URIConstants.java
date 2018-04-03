@@ -67,6 +67,10 @@ public interface URIConstants {
     String GET_STUDENTS_FROM_SCHOOL = "/getStudentsFromSchool";
     String DELETE_STUDENT           = "/deleteStudent/{studentId}";
 
+    //-----------------------------Communication URIs-----------------------------
+    String SEND_TEST_EMAIL          = "/sendTestEmail";
+    String SEND_TEST_TEXT           = "/sendTestText";
+
     //-----------------------------Auth URIs-----------------------------
     String LOGIN                    = "/auth/login";
     String LOGOUT                   = "/auth/logout";
