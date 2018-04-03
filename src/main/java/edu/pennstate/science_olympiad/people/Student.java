@@ -9,21 +9,10 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
  */
 public class Student extends AUser {
     @DBRef
-    private Coach coach;
-
-    @DBRef
     private School school;
 
     public Student() {
         super();
-    }
-
-    public Coach getCoach() {
-        return coach;
-    }
-
-    public void setCoach(Coach coach) {
-        this.coach = coach;
     }
 
     public School getSchool() { return school; }
@@ -33,7 +22,6 @@ public class Student extends AUser {
     @Override
     public void copyInfo(AUser aUser) {
         super.copyInfo(aUser);
-        this.coach = ((Student)aUser).getCoach();
         this.school = ((Student) aUser).getSchool();
     }
 }

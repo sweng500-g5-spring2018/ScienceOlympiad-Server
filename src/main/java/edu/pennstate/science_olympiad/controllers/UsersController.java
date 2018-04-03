@@ -8,6 +8,7 @@ import edu.pennstate.science_olympiad.helpers.mongo.MongoIdVerifier;
 import edu.pennstate.science_olympiad.people.*;
 import edu.pennstate.science_olympiad.repositories.SchoolRepository;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
+import edu.pennstate.science_olympiad.services.TeamService;
 import edu.pennstate.science_olympiad.util.Pair;
 import edu.pennstate.science_olympiad.helpers.json.JsonHelper;
 import org.apache.commons.logging.Log;
@@ -37,6 +38,8 @@ public class UsersController implements URIConstants{
     MongoTemplate mongoTemplate;
     @Autowired
     SchoolRepository schoolRepository;
+    @Autowired
+    TeamService teamService;
 
     /**
      * URI is /sweng500/createTestUser
@@ -149,6 +152,28 @@ public class UsersController implements URIConstants{
     }
 
     /**
+     * Returns a list of students that attend a specified school
+     * URI is /sweng500/getStudentsFromSchool
+     *
+     * @param schoolId the mongoID of the school
+     * @return a list of the students attending the specified school
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value=GET_STUDENTS_FROM_SCHOOL, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> getStudentsFromSchool(@RequestParam(name="schoolId") String schoolId) {
+        try {
+            //Get students in school district and filter any that already belong to team
+            List<Student> students = userRepository.getStudentsFromSchool(schoolId);
+            students = teamService.filterStudentsOnTeam(students, schoolId);
+
+            return ResponseEntity.status(HttpStatus.OK).body(students);
+
+        }catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
+        }
+    }
+
+    /**
      * Removes a specific user from the database
      * @param userId the id of the user you want to remove
      * @return the response of the user beign deleted or not
@@ -164,6 +189,45 @@ public class UsersController implements URIConstants{
             boolean removed = userRepository.removeUser(userId);
 
             if (removed){
+                return ResponseEntity.status(HttpStatus.OK).body("User was removed.");}
+            else
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User could not be removed, doesn't exist.");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
+        }
+    }
+
+
+
+    /**
+     * Removes a specific user from the database
+     * @param studentId the id of the user you want to remove
+     * @return the response of the user beign deleted or not
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= DELETE_STUDENT, method= RequestMethod.DELETE ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> deleteStudent(@PathVariable("studentId") String studentId) {
+        try {
+            if(! MongoIdVerifier.isValidMongoId(studentId)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid user ID.");
+            }
+
+            Student student = (Student) userRepository.getUser(studentId);
+
+            if(student == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Student does not exist.");
+            }
+
+            boolean studentNotReferenced = teamService.removeStudentFromAnyTeam(student);
+
+            if( ! studentNotReferenced) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("The student is referenced and this could not be resolved.");
+            }
+
+            boolean deleteResult = userRepository.removeUser(student);
+
+            if (deleteResult){
                 return ResponseEntity.status(HttpStatus.OK).body("User was removed.");}
             else
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("User could not be removed, doesn't exist.");
@@ -343,25 +407,25 @@ public class UsersController implements URIConstants{
      * @param studentIdJson the JSON of the student who is getting a new coach
      * @return STATUS 200 if coach is successfully set, STATUS 409 if coach was not set, STATUS 400 if bad JSON provided
      */
-    @CrossOrigin(origins = "*")
-    @RequestMapping(value= ADD_COACH_TO_STUDENT, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> addCoachToStudent(@RequestBody String coachIdJson, @RequestBody String studentIdJson) {
-        try {
-
-            Coach coach = (Coach) userRepository.getUser(JsonHelper.getIdFromJson(coachIdJson));
-            Student student = (Student) userRepository.getUser(JsonHelper.getIdFromJson(studentIdJson));
-
-            boolean added = userRepository.addCoachToStudent(coach, student);
-
-            if (added)
-                return ResponseEntity.status(HttpStatus.OK).body("Coach was added to student.");
-            else
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Coach was not added.");
-
-        } catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
-        }
-    }
+//    @CrossOrigin(origins = "*")
+//    @RequestMapping(value= ADD_COACH_TO_STUDENT, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+//    public ResponseEntity<?> addCoachToStudent(@RequestBody String coachIdJson, @RequestBody String studentIdJson) {
+//        try {
+//
+//            Coach coach = (Coach) userRepository.getUser(JsonHelper.getIdFromJson(coachIdJson));
+//            Student student = (Student) userRepository.getUser(JsonHelper.getIdFromJson(studentIdJson));
+//
+//            boolean added = userRepository.addCoachToStudent(coach, student);
+//
+//            if (added)
+//                return ResponseEntity.status(HttpStatus.OK).body("Coach was added to student.");
+//            else
+//                return ResponseEntity.status(HttpStatus.CONFLICT).body("Coach was not added.");
+//
+//        } catch(Exception e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
+//        }
+//    }
 
     /**
      * The POST request for adding a a coach to a student
