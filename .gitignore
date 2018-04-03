@@ -1,0 +1,13 @@
+
+#Ignore Config:
+/src/main/java/edu/pennstate/science_olympiad/config/SpringConfig.java
+
+#Ignore Test Builds:
+/target
+
+#Mac Crap:
+web/.DS_Store
+.DS_Store
+
+#IntelliJ Configs
+.idea

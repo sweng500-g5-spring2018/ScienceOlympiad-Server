@@ -23,13 +23,11 @@ public class Event {
 
     private String name;
     private String description;
-    private Building building;
+    //private Building building;
+    private Room room;
     private Date eventDate;
     private Date startTime;
     private Date endTime;
-
-    //may not need this because when we add a team to this event we will create it in the service
-    private List<Team_Event> team_events;
 
     public Event() {
 
@@ -64,12 +62,12 @@ public class Event {
         this.description = description;
     }
 
-    public Building getBuilding() {
-        return building;
+    public Room getRoom() {
+        return room;
     }
 
-    public void setLocation(Building building) {
-        this.building = building;
+    public void setLocation(Room room) {
+        this.room = room;
     }
 
     public Date getStartTime() {
@@ -88,27 +86,6 @@ public class Event {
         this.endTime = endTime;
     }
 
-
-    public List<Team_Event> getTeam_events() {
-        if (team_events == null)
-            team_events = new ArrayList<Team_Event>();
-        return team_events;
-    }
-
-    public void addTeamToEvent(Team team) {
-        getTeam_events().add(new Team_Event(team, this));
-    }
-
-    public boolean removeTeam(Team team) {
-        for (Iterator<Team_Event> team_event_Iter = team_events.iterator(); team_event_Iter.hasNext();) {
-            if (team_event_Iter.next().getTeam() == team) {
-                team_event_Iter.remove();
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public String toString() {
         Gson gson = new Gson();
@@ -118,9 +95,9 @@ public class Event {
     public void copyInfo(Event event) {
         this.name = event.getName();
         this.description = event.getDescription();
-        this.building = event.getBuilding();
+        this.room = event.getRoom();
+        this.eventDate = event.getEventDate();
         this.startTime = event.getStartTime();
         this.endTime = event.getEndTime();
-        this.team_events = event.getTeam_events();
     }
 }
