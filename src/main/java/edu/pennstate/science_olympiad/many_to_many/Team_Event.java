@@ -11,28 +11,33 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * {@link edu.pennstate.science_olympiad.Team}s and {@link edu.pennstate.science_olympiad.Event}s
  * and this also records the team's score for the event
  */
-@Document(collection="team_events")
+@Document(collection = "team_events")
 public class Team_Event {
     @Id
     public String id;
-    @DBRef
-    private Team team;
-    @DBRef
-    private Event event;
+    private String teamId;
+    private String eventId;
     private Double score;
 
-    public Team_Event(Team team, Event event) {
-        this.team = team;
-        this.event = event;
+    public Team_Event(String teamId, String eventId) {
+        this.teamId = teamId;
+        this.eventId = eventId;
     }
 
-    public Team getTeam() {
-        return team;
+    public String getTeamId() {
+        return teamId;
     }
-    public void setTeam(Team t)  {this.team =t;}
 
-    public Event getEvent() {
-        return event;
+    public void setTeamId(String teamId) {
+        this.teamId = teamId;
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
     }
 
     public Double getScore() {

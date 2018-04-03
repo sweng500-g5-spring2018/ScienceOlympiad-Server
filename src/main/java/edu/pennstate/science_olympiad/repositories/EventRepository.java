@@ -253,4 +253,41 @@ public class EventRepository {
         return true;
     }
 
+
+    /**
+     * Register a team for an event unless it is already registered
+     * @param teamId
+     * @param eventId
+     * @return
+     */
+    public boolean registerTeamToEvent(String teamId, String eventId) {
+        Query singleQuery = new Query();
+        singleQuery.addCriteria(Criteria.where("eventId").is(eventId));
+        singleQuery.addCriteria(Criteria.where("teamId").is(teamId));
+        List<Team_Event> existing = mongoTemplate.find(singleQuery,Team_Event.class,"team_events");
+        logger.info("existing -- " + existing.size());
+        if(existing.size() > 0) {
+            return false;
+        }
+        Team_Event te = new Team_Event(teamId,eventId);
+        mongoTemplate.insert(te);
+        return true;
+    }
+
+    /**
+     * Get all team ids registered for this event id
+     * @param id
+     * @return
+     */
+    public List<String> getTeamIds(String id) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("eventId").is(id));
+        List<Team_Event> teamE = mongoTemplate.find(query, Team_Event.class);
+        List<String> teamIds = new ArrayList<String>();
+        for(Team_Event je : teamE) {
+            teamIds.add(je.getTeamId());
+        }
+
+        return teamIds;
+    }
 }

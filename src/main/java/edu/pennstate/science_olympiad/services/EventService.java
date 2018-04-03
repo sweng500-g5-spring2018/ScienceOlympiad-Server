@@ -11,10 +11,7 @@ import edu.pennstate.science_olympiad.helpers.request.NewJudgeHelper;
 import edu.pennstate.science_olympiad.many_to_many.Judge_Event;
 import edu.pennstate.science_olympiad.many_to_many.Team_Event;
 import edu.pennstate.science_olympiad.people.*;
-import edu.pennstate.science_olympiad.repositories.BuildingRepository;
-import edu.pennstate.science_olympiad.repositories.EventRepository;
-import edu.pennstate.science_olympiad.repositories.RoomRepository;
-import edu.pennstate.science_olympiad.repositories.UserRepository;
+import edu.pennstate.science_olympiad.repositories.*;
 import edu.pennstate.science_olympiad.sms.EmailSender;
 import edu.pennstate.science_olympiad.util.Pair;
 import org.apache.commons.logging.Log;
@@ -40,6 +37,9 @@ public class EventService {
     RoomRepository roomRepository;
 
     @Autowired
+    TeamRepository teamRepository;
+
+    @Autowired
     EmailSender emailSender;
 
     Log logger = LogFactory.getLog(getClass());
@@ -50,42 +50,14 @@ public class EventService {
     public EventRepository getEventRepository() {
         return eventRepository;
     }
-
     public UserRepository getUserRepository() {
         return userRepository;
     }
-
     public RoomRepository getBuildingRepository(){
         return roomRepository;
     }
-
-    /**
-     * @param studentIds - The students selected to add to the team - just testing
-     * @param eventName  -The event we are adding a team for, used to lookup event
-     * @return Success no matter what
-     */
-    public Object addTeamToEvent(List<String> studentIds, String eventName) {
-        //The students and coaches objects should have already been entered into the database so mock them here
-        //The coach would be grabbed from the database based on a session of whos logged in
-        Coach coach = new Coach();
-        eventRepository.saveTestCoach(coach);
-        //make db request to get the students with these id's entered in form
-        Student student = new Student();
-        student.setFirstName("Kyle");
-        student.setLastName("Hughes");
-        eventRepository.saveTestStudent(student);
-        //Create the team based on the gathered coach and the students found from the ids
-        Team team = new Team(coach);
-        eventRepository.createTeam(team);
-
-        //based on the event name, get the Event already saved in the database ("FirstEvent")
-        Event event = eventRepository.getEvent(eventName);
-
-        //now finally create a new team event object
-        Team_Event teamEvent = new Team_Event(team, event);
-
-        eventRepository.createTeamEvent(teamEvent);
-        return new Pair<String, String>("Success", "added a new team to the event");
+    public TeamRepository getTeamRepository(){
+        return teamRepository;
     }
 
     /**
@@ -264,5 +236,25 @@ public class EventService {
             eventRepository.mapJudgeToEvent(je);
             logger.info("mapping this judge " + aJudge);
         }
+    }
+
+    /**
+     * Grab the teams registered to this event to display on the details
+     * @param eventId
+     * @return
+     */
+    public List<Team> getEventTeams(String eventId) {
+        Event theEvent = eventRepository.getEvent(eventId);
+        List<Team> teams = new ArrayList<Team>();
+        //query the many to many
+        List<String> teamIds = eventRepository.getTeamIds(theEvent.getId());
+        //grab the actual judge object
+        logger.info("found some judgeIds for this event --" + teamIds.size());
+        for(String tid : teamIds) {
+            Team team = teamRepository.getTeam(tid);
+            logger.info("Getting the teams for this event " + team.getName());
+            teams.add(team);
+        }
+        return teams;
     }
 }
