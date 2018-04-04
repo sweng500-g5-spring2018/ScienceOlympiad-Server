@@ -4,10 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.sun.deploy.panel.JHighDPITable;
 import edu.pennstate.science_olympiad.Event;
 import edu.pennstate.science_olympiad.URIConstants;
 import edu.pennstate.science_olympiad.helpers.mongo.MongoIdVerifier;
 import edu.pennstate.science_olympiad.helpers.request.NewJudgeHelper;
+import edu.pennstate.science_olympiad.many_to_many.Team_Event;
 import edu.pennstate.science_olympiad.people.Judge;
 import edu.pennstate.science_olympiad.repositories.EventRepository;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
@@ -191,6 +193,76 @@ public class EventController implements URIConstants{
     public ResponseEntity<?> getEventJudges(@PathVariable("eventId") String eventId) {
         List<Judge> judges = eventService.getEventJudges(eventId);
         return ResponseEntity.status(HttpStatus.OK).body(judges);
+    }
+
+    /**
+     * This is an endpoint that allows for a judge to add a score to a team_event object
+     * @param score the score that a team earned, this will be a double although it is passed as a string
+     * @param teamIdJson the teamId of the specified team, in json format
+     * @param eventIdJson the eventId of the specified event, in json format
+     * @return Whether the score was added or not
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= ADD_SCORE, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> addScoreToTeamEvent(@PathVariable("score") String score,
+                                                 @RequestBody String teamIdJson, @RequestBody String eventIdJson) {
+        String teamId = JsonHelper.getIdFromJson(teamIdJson);
+        String eventId = JsonHelper.getIdFromJson(eventIdJson);
+        boolean added = eventRepository.addScoreToTeamEvent(Double.parseDouble(score), teamId, eventId);
+        if (added)
+            return ResponseEntity.status(HttpStatus.OK).body(added);
+        else
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(added);
+    }
+
+    /**
+     * This will grab all of the scores for all of the teams_event objects.
+     *
+     * This is useful for determining who the winner will be at the end.
+     * @return the list of all of the team_event objects in the database
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= GET_SCORES, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> getAllTeamEventScores() {
+        List<Team_Event> team_events = eventRepository.getAllScores();
+        if (team_events != null)
+            return ResponseEntity.status(HttpStatus.OK).body(team_events);
+        else
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Unable to query for team_events");
+    }
+
+    /**
+     * This will grab all of the team_event objects for a specified team.
+     *
+     * This is useful for if we want to show a team their scores thus far in the competition
+     * @param teamId the ID if the team that we would like the team_event objects for
+     * @return team_event objects for a specified team
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= GET_SCORES_FOR_TEAM, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> getTeamScores(@PathVariable("teamId") String teamId) {
+        List<Team_Event> team_events = eventRepository.getAllScoresForTeam(teamId);
+        if (team_events != null)
+            return ResponseEntity.status(HttpStatus.OK).body(team_events);
+        else
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Unable to query for team_events");
+    }
+
+    /**
+     * This will grab all of the team_event objects for a specified event.
+     *
+     * This is useful for the sheet that will allow the judge to see all of the events for the event that they are currently judging
+     * @param eventId the ID if the event that we would like the team_event objects for
+     * @return team_event objects for a specified event
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= GET_SCORES_FOR_EVENT, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> getEventScores(@PathVariable("eventId") String eventId) {
+        List<Team_Event> team_events = eventRepository.getAllScoresForEvent(eventId);
+        if (team_events != null)
+            return ResponseEntity.status(HttpStatus.OK).body(team_events);
+        else
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Unable to query for team_events");
     }
 
 }
