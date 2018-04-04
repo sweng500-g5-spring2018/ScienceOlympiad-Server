@@ -2,6 +2,7 @@ package edu.pennstate.science_olympiad.repositories;
 
 import com.google.gson.Gson;
 import edu.pennstate.science_olympiad.Team;
+import edu.pennstate.science_olympiad.people.AUser;
 import edu.pennstate.science_olympiad.people.Coach;
 import edu.pennstate.science_olympiad.people.Student;
 import org.apache.commons.logging.Log;
@@ -14,6 +15,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Repository("teamRepository")
@@ -249,6 +251,27 @@ public class TeamRepository {
             return true;
         }
         return false;
+    }
+
+    /**
+     * This user is a coach so only display his teams
+     * @param user
+     */
+    public List<Team> getTeamByCoach(Coach user) {
+        List<Team> teams = getTeams();
+        logger.info("found some teams -- "+ teams.size());
+        Iterator<Team> itty = teams.iterator();
+        //remove any teams not created by this coach
+        while(itty.hasNext()){
+            Team te = itty.next();
+            logger.info("coach name "+ te.getCoach().getEmailAddress());
+            if(!te.getCoach().getId().equals(user.getId())) {
+                logger.info("coach removed");
+
+                itty.remove();
+            }
+        }
+        return teams;
     }
 
 //    Note there is no method for removing a coach, instead just replace them. Weird things are bound to happen

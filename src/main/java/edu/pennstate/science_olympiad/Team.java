@@ -34,9 +34,6 @@ public class Team {
     @DBRef
     private List<Student> students;
 
-    // This is a list of Pairs. Each Pair is an event paired with the team's score at that event.
-    private List<Team_Event> team_events;
-
     public Team(Coach coach) {
         this.coach = coach;
     }
@@ -75,31 +72,9 @@ public class Team {
         this.school = school;
     }
 
-    public List<Team_Event> getTeam_events() {
-        if (team_events == null)
-            team_events = new ArrayList<Team_Event>();
-
-        return team_events;
-    }
-
-    public void addEvent(Event event) {
-        team_events.add(new Team_Event(this, event));
-    }
-
-    public boolean removeEvent(Event event) {
-        for (Iterator<Team_Event> team_event_Iter = team_events.iterator(); team_event_Iter.hasNext();) {
-            if (team_event_Iter.next().getEvent() == event) {
-                team_event_Iter.remove();
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void copyInfo(Team team) {
         this.coach = team.getCoach();
         this.students = team.getStudents();
         this.school = team.getSchool();
-        this.team_events = team.getTeam_events();
     }
 }
