@@ -90,7 +90,8 @@ public interface URIConstants {
                                         "/getSchools/**",
                                         "/resetPassword",
                                         "/getJudges",
-                                        "/validate"
+                                        "/validate",
+                                        "/resetPassword"
                                        };
 
 

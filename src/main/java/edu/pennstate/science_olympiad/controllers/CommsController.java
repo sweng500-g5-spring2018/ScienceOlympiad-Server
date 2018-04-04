@@ -25,6 +25,11 @@ public class CommsController implements URIConstants{
     @Autowired
     MongoTemplate mongoTemplate;
 
+    /**
+     * This sends out a test email to an email address that is provided by the user
+     * @param toAddressJson the address, in JSON format, to send the email to
+     * @return whether or not the email was sent
+     */
     @CrossOrigin(origins = "*")
     @RequestMapping(value= SEND_TEST_EMAIL, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> sendTestEmail(@RequestBody String toAddressJson) {
@@ -50,6 +55,12 @@ public class CommsController implements URIConstants{
         }
     }
 
+
+    /**
+     * Sends a generic text message to the phone number provided by the user
+     * @param toNumberJson the reformatted phone number, in string json format, to send the text to
+     * @return whether or not the text was sent
+     */
     @CrossOrigin(origins = "*")
     @RequestMapping(value= SEND_TEST_TEXT, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> sendTestText(@RequestBody String toNumberJson) {

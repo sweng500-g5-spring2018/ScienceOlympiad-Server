@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import edu.pennstate.science_olympiad.helpers.request.LoginJsonHelper;
 import edu.pennstate.science_olympiad.School;
 import edu.pennstate.science_olympiad.people.*;
+import edu.pennstate.science_olympiad.sms.EmailSender;
+import edu.pennstate.science_olympiad.util.RandomString;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.bson.types.ObjectId;
@@ -25,6 +27,8 @@ public class UserRepository {
     Log logger = LogFactory.getLog(getClass());
     @Autowired
     MongoTemplate mongoTemplate;
+    @Autowired
+    EmailSender emailSender;
 
     public MongoTemplate getMongoTemplate() {
         return mongoTemplate;
@@ -162,15 +166,26 @@ public class UserRepository {
         return false;
     }
 
-    public boolean resetPassword(String userId) {
-        AUser user = mongoTemplate.findById(userId, AUser.class);
-        //password cleared
-        user.setPassword("");
-        mongoTemplate.save(user);
-        //send and email to the user telling them to change their password
-        //the link from the email should put them on a separate page that lets them set a new password
-        JOptionPane.showMessageDialog(null, "Password as been reset and email has been sent to the window licker that forgot their password");
-        return true;
+    public boolean resetPassword(String emailAddress) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("emailAddress").is(emailAddress));
+        AUser user = mongoTemplate.findOne(query, AUser.class);
+        if (user != null) {
+            //password cleared
+            String random = new RandomString(20).nextString();
+            user.setPassword(random);
+            mongoTemplate.save(user);
+            //send and email to the user telling them to change their password
+            boolean sent = emailSender.sendMail(user.getEmailAddress(), "Password Reset",
+                    "Dear " + user.getFirstName() + ",\n\nYour password has successfully been reset on " +
+                            "http://www.sweng500.com . If you feel you have been hacked feel free to give us a call " +
+                            "between the hours of 10pm and 4am (EST) at 610-752-5349.\n\nYour temporary password is: " +
+                            random + "\n\n\nThank you for choosing Science Olympiad!\n\n\n::cough::cough::A+::cough::cough::");
+
+            logger.info("Password as been reset and email has been sent to the window licker that forgot their password");
+            return sent;
+        } else
+            return false;
     }
 
     public boolean changePassword(AUser user, String newPassword) {

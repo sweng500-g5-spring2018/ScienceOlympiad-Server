@@ -455,31 +455,6 @@ public class UsersController implements URIConstants{
     }
 
     /**
-     * Resets a user's password
-     * @param userId the id of the user whos password is being reset
-     * @return the response of the password being reset or not
-     */
-    @CrossOrigin(origins = "*")
-    @RequestMapping(value= RESET_PASSWORD, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> resetUserPassword(@PathVariable("userId") String userId) {
-        try {
-            if(! MongoIdVerifier.isValidMongoId(userId)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid user ID.");
-            }
-
-            boolean removed = userRepository.resetPassword(userId);
-
-            if (removed){
-                return ResponseEntity.status(HttpStatus.OK).body("User was removed.");}
-            else
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("User could not be removed, doesn't exist.");
-
-        } catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
-        }
-    }
-
-    /**
      * Validates a user's password is correct
      * @return the response of the password being reset or not
      */
@@ -509,4 +484,25 @@ public class UsersController implements URIConstants{
         }
     }
 
+    /**
+     * Resets a user's password
+     * @param emailAddress the email address of the user whos password is being reset
+     * @return the response of the password being reset or not
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= RESET_PASSWORD, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> resetUserPassword(@PathVariable("emailAddress") String emailAddress) {
+        try {
+
+            boolean sent = userRepository.resetPassword(emailAddress);
+
+            if (sent){
+                return ResponseEntity.status(HttpStatus.OK).body("User's password was reset.");}
+            else
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Password could not be reset.");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
+        }
+    }
 }
