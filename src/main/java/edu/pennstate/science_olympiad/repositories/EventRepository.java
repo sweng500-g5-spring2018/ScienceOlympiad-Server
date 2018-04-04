@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
+import java.awt.event.TextEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -251,6 +252,77 @@ public class EventRepository {
             }
         }
         return true;
+    }
+
+    /**
+     * Adds a score for a team for a specific event
+     * @param score the score the team earned
+     * @param teamId the team id that earned the score
+     * @param eventId the event that the team earned the score participating in
+     * @return Whether the score was added or not
+     */
+    public boolean addScoreToTeamEvent(Double score, String teamId, String eventId) {
+        try {
+            Query query = new Query();
+            query.addCriteria(Criteria.where("teamId").is(teamId)).addCriteria(Criteria.where("eventId").is(eventId));
+            logger.info("Query " + query.toString());
+            Team_Event dbTeamEvent = mongoTemplate.findOne(query, Team_Event.class);
+            if (dbTeamEvent != null) {
+                dbTeamEvent.setScore(score);
+                mongoTemplate.save(dbTeamEvent);
+                return true;
+            }
+            return false;
+        } catch(Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Gets all of the Team_Event objects with includes the team, the event, and the scores
+     * @return List<Team_Event>
+     */
+    public List<Team_Event> getAllScores() {
+        try {
+            List<Team_Event> team_events = mongoTemplate.findAll(Team_Event.class);
+            if (team_events != null)
+                return team_events;
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }
+
+    /**
+     * Gets all of the Team_Event objects for a specific team.
+     * @param teamId the ID for the team that you want the event and score information for
+     * @return The event and score information for the team specified
+     */
+    public List<Team_Event> getAllScoresForTeam(String teamId) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("teamId").is(teamId));
+        logger.info("Query " + query.toString());
+        List<Team_Event> dbTeamEvents = mongoTemplate.find(query, Team_Event.class);
+        if (dbTeamEvents != null) {
+            return dbTeamEvents;
+        }
+        return null;
+    }
+
+    /**
+     * Gets all of the Team_Event objects for a specific event.
+     * @param eventId the ID for the event that you want the teams who participated and the score information for
+     * @return The team and score information for the specified event
+     */
+    public List<Team_Event> getAllScoresForEvent(String eventId) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("eventId").is(eventId));
+        logger.info("Query " + query.toString());
+        List<Team_Event> dbTeamEvents = mongoTemplate.find(query, Team_Event.class);
+        if (dbTeamEvents != null) {
+            return dbTeamEvents;
+        }
+        return null;
     }
 
 

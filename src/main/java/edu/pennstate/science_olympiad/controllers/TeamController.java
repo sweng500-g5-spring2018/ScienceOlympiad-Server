@@ -11,6 +11,7 @@ import edu.pennstate.science_olympiad.people.Student;
 import edu.pennstate.science_olympiad.repositories.TeamRepository;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
 import edu.pennstate.science_olympiad.helpers.json.JsonHelper;
+import edu.pennstate.science_olympiad.services.TeamService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ import java.util.List;
  */
 @RestController
 public class TeamController implements URIConstants{
+    @Autowired
+    private TeamService teamService;
     @Autowired
     private TeamRepository teamRepository;
     @Autowired
@@ -118,9 +121,33 @@ public class TeamController implements URIConstants{
     }
 
     /**
+     * Adds the students to the team by updating the team using the provided JSON
+     * @param studentsToTeamJson the JSON string containing a team object with updated students JSON
+     * @return the success or failure of the request
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= UPDATE_STUDENTS_IN_TEAM, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> addStudentToTeam(@RequestBody String studentsToTeamJson) {
+        logger.info("Adding students to team");
+        try {
+            Team updatedTeam = teamService.updateTeamWithNewStudents(studentsToTeamJson);
+
+            if(updatedTeam != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(updatedTeam);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update team.");
+            }
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
+        }
+    }
+
+
+
+    /**
      * Adds a coach to a team, a team can only have one coach
-     * @param coachIdJson
-     * @param teamIdJson
+     * @param coachIdJson the mongoID of the coach to add to the team
+     * @param teamIdJson the mongoID of the team to add the coach to
      * @return
      */
     @CrossOrigin(origins = "*")
@@ -194,29 +221,29 @@ public class TeamController implements URIConstants{
         }
     }
 
-    /**
+    /** @DEPRECATED PROBABLY
      * Removes a student from a specific team
      * @param studentIdJson the student ID, in JSON format
      * @return Whether the action was carried out or not
      */
-    @CrossOrigin(origins = "*")
-    @RequestMapping(value= REMOVE_STUDENT_FROM_SPECIFIC_TEAM, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> removeStudentFromTeam(@RequestBody String studentIdJson) {
-        logger.info("Removing student from team");
-        try {
-            Student student = (Student) userRepository.getUser(JsonHelper.getIdFromJson(studentIdJson));
-
-            boolean remove = teamRepository.removeStudentFromTeam(student);
-
-            if (remove)
-                return ResponseEntity.status(HttpStatus.OK).body("Student was removed.");
-            else
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Student not removed, could not find student or team.");
-
-        } catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
-        }
-    }
+//    @CrossOrigin(origins = "*")
+//    @RequestMapping(value= REMOVE_STUDENT_FROM_SPECIFIC_TEAM, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+//    public ResponseEntity<?> removeStudentFromTeam(@RequestBody String studentIdJson) {
+//        logger.info("Removing student from team");
+//        try {
+//            Student student = (Student) userRepository.getUser(JsonHelper.getIdFromJson(studentIdJson));
+//
+//            boolean remove = teamRepository.removeStudentFromTeam(student);
+//
+//            if (remove)
+//                return ResponseEntity.status(HttpStatus.OK).body("Student was removed.");
+//            else
+//                return ResponseEntity.status(HttpStatus.CONFLICT).body("Student not removed, could not find student or team.");
+//
+//        } catch(Exception e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
+//        }
+//    }
 
     /**
      * Removes a specific team from the database

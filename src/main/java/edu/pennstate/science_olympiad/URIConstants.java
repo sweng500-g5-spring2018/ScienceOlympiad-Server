@@ -18,6 +18,10 @@ public interface URIConstants {
     String UPDATE_EVENT             = "/updateEvent/{eventId}";
     String GET_AN_EVENT             = "/event/{eventId}";
     String GET_EVENT_JUDGES         = "/event/judges/{eventId}";
+    String ADD_SCORE                = "/addScore/{score}";
+    String GET_SCORES               = "/getScores";
+    String GET_SCORES_FOR_TEAM      = "/getTeamScores{teamId}";
+    String GET_SCORES_FOR_EVENT     = "/getEventScores{eventId}";
     String GET_EVENT_TEAMS          = "/event/teams/{eventId}";
     String REGISTER_TEAM_FOR_EVENT  ="/event/{eventId}/{teamId}";
 
@@ -43,11 +47,12 @@ public interface URIConstants {
     String ADD_TEAM                 = "/addTeam";
     String ADD_STUDENT_TO_TEAM      = "/addStudentToTeam";
     String ADD_COACH_TO_TEAM        = "/addCoachToTeam";
-    String REMOVE_TEAM              = "/removeTeam";
+    String REMOVE_TEAM              = "/removeTeam/{teamId}";
     String UPDATE_TEAM              = "/updateTeam";
     String REMOVE_STUDENT_FROM_TEAM = "/removeStudentFromTeam";
     String REMOVE_STUDENT_FROM_SPECIFIC_TEAM = "/removeStudentFromSpecificTeam";
     String GET_TEAMS_BY_USER        ="/getTeamsByUser";
+    String UPDATE_STUDENTS_IN_TEAM  = "updateStudentsInTeam";
 
     //-----------------------------Users URIs-----------------------------
     String TEST_USER                = "/createTestUser";
@@ -66,6 +71,12 @@ public interface URIConstants {
     String CHANGE_PASSWORD          = "/changePassword";
     String VALIDATE                 = "/validate";
     String GET_USER_PROFILE         = "/getUserProfile";
+    String GET_STUDENTS_FROM_SCHOOL = "/getStudentsFromSchool";
+    String DELETE_STUDENT           = "/deleteStudent/{studentId}";
+
+    //-----------------------------Communication URIs-----------------------------
+    String SEND_TEST_EMAIL          = "/sendTestEmail";
+    String SEND_TEST_TEXT           = "/sendTestText";
 
     //-----------------------------Auth URIs-----------------------------
     String LOGIN                    = "/auth/login";

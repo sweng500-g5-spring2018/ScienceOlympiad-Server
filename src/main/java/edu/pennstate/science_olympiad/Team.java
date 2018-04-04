@@ -31,6 +31,7 @@ public class Team {
     private School school;
 
     //All of the members of this team
+    @DBRef
     private List<Student> students;
 
     public Team(Coach coach) {
@@ -53,6 +54,10 @@ public class Team {
         if (students == null)
             students = new ArrayList<Student>();
         return students;
+    }
+
+    public void addStudents(List<Student> students) {
+        this.students.addAll(students);
     }
 
     public void setStudents(List<Student> students) {
