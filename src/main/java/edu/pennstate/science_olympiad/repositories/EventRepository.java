@@ -362,4 +362,21 @@ public class EventRepository {
 
         return teamIds;
     }
+
+    /**
+     * Remove the teams registered for an event on event delete
+     * @param eventId
+     * @return
+     */
+    public boolean removeEventTeams(String eventId) {
+        Query singleQuery = new Query();
+        singleQuery.addCriteria(Criteria.where("eventId").is(eventId));
+        List<Team_Event> teams = mongoTemplate.find(singleQuery, Team_Event.class);
+        if (teams != null && teams.size() >0 ) {
+            for(Team_Event te : teams) {
+                mongoTemplate.remove(te);
+            }
+        }
+        return true;
+    }
 }

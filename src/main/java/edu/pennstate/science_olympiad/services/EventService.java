@@ -125,7 +125,7 @@ public class EventService {
     }
 
     /**
-     * Remove an event and all of its event_judges (eventually remove teams)
+     * Remove an event and all of its event_judges and event_teams
      * @param eventId
      * @return
      */
@@ -133,7 +133,8 @@ public class EventService {
         boolean eventRemove = eventRepository.removeEvent(eventId);
         if(eventRemove) {
             boolean judgesRemoved = eventRepository.removeEventJudges(eventId);
-            return judgesRemoved;
+            boolean teamsRemoved = eventRepository.removeEventTeams(eventId);
+            return (judgesRemoved&&teamsRemoved);
         }
         return false;
     }
