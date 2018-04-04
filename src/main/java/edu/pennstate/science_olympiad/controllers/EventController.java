@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.sun.deploy.panel.JHighDPITable;
 import edu.pennstate.science_olympiad.Event;
+import edu.pennstate.science_olympiad.Team;
 import edu.pennstate.science_olympiad.URIConstants;
 import edu.pennstate.science_olympiad.helpers.mongo.MongoIdVerifier;
 import edu.pennstate.science_olympiad.helpers.request.NewJudgeHelper;
@@ -264,5 +264,40 @@ public class EventController implements URIConstants{
         else
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Unable to query for team_events");
     }
+
+    /**
+     * Get this events judges, this is in the works and not working currently
+     * @param eventId the id of the event you want to update
+     * @return the Event object c
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= GET_EVENT_TEAMS, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> getEventTeams(@PathVariable("eventId") String eventId) {
+        List<Team> teams = eventService.getEventTeams(eventId);
+        return ResponseEntity.status(HttpStatus.OK).body(teams);
+    }
+
+    /**
+     * Grabs a specific event to view
+     * @param eventId the id of the event you want to update
+     * @return the Event object c
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= REGISTER_TEAM_FOR_EVENT, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> registerTeamForEvent(@PathVariable("eventId") String eventId,@PathVariable("teamId") String teamId) {
+        logger.info("Trying to register a team to an event " + eventId + "  ---  " + teamId);
+        if(! MongoIdVerifier.isValidMongoId(eventId)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid event ID.");
+        } else if(! MongoIdVerifier.isValidMongoId(teamId)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid team ID.");
+        }
+        if(eventRepository.registerTeamToEvent(teamId,eventId)) {
+            return ResponseEntity.status(HttpStatus.OK).body("Success, team has been registered");
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Team is already registered");
+        }
+    }
+
+
 
 }

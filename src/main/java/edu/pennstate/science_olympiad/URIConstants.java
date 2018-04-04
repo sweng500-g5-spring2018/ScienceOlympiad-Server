@@ -22,6 +22,8 @@ public interface URIConstants {
     String GET_SCORES               = "/getScores";
     String GET_SCORES_FOR_TEAM      = "/getTeamScores{teamId}";
     String GET_SCORES_FOR_EVENT     = "/getEventScores{eventId}";
+    String GET_EVENT_TEAMS          = "/event/teams/{eventId}";
+    String REGISTER_TEAM_FOR_EVENT  ="/event/{eventId}/{teamId}";
 
     //-----------------------------First Controller URIs-----------------------------
     //none
@@ -49,6 +51,7 @@ public interface URIConstants {
     String UPDATE_TEAM              = "/updateTeam";
     String REMOVE_STUDENT_FROM_TEAM = "/removeStudentFromTeam";
     String REMOVE_STUDENT_FROM_SPECIFIC_TEAM = "/removeStudentFromSpecificTeam";
+    String GET_TEAMS_BY_USER        ="/getTeamsByUser";
     String UPDATE_STUDENTS_IN_TEAM  = "updateStudentsInTeam";
 
     //-----------------------------Users URIs-----------------------------

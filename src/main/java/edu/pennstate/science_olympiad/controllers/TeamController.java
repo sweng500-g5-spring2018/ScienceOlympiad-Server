@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import edu.pennstate.science_olympiad.Team;
 import edu.pennstate.science_olympiad.URIConstants;
 import edu.pennstate.science_olympiad.helpers.mongo.MongoIdVerifier;
+import edu.pennstate.science_olympiad.people.AUser;
+import edu.pennstate.science_olympiad.people.Admin;
 import edu.pennstate.science_olympiad.people.Coach;
 import edu.pennstate.science_olympiad.people.Student;
 import edu.pennstate.science_olympiad.repositories.TeamRepository;
@@ -18,6 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -38,6 +42,30 @@ public class TeamController implements URIConstants{
     public List<Team> getTeams() {
         logger.info("Retrieving all teams");
         return teamRepository.getTeams();
+    }
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= GET_TEAMS_BY_USER, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> getTeamsByUser(HttpServletRequest request) {
+        logger.info("Retrieving all teams by this user");
+        try {
+            HttpSession userSession = request.getSession(false);
+            if(userSession == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No active session exists.");
+            }
+
+            AUser user = (AUser) userSession.getAttribute("user");
+            if(user instanceof Coach) {
+                logger.info("Coach instance");
+               return  ResponseEntity.status(HttpStatus.OK).body(teamRepository.getTeamByCoach((Coach) user));
+            } else if(user instanceof Admin) {
+                return  ResponseEntity.status(HttpStatus.OK).body(teamRepository.getTeams());
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User should not be able to see any teams.");
+            }
+        }catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
+        }
     }
 
     @CrossOrigin(origins = "*")
