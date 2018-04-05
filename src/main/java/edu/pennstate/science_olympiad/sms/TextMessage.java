@@ -5,19 +5,18 @@ import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import edu.pennstate.science_olympiad.Event;
 import edu.pennstate.science_olympiad.people.AUser;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
 
-@Component
 public class TextMessage {
 
     // Find your Account Sid and Token at twilio.com/user/account
     private static TextMessage INSTANCE;
-    private static final String ACCOUNT_SID = "AC9984cfcb94d38cbd74d5cfbb4cf5aa17";
-    private static final String AUTH_TOKEN = "cba1ed3da109226750b8fd9b90000f55";
-    private static final PhoneNumber FROM_NUMBER = new PhoneNumber("+18143478009");
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+
+    @Autowired
+    TwilioInfo twilioInfo;
 
 //    public static void main(String[] args) {
 //        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
@@ -27,7 +26,7 @@ public class TextMessage {
 //    }
 
     private TextMessage() {
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+        Twilio.init(twilioInfo.getAccountSid(), twilioInfo.getAuthToken());
     }
 
     public static TextMessage getInstance() {
@@ -48,7 +47,7 @@ public class TextMessage {
 
     public boolean text(String phoneNumber, String message) {
         try {
-            Message.creator(new PhoneNumber(phoneNumber), FROM_NUMBER, message).create();
+            Message.creator(new PhoneNumber(phoneNumber), twilioInfo.getPhoneNumber(), message).create();
             return true;
         } catch (Exception e) {}
         return false;
@@ -63,33 +62,7 @@ public class TextMessage {
         }
     }
 
-    public static void textBrandon(String message) {
-        if (message == null)
-            message = "Let's crush this course!";
-
-        Message.creator(new PhoneNumber("+19092136132"), FROM_NUMBER, message).create();
-    }
-
-    private static void textJeff(String message) {
-        if (message == null)
-            message = "Let's crush this course!";
-
-        Message.creator(new PhoneNumber("+15709050467"), FROM_NUMBER, message).create();
-    }
-    private static void textKyle(String message) {
-        if (message == null)
-            message = "Let's crush this course!";
-
-        Message.creator(new PhoneNumber("+19086165430"), FROM_NUMBER, message).create();
-    }
-    private static void textRyan(String message) {
-        if (message == null)
-            message = "Let's crush this course!";
-
-        Message.creator(new PhoneNumber("+14127607290"), FROM_NUMBER, message).create();
-    }
-
-    //This is for the bulk notifications (up to 10,000 at a time). I am not sure where we get the SERVICE_SID
+//This is for the bulk notifications (up to 10,000 at a time). I am not sure where we get the SERVICE_SID
     /*
      *import java.util.Arrays;
 import java.util.List;

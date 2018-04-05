@@ -21,8 +21,6 @@ public class CommsController implements URIConstants{
     @Autowired
     EmailSender emailSender;
     @Autowired
-    TextMessage textMessage;
-    @Autowired
     MongoTemplate mongoTemplate;
 
     /**

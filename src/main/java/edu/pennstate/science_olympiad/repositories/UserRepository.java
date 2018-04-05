@@ -178,7 +178,7 @@ public class UserRepository {
             //send and email to the user telling them to change their password
             boolean sent = emailSender.sendMail(user.getEmailAddress(), "Password Reset",
                     "Dear " + user.getFirstName() + ",\n\nYour password has successfully been reset on " +
-                            "http://www.sweng500.com . If you feel you have been hacked feel free to give us a call " +
+                            "https://www.sweng500.com . If you feel you have been hacked feel free to give us a call " +
                             "between the hours of 10pm and 4am (EST) at 610-752-5349.\n\nYour temporary password is: " +
                             random + "\n\n\nThank you for choosing Science Olympiad!\n\n\n::cough::cough::A+::cough::cough::");
 
@@ -186,6 +186,12 @@ public class UserRepository {
             return sent;
         } else
             return false;
+    }
+
+    public void signUpEmail(String emailAddress, String firstName, String userType, String password) {
+        emailSender.sendMail(emailAddress, "Welcome to Science Olympiad",  "Welcome " + firstName +
+            ",\n\nYou have been signed up for Science Olympiad on https://www.sweng500.com as a " + userType +
+            ".\n\n\nYour password for this site is: " + password + ".\n\n\nThank you for participating!\n\nGroup 5");
     }
 
     public boolean changePassword(AUser user, String newPassword) {

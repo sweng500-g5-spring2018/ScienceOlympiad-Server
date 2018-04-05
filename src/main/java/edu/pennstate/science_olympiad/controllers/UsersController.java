@@ -4,13 +4,14 @@ package edu.pennstate.science_olympiad.controllers;
 import com.google.gson.Gson;
 import edu.pennstate.science_olympiad.School;
 import edu.pennstate.science_olympiad.URIConstants;
+import edu.pennstate.science_olympiad.helpers.json.JsonHelper;
 import edu.pennstate.science_olympiad.helpers.mongo.MongoIdVerifier;
 import edu.pennstate.science_olympiad.people.*;
 import edu.pennstate.science_olympiad.repositories.SchoolRepository;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
 import edu.pennstate.science_olympiad.services.TeamService;
 import edu.pennstate.science_olympiad.util.Pair;
-import edu.pennstate.science_olympiad.helpers.json.JsonHelper;
+import edu.pennstate.science_olympiad.util.RandomString;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.swing.*;
 import java.util.List;
 
 /**
@@ -340,18 +340,23 @@ public class UsersController implements URIConstants{
         try {
             AUser userToAdd;
             School foundSchool = null;
+            String userTypeString = "";
 
             try {
                 Gson gson = new Gson();
 
                 if (userType.equalsIgnoreCase(IUserTypes.ADMIN)){
                     userToAdd = gson.fromJson(userJson, Admin.class);
+                    userTypeString = "Admin";
                 } else if (userType.equalsIgnoreCase(IUserTypes.COACH)){
                     userToAdd = gson.fromJson(userJson, Coach.class);
+                    userTypeString = "Coach";
                 } else if (userType.equalsIgnoreCase(IUserTypes.JUDGE)){
                     userToAdd = gson.fromJson(userJson, Judge.class);
+                    userTypeString = "Judge";
                 } else if (userType.equalsIgnoreCase(IUserTypes.STUDENT)){
                     userToAdd = gson.fromJson(userJson, Student.class);
+                    userTypeString = "Student";
                 } else {
                     userToAdd = null;
                 }
@@ -376,7 +381,14 @@ public class UsersController implements URIConstants{
             //TODO: Generate random password which can then be part of a sent email to the user?
             String passwordString = JsonHelper.getJsonString(userJson, "password");
             if(passwordString == null) {
-                userToAdd.setPasswordPlainText("Password1");
+                if (userToAdd.getEmailAddress().contains("@test.com"))
+                    userToAdd.setPasswordPlainText("Password1");
+                else {
+                    String randomString = new RandomString(20).nextString();
+                    userToAdd.setPasswordPlainText(randomString);
+                    userRepository.signUpEmail(userToAdd.getEmailAddress(), userToAdd.getFirstName(),
+                            userTypeString, randomString);
+                }
             }
 
             boolean userAdded = userRepository.addUser(userToAdd);
@@ -400,13 +412,13 @@ public class UsersController implements URIConstants{
         }
     }
 
-    /**
-     * The POST request for adding a a coach to a student
-     * URI is /sweng500/addCoachToStudent
-     * @param coachIdJson the JSON of the coach to add
-     * @param studentIdJson the JSON of the student who is getting a new coach
-     * @return STATUS 200 if coach is successfully set, STATUS 409 if coach was not set, STATUS 400 if bad JSON provided
-     */
+//    /**
+//     * The POST request for adding a a coach to a student
+//     * URI is /sweng500/addCoachToStudent
+//     * @param coachIdJson the JSON of the coach to add
+//     * @param studentIdJson the JSON of the student who is getting a new coach
+//     * @return STATUS 200 if coach is successfully set, STATUS 409 if coach was not set, STATUS 400 if bad JSON provided
+//     */
 //    @CrossOrigin(origins = "*")
 //    @RequestMapping(value= ADD_COACH_TO_STUDENT, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
 //    public ResponseEntity<?> addCoachToStudent(@RequestBody String coachIdJson, @RequestBody String studentIdJson) {
