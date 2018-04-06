@@ -167,10 +167,12 @@ public class UserRepository {
     }
 
     public boolean resetPassword(String emailAddress) {
+        logger.info("Resetting password for: " + emailAddress);
         Query query = new Query();
         query.addCriteria(Criteria.where("emailAddress").is(emailAddress));
         AUser user = mongoTemplate.findOne(query, AUser.class);
         if (user != null) {
+            logger.info("User " + user.getFirstName() + " found");
             //password cleared
             String random = new RandomString(20).nextString();
             user.setPassword(random);

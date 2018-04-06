@@ -37,9 +37,9 @@ public class CommsController implements URIConstants{
 
             logger.info("Hit the send email endpoint. Sending to: " + toAddress);
 
-            boolean sent = emailSender.sendMail(toAddress, "Test Email", "This email is a test.\n\n " +
-                    "This could be used as a way for students to be informed that their coach registered them, " +
-                    "or to recover a password.");
+            boolean sent = emailSender.sendMail(toAddress, "Test Email from Group 5", "This email is a test.\n\n" +
+                    "This could be used as a way for students to be informed that their coach registered them for the " +
+                    "Science Olympiad, or to recover a password.\n\n\nSuper cool right?");
 
             logger.info("Email sent: " + sent);
 
