@@ -298,6 +298,49 @@ public class EventController implements URIConstants{
         }
     }
 
+    /**
+     * Removes a specific team from an event
+     * @param eventId the id of the event you want to remove
+     * @return the response of the event being deleted or not
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= REMOVE_TEAM_FROM_EVENT, method= RequestMethod.DELETE ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> removeTeamFromEvent(@PathVariable("eventId") String eventId,@PathVariable("teamId") String teamId) {
+        logger.info("got to delete team in event controller ");
+        try {
+            if(! MongoIdVerifier.isValidMongoId(teamId)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid event ID.");            }
 
+            boolean removed = eventRepository.removeTeamFromEvent(eventId,teamId);
+
+            if (removed){
+                return ResponseEntity.status(HttpStatus.OK).body("Team was removed.");}
+            else
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Team could not be removed, doesn't exist.");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
+        }
+    }
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= REMOVE_JUDGE_FROM_EVENT, method= RequestMethod.DELETE ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> removeJudgeFromEvent(@PathVariable("eventId") String eventId,@PathVariable("judgeId") String judgeId) {
+        logger.info("got to delete judge in event controller ");
+        try {
+            if(! MongoIdVerifier.isValidMongoId(judgeId)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid event ID.");            }
+
+            boolean removed = eventRepository.removeJudgeFromEvent(eventId,judgeId);
+
+            if (removed){
+                return ResponseEntity.status(HttpStatus.OK).body("Judge was removed.");}
+            else
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Judge could not be removed, doesn't exist.");
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
+        }
+    }
 
 }

@@ -1,6 +1,7 @@
 package edu.pennstate.science_olympiad.repositories;
 
 import com.google.gson.Gson;
+import com.mongodb.WriteResult;
 import edu.pennstate.science_olympiad.Event;
 import edu.pennstate.science_olympiad.Team;
 import edu.pennstate.science_olympiad.many_to_many.Judge_Event;
@@ -377,6 +378,22 @@ public class EventRepository {
                 mongoTemplate.remove(te);
             }
         }
+        return true;
+    }
+
+    public boolean removeTeamFromEvent(String eventId, String teamId) {
+        Query singleQuery = new Query();
+        singleQuery.addCriteria(Criteria.where("eventId").is(eventId)).addCriteria(Criteria.where("teamId").is(teamId));
+        WriteResult team = mongoTemplate.remove(singleQuery, Team_Event.class);
+        logger.info("removed the team event " + team.isUpdateOfExisting() + " -- " + team.getN());
+        return true;
+    }
+
+    public boolean removeJudgeFromEvent(String eventId, String judgeId) {
+        Query singleQuery = new Query();
+        singleQuery.addCriteria(Criteria.where("eventId").is(eventId)).addCriteria(Criteria.where("judgeId").is(judgeId));
+        WriteResult judge = mongoTemplate.remove(singleQuery, Judge_Event.class);
+
         return true;
     }
 }
