@@ -222,9 +222,9 @@ public class EventController implements URIConstants{
      * @return the list of all of the team_event objects in the database
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value= GET_SCORES, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value= GET_TEAM_EVENTS, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> getAllTeamEventScores() {
-        List<Team_Event> team_events = eventRepository.getAllScores();
+        List<Team_Event> team_events = eventRepository.getAllTeamEvents();
         if (team_events != null)
             return ResponseEntity.status(HttpStatus.OK).body(team_events);
         else

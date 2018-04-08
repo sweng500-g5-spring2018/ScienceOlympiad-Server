@@ -282,7 +282,7 @@ public class EventRepository {
      * Gets all of the Team_Event objects with includes the team, the event, and the scores
      * @return List<Team_Event>
      */
-    public List<Team_Event> getAllScores() {
+    public List<Team_Event> getAllTeamEvents() {
         try {
             List<Team_Event> team_events = mongoTemplate.findAll(Team_Event.class);
             if (team_events != null)
@@ -290,7 +290,7 @@ public class EventRepository {
         } catch (Exception e) {
             return null;
         }
-        return null;
+        return new ArrayList<Team_Event>();
     }
 
     /**

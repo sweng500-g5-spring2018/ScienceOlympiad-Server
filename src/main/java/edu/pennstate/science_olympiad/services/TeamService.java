@@ -39,6 +39,9 @@ public class TeamService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    EventRepository eventRepository;
+
     Log logger = LogFactory.getLog(getClass());
 
     public TeamRepository getTeamRepository() {
@@ -105,6 +108,19 @@ public class TeamService {
 
         //Check if student on a team... if so, remove student
         return teamRepository.removeStudentFromTeam(student);
+    }
+
+    public boolean isTeamInEvent(String teamId) {
+
+        List<Team_Event> teamEvents = eventRepository.getAllTeamEvents();
+
+        for (Team_Event teamEvent : teamEvents) {
+            if(teamEvent.getTeamId().equals(teamId)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

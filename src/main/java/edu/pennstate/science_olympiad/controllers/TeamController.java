@@ -180,6 +180,10 @@ public class TeamController implements URIConstants{
     public ResponseEntity<?> removeTeam(@PathVariable("teamId") String teamId) {
         logger.info("Removing team");
         try {
+            if(teamService.isTeamInEvent(teamId)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Team is set to participate in an event.  Cannot delete.");
+            }
+
             Team team = teamRepository.getTeam(teamId);
 
             boolean removed = teamRepository.removeTeam(team);

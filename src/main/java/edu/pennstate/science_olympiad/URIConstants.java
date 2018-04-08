@@ -19,7 +19,7 @@ public interface URIConstants {
     String GET_AN_EVENT             = "/event/{eventId}";
     String GET_EVENT_JUDGES         = "/event/judges/{eventId}";
     String ADD_SCORE                = "/addScore/{score}";
-    String GET_SCORES               = "/getScores";
+    String GET_TEAM_EVENTS          = "/getTeamEvents";
     String GET_SCORES_FOR_TEAM      = "/getTeamScores{teamId}";
     String GET_SCORES_FOR_EVENT     = "/getEventScores{eventId}";
     String GET_EVENT_TEAMS          = "/event/teams/{eventId}";
@@ -50,9 +50,8 @@ public interface URIConstants {
     String REMOVE_TEAM              = "/removeTeam/{teamId}";
     String UPDATE_TEAM              = "/updateTeam";
     String REMOVE_STUDENT_FROM_TEAM = "/removeStudentFromTeam";
-    String REMOVE_STUDENT_FROM_SPECIFIC_TEAM = "/removeStudentFromSpecificTeam";
-    String GET_TEAMS_BY_USER        ="/getTeamsByUser";
-    String UPDATE_STUDENTS_IN_TEAM  = "updateStudentsInTeam";
+    String GET_TEAMS_BY_USER        = "/getTeamsByUser";
+    String UPDATE_STUDENTS_IN_TEAM  = "/updateStudentsInTeam";
 
     //-----------------------------Users URIs-----------------------------
     String TEST_USER                = "/createTestUser";
@@ -65,7 +64,6 @@ public interface URIConstants {
     String REMOVE_USERS             = "/removeUsers";
     String EMAIL_AVAILABLE          = "/emailAvailable";
     String ADD_USER                 = "/addUser";
-    String ADD_COACH_TO_STUDENT     = "/addCoachToStudent";
     String ADD_SCHOOL_TO_USER       = "/addSchoolToUser";
     String RESET_PASSWORD           = "/resetPassword";
     String CHANGE_PASSWORD          = "/changePassword";
@@ -87,13 +85,12 @@ public interface URIConstants {
     String [] PUBLIC_URIS           = {
                                         "/auth/**",
                                         "/emailAvailable",
-                                        "/users",
-                                        "/testSessionStart",
                                         "/addUser/**",
                                         "/getSchools/**",
                                         "/resetPassword",
-                                        "/getJudges",
-                                        "/validate"
+                                        "/validate",
+                                        "/users",
+                                        "/getJudges"
                                        };
 
 
