@@ -24,6 +24,8 @@ public interface URIConstants {
     String GET_SCORES_FOR_EVENT     = "/getEventScores{eventId}";
     String GET_EVENT_TEAMS          = "/event/teams/{eventId}";
     String REGISTER_TEAM_FOR_EVENT  ="/event/{eventId}/{teamId}";
+    String REMOVE_JUDGE_FROM_EVENT  ="/event/{eventId}/removeJudge/{judgeId}";
+    String REMOVE_TEAM_FROM_EVENT   ="/event/{eventId}/removeTeam/{teamId}";
 
     //-----------------------------First Controller URIs-----------------------------
     //none
