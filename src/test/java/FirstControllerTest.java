@@ -40,23 +40,6 @@ public class FirstControllerTest {
     }
 
     @Test
-    public void getAccount() throws Exception {
-        //simple check to see if the
-        MvcResult result = this.mockMvc.perform(get("/users")
-                .accept(MediaType.parseMediaType("application/json;charset=UTF-8")))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.firstName").value("Brandon"))
-                .andReturn();
-
-        String content = result.getResponse().getContentAsString();
-        Gson gson = new Gson();
-        Admin brandon = gson.fromJson(content, Admin.class);
-        brandon.setPassword("password");
-        assert brandon.isPasswordEqual("password");
-    }
-
-    @Test
     public void checkJudgesExist() throws Exception {
         MvcResult result = this.mockMvc.perform(get("/getJudges")
                 .accept(MediaType.parseMediaType("application/json;charset=UTF-8")))
