@@ -61,7 +61,7 @@ public interface URIConstants {
     String ALL_USERS                = "/allUsers";
     String GET_JUDGES               = "/getJudges";
     String GET_COACHES              = "/getCoaches";
-    String REMOVE_USER              = "/removeUser";
+    String REMOVE_USER              = "/removeUser/{userId}";
     String UPDATE_USER              = "/updateUser";
     String REMOVE_USERS             = "/removeUsers";
     String EMAIL_AVAILABLE          = "/emailAvailable";
