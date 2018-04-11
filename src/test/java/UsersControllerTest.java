@@ -2,10 +2,7 @@ import com.google.gson.Gson;
 import edu.pennstate.science_olympiad.School;
 import edu.pennstate.science_olympiad.config.SpringConfig;
 import edu.pennstate.science_olympiad.controllers.UsersController;
-import edu.pennstate.science_olympiad.people.AUser;
-import edu.pennstate.science_olympiad.people.Coach;
-import edu.pennstate.science_olympiad.people.Judge;
-import edu.pennstate.science_olympiad.people.Student;
+import edu.pennstate.science_olympiad.people.*;
 import edu.pennstate.science_olympiad.repositories.SchoolRepository;
 import edu.pennstate.science_olympiad.repositories.UserRepository;
 import edu.pennstate.science_olympiad.services.TeamService;
@@ -62,9 +59,14 @@ public class UsersControllerTest {
     private UsersController userController;
 
     private Gson gson;
-
+    private List<AUser> testUsers;
     @Before
     public void setup() throws Exception {
+        testUsers = new ArrayList<AUser>();
+        testUsers.add(new Coach());
+        testUsers.add(new Judge());
+        testUsers.add(new Admin());
+        testUsers.add(new Student());
         //set up the controller want to test
        MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders
@@ -198,6 +200,21 @@ public class UsersControllerTest {
         mockMvc.perform(
                 MockMvcRequestBuilders.delete("/removeUser/{userId}",userId))
                 .andExpect(status().isConflict());
+
+        //bad id
+        userId = "12678901234";
+        Mockito.when(userRepository.removeUser(userId)).thenReturn(false);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/removeUser/{userId}",userId))
+                .andExpect(status().isBadRequest());
+
+        //exception
+        Mockito.when(userRepository.removeUser(userId)).thenThrow(Exception.class);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/removeUser/{userId}",userId))
+                .andExpect(status().isBadRequest());
     }
 
     /**
@@ -274,6 +291,34 @@ public class UsersControllerTest {
 
         Mockito.verify(userRepository, times(1)).updateUser(coach1,coachJson);
         verifyNoMoreInteractions(userRepository);
+
+        Mockito.when(userRepository.updateUser(coach1,coachJson)).thenReturn(false);
+
+        //Send the fake session with a user to return
+        MvcResult result2 = mockMvc.perform(MockMvcRequestBuilders.post("/updateUser")
+                .with((new RequestPostProcessor() {
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        HttpSession session = request.getSession();
+                        session.setAttribute("user",coach1);
+                        return request;
+                    }})).content(coachJson))
+
+                .andExpect(status().isConflict())
+                .andReturn();
+
+        Mockito.when(userRepository.updateUser(coach1,coachJson)).thenThrow(Exception.class);
+
+        //an exception
+        MvcResult result23= mockMvc.perform(MockMvcRequestBuilders.post("/updateUser")
+                .with((new RequestPostProcessor() {
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        HttpSession session = request.getSession();
+                        session.setAttribute("user",coach1);
+                        return request;
+                    }})).content(coachJson))
+
+                .andExpect(status().isInternalServerError())
+                .andReturn();
     }
 
     /**
@@ -334,10 +379,17 @@ public class UsersControllerTest {
         //Mockito.when(JsonHelper.getJsonString(coachJson,"password1")).thenReturn("newPass");
         Mockito.when(userRepository.emailUsed("test@test.com")).thenReturn(false);
 
-        //Send the fake session with a user to return
         MvcResult result2 = mockMvc.perform(MockMvcRequestBuilders.post("/emailAvailable")
                 .content(emailJson2))
                 .andExpect(status().isOk())
+                .andReturn();
+
+
+        //an exception
+        Mockito.when(userRepository.emailUsed("test@test.com")).thenThrow(Exception.class);
+        MvcResult result3 = mockMvc.perform(MockMvcRequestBuilders.post("/emailAvailable")
+                .content(emailJson))
+                .andExpect(status().isBadRequest())
                 .andReturn();
     }
 
@@ -348,66 +400,67 @@ public class UsersControllerTest {
     @Test
     public void addUser() throws Exception {
         //need to give it json so the static method will pass since it can't be stubbed with Mockito
-        AUser userToAdd = new Coach();
-        userToAdd.setFirstName("Joey");
-        userToAdd.setLastName("jin");
-        userToAdd.setPasswordPlainText("Password1");
-        userToAdd.setEmailAddress("test5555@test.com");
-        gson = new Gson();
-        String userJson = gson.toJson(userToAdd);
-        School foundSchool = new School("TestingSchool");
-        //Test 1 - everything executes correctly
-        //NOTE: had to use any(), since the userToAdd object did not work.
-        Mockito.when(userRepository.addUser((AUser) Mockito.any())).thenReturn(true);
-        Mockito.when(userRepository.addSchoolToUser(foundSchool,userToAdd)).thenReturn(true);
-        Mockito.when(schoolRepository.getSchool("111111111111111111111111")).thenReturn(foundSchool);
+        //run for each kind of user
+        for (AUser userToAdd : testUsers) {
+            userToAdd.setFirstName("Joey");
+            userToAdd.setLastName("jin");
+            userToAdd.setPasswordPlainText("Password1");
+            userToAdd.setEmailAddress("test5555@test.com");
+            gson = new Gson();
+            String userJson = gson.toJson(userToAdd);
+            School foundSchool = new School("TestingSchool");
+            //Test 1 - everything executes correctly
+            //NOTE: had to use any(), since the userToAdd object did not work.
+            Mockito.when(userRepository.addUser((AUser) Mockito.any())).thenReturn(true);
+            Mockito.when(userRepository.addSchoolToUser(foundSchool, userToAdd)).thenReturn(true);
+            Mockito.when(schoolRepository.getSchool("111111111111111111111111")).thenReturn(foundSchool);
 
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/addUser")
-                .param("userType","COACH")
-                .param("schoolID","111111111111111111111111")
-                .content(userJson))
-                .andExpect(status().isOk())
-                .andReturn();
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/addUser")
+                    .param("userType", "COACH")
+                    .param("schoolID", "111111111111111111111111")
+                    .content(userJson))
+                    .andExpect(status().isOk())
+                    .andReturn();
 
-        Mockito.when(userRepository.addUser((AUser) Mockito.any())).thenReturn(true);
-        Mockito.when(userRepository.addSchoolToUser(foundSchool,userToAdd)).thenReturn(true);
-        Mockito.when(schoolRepository.getSchool("111111111111111111111111")).thenReturn(null);
+            Mockito.when(userRepository.addUser((AUser) Mockito.any())).thenReturn(true);
+            Mockito.when(userRepository.addSchoolToUser(foundSchool, userToAdd)).thenReturn(true);
+            Mockito.when(schoolRepository.getSchool("111111111111111111111111")).thenReturn(null);
 
 
-        //Test 2 - a bad school id so make sure the add user methods were not called
-        MvcResult result2 = mockMvc.perform(MockMvcRequestBuilders.post("/addUser")
-                .param("userType","COACH")
-                .param("schoolID","111111111111111111111111")
-                .content(userJson))
-                .andExpect(status().isBadRequest())
-                .andReturn();
-        verify(userRepository,Mockito.times(0)).addUser(userToAdd);
-        verify(userRepository,Mockito.times(0)).addSchoolToUser(foundSchool,userToAdd);
+            //Test 2 - a bad school id so make sure the add user methods were not called
+            MvcResult result2 = mockMvc.perform(MockMvcRequestBuilders.post("/addUser")
+                    .param("userType", "COACH")
+                    .param("schoolID", "111111111111111111111111")
+                    .content(userJson))
+                    .andExpect(status().isBadRequest())
+                    .andReturn();
+            verify(userRepository, Mockito.times(0)).addUser(userToAdd);
+            verify(userRepository, Mockito.times(0)).addSchoolToUser(foundSchool, userToAdd);
 
-        //Test 3 - User already exists, make sure add school to user is not executed
-        Mockito.when(userRepository.addUser((AUser) Mockito.any())).thenReturn(false);
-        Mockito.when(userRepository.addSchoolToUser(foundSchool,userToAdd)).thenReturn(true);
-        Mockito.when(schoolRepository.getSchool("111111111111111111111111")).thenReturn(foundSchool);
-        MvcResult result3 = mockMvc.perform(MockMvcRequestBuilders.post("/addUser")
-                .param("userType","COACH")
-                .param("schoolID","111111111111111111111111")
-                .content(userJson))
-                .andExpect(status().isConflict())
-                .andReturn();
-        verify(userRepository,Mockito.times(0)).addSchoolToUser(foundSchool,userToAdd);
+            //Test 3 - User already exists, make sure add school to user is not executed
+            Mockito.when(userRepository.addUser((AUser) Mockito.any())).thenReturn(false);
+            Mockito.when(userRepository.addSchoolToUser(foundSchool, userToAdd)).thenReturn(true);
+            Mockito.when(schoolRepository.getSchool("111111111111111111111111")).thenReturn(foundSchool);
+            MvcResult result3 = mockMvc.perform(MockMvcRequestBuilders.post("/addUser")
+                    .param("userType", "COACH")
+                    .param("schoolID", "111111111111111111111111")
+                    .content(userJson))
+                    .andExpect(status().isConflict())
+                    .andReturn();
+            verify(userRepository, Mockito.times(0)).addSchoolToUser(foundSchool, userToAdd);
 
-        //Test 4 - User added but the school couldnt be added correctly
-        //controller mightnot be edited to return the multi-status. Will wait to change so for now assume its ok
-        Mockito.when(userRepository.addUser((AUser) Mockito.any())).thenReturn(true);
-        Mockito.when(schoolRepository.getSchool("111111111111111111111111")).thenReturn(foundSchool);
-        Mockito.when(userRepository.addSchoolToUser(foundSchool, userToAdd)).thenReturn(false);
-        MvcResult result4 = mockMvc.perform(MockMvcRequestBuilders.post("/addUser")
-                .param("userType","COACH")
-                .param("schoolID","111111111111111111111111")
-                .content(userJson))
-                .andExpect(status().isOk())
-                .andReturn();
+            //Test 4 - User added but the school couldnt be added correctly
+            Mockito.when(userRepository.addUser((AUser) Mockito.any())).thenReturn(true);
+            Mockito.when(schoolRepository.getSchool("111111111111111111111111")).thenReturn(foundSchool);
+            Mockito.when(userRepository.addSchoolToUser(foundSchool, userToAdd)).thenReturn(false);
+            MvcResult result4 = mockMvc.perform(MockMvcRequestBuilders.post("/addUser")
+                    .param("userType", "COACH")
+                    .param("schoolID", "111111111111111111111111")
+                    .content(userJson))
+                    .andExpect(status().isOk())
+                    .andReturn();
+        }
 
     }
 
@@ -518,6 +571,28 @@ public class UsersControllerTest {
         //sending no content causes to fail
         MvcResult result3 = mockMvc.perform(MockMvcRequestBuilders.post("/resetPassword"))
                 .andExpect(status().isBadRequest())
+                .andReturn();
+    }
+
+    @Test
+    public void getStudentsFromSchool() throws Exception {
+        String schoolId = "123456789012345678901234";
+        List<Student> students = new ArrayList<Student>();
+        students.add(new Student());
+        Mockito.when(userRepository.getStudentsFromSchool(schoolId)).thenReturn(students);
+        Mockito.when(teamService.filterStudentsOnTeam(students,schoolId)).thenReturn(students);
+        //requestParam
+        MvcResult result2 = mockMvc.perform(MockMvcRequestBuilders.get("/getStudentsFromSchool")
+                .param("schoolId",schoolId))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        //some exception
+        Mockito.when(userRepository.getStudentsFromSchool(schoolId)).thenThrow(Exception.class);
+        //requestParam
+        MvcResult result3 = mockMvc.perform(MockMvcRequestBuilders.get("/getStudentsFromSchool")
+                .param("schoolId",schoolId))
+                .andExpect(status().isInternalServerError())
                 .andReturn();
     }
 
