@@ -6,6 +6,9 @@ public class TwilioInfo {
     private String accountSid;
     private String authToken;
 
+    public TwilioInfo() {
+    }
+
     public TwilioInfo(String phoneNumber, String accountSid, String authToken) {
         this.phoneNumber = phoneNumber;
         this.accountSid = accountSid;

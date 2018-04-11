@@ -5,15 +5,20 @@ import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import edu.pennstate.science_olympiad.Event;
 import edu.pennstate.science_olympiad.people.AUser;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 
+@Component
 public class TextMessage {
 
     // Find your Account Sid and Token at twilio.com/user/account
     private static TextMessage INSTANCE;
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+    Log logger = LogFactory.getLog(getClass());
 
     @Autowired
     TwilioInfo twilioInfo;
@@ -26,13 +31,24 @@ public class TextMessage {
 //    }
 
     private TextMessage() {
+        logger.info("Init TextMessage: " + twilioInfo.getAccountSid() + twilioInfo.getAuthToken());
         Twilio.init(twilioInfo.getAccountSid(), twilioInfo.getAuthToken());
     }
 
     public static TextMessage getInstance() {
-        if (INSTANCE == null)
-            INSTANCE = new TextMessage();
-        return INSTANCE;
+        Log logger = LogFactory.getLog("TextMessage");
+        logger.info(">>TextMessage.getInstance() " + INSTANCE);
+        try {
+            if (INSTANCE == null) {
+                logger.info("Gonna call new");
+                INSTANCE = new TextMessage();
+                logger.info("Called new");
+            }
+            return INSTANCE;
+        }catch (Exception e) {
+            logger.info(e.getMessage(), e);
+            return null;
+        }
     }
 
     public boolean text(AUser user, String message) {
@@ -47,9 +63,13 @@ public class TextMessage {
 
     public boolean text(String phoneNumber, String message) {
         try {
+            logger.info(">>text(phoneNumber, message) with data: toPhone, accountSid, authToken, fromPhone" + phoneNumber + " " + twilioInfo.getAccountSid()
+            + twilioInfo.getAuthToken() + twilioInfo.getPhoneNumber());
             Message.creator(new PhoneNumber(phoneNumber), twilioInfo.getPhoneNumber(), message).create();
+            logger.info("Returning true");
             return true;
         } catch (Exception e) {}
+        logger.info("Returning false");
         return false;
     }
 

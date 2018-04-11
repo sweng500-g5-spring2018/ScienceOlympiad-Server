@@ -517,25 +517,4 @@ public class UsersController implements URIConstants{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
         }
     }
-//    /**
-//     * Resets a user's password
-//     * @param emailAddress the email address of the user whos password is being reset
-//     * @return the response of the password being reset or not
-//     */
-//    @CrossOrigin(origins = "*")
-//    @RequestMapping(value= RESET_PASSWORD+"/{emailAddress}", method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-//    public ResponseEntity<?> resetUserPassword(@PathVariable("emailAddress") String emailAddress) {
-//        try {
-//            logger.info("Hit reset password endpoint");
-//            boolean sent = userRepository.resetPassword(emailAddress);
-//
-//            if (sent){
-//                return ResponseEntity.status(HttpStatus.OK).body("User's password was reset.");}
-//            else
-//                return ResponseEntity.status(HttpStatus.CONFLICT).body("Password could not be reset.");
-//
-//        } catch(Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
-//        }
-//    }
 }
