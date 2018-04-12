@@ -4,15 +4,16 @@ import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import edu.pennstate.science_olympiad.Event;
+import edu.pennstate.science_olympiad.config.SpringConfig;
 import edu.pennstate.science_olympiad.people.AUser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.omg.CORBA.TIMEOUT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 
-@Component
 public class TextMessage {
 
     // Find your Account Sid and Token at twilio.com/user/account
@@ -20,8 +21,7 @@ public class TextMessage {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
     Log logger = LogFactory.getLog(getClass());
 
-    @Autowired
-    TwilioInfo twilioInfo;
+    private TwilioInfo twilioInfo;
 
 //    public static void main(String[] args) {
 //        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
@@ -31,13 +31,18 @@ public class TextMessage {
 //    }
 
     private TextMessage() {
-        logger.info("Init TextMessage: " + twilioInfo.getAccountSid() + twilioInfo.getAuthToken());
+        if (twilioInfo == null)
+            twilioInfo = TwilioInfo.getInstance();
+
+        logger.info("Init TextMessage: " + twilioInfo.getAccountSid() + " " + twilioInfo.getAuthToken());
         Twilio.init(twilioInfo.getAccountSid(), twilioInfo.getAuthToken());
     }
 
     public static TextMessage getInstance() {
         Log logger = LogFactory.getLog("TextMessage");
         logger.info(">>TextMessage.getInstance() " + INSTANCE);
+        SpringConfig springConfig = new SpringConfig();
+        springConfig.twilioInfo();
         try {
             if (INSTANCE == null) {
                 logger.info("Gonna call new");
@@ -63,14 +68,15 @@ public class TextMessage {
 
     public boolean text(String phoneNumber, String message) {
         try {
-            logger.info(">>text(phoneNumber, message) with data: toPhone, accountSid, authToken, fromPhone" + phoneNumber + " " + twilioInfo.getAccountSid()
-            + twilioInfo.getAuthToken() + twilioInfo.getPhoneNumber());
-            Message.creator(new PhoneNumber(phoneNumber), twilioInfo.getPhoneNumber(), message).create();
+            logger.info(">>text(phoneNumber, message) with data: toPhone, accountSid, authToken, fromPhone" +
+                    phoneNumber + " " + twilioInfo.getAccountSid() + " " + twilioInfo.getAuthToken() + " " + twilioInfo.getPhoneNumber());
+            Message.creator(new PhoneNumber(phoneNumber), twilioInfo.getAccountSid(), message).create();
             logger.info("Returning true");
             return true;
-        } catch (Exception e) {}
-        logger.info("Returning false");
-        return false;
+        } catch (Exception e) {
+            logger.info("Returning false: " + e.getCause(), e);
+            return false;
+        }
     }
 
     public void textEventTime(AUser user, Event event) {

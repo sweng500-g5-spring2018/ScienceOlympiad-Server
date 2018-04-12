@@ -2,7 +2,6 @@ import com.google.gson.Gson;
 import edu.pennstate.science_olympiad.School;
 import edu.pennstate.science_olympiad.config.SpringConfig;
 import edu.pennstate.science_olympiad.controllers.UsersController;
-import edu.pennstate.science_olympiad.helpers.json.JsonHelper;
 import edu.pennstate.science_olympiad.people.AUser;
 import edu.pennstate.science_olympiad.people.Coach;
 import edu.pennstate.science_olympiad.people.Judge;
