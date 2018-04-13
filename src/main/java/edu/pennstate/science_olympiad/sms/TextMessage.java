@@ -45,7 +45,6 @@ public class TextMessage {
         springConfig.twilioInfo();
         try {
             if (INSTANCE == null) {
-                logger.info("Gonna call new");
                 INSTANCE = new TextMessage();
                 logger.info("Called new");
             }
@@ -68,13 +67,9 @@ public class TextMessage {
 
     public boolean text(String phoneNumber, String message) {
         try {
-            logger.info(">>text(phoneNumber, message) with data: toPhone, accountSid, authToken, fromPhone" +
-                    phoneNumber + " " + twilioInfo.getAccountSid() + " " + twilioInfo.getAuthToken() + " " + twilioInfo.getPhoneNumber());
-            Message.creator(new PhoneNumber(phoneNumber), twilioInfo.getAccountSid(), message).create();
-            logger.info("Returning true");
+            Message.creator(new PhoneNumber(phoneNumber), new PhoneNumber(twilioInfo.getPhoneNumber()), message).create();
             return true;
         } catch (Exception e) {
-            logger.info("Returning false: " + e.getCause(), e);
             return false;
         }
     }
