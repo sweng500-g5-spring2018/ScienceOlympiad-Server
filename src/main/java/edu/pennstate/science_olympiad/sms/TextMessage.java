@@ -4,8 +4,13 @@ import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import edu.pennstate.science_olympiad.Event;
+import edu.pennstate.science_olympiad.config.SpringConfig;
 import edu.pennstate.science_olympiad.people.AUser;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.omg.CORBA.TIMEOUT;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 
@@ -14,9 +19,9 @@ public class TextMessage {
     // Find your Account Sid and Token at twilio.com/user/account
     private static TextMessage INSTANCE;
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+    Log logger = LogFactory.getLog(getClass());
 
-    @Autowired
-    TwilioInfo twilioInfo;
+    private TwilioInfo twilioInfo;
 
 //    public static void main(String[] args) {
 //        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
@@ -26,13 +31,28 @@ public class TextMessage {
 //    }
 
     private TextMessage() {
+        if (twilioInfo == null)
+            twilioInfo = TwilioInfo.getInstance();
+
+        logger.info("Init TextMessage: " + twilioInfo.getAccountSid() + " " + twilioInfo.getAuthToken());
         Twilio.init(twilioInfo.getAccountSid(), twilioInfo.getAuthToken());
     }
 
     public static TextMessage getInstance() {
-        if (INSTANCE == null)
-            INSTANCE = new TextMessage();
-        return INSTANCE;
+        Log logger = LogFactory.getLog("TextMessage");
+        logger.info(">>TextMessage.getInstance() " + INSTANCE);
+        SpringConfig springConfig = new SpringConfig();
+        springConfig.twilioInfo();
+        try {
+            if (INSTANCE == null) {
+                INSTANCE = new TextMessage();
+                logger.info("Called new");
+            }
+            return INSTANCE;
+        }catch (Exception e) {
+            logger.info(e.getMessage(), e);
+            return null;
+        }
     }
 
     public boolean text(AUser user, String message) {
@@ -47,10 +67,11 @@ public class TextMessage {
 
     public boolean text(String phoneNumber, String message) {
         try {
-            Message.creator(new PhoneNumber(phoneNumber), twilioInfo.getPhoneNumber(), message).create();
+            Message.creator(new PhoneNumber(phoneNumber), new PhoneNumber(twilioInfo.getPhoneNumber()), message).create();
             return true;
-        } catch (Exception e) {}
-        return false;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public void textEventTime(AUser user, Event event) {

@@ -2,14 +2,18 @@ package edu.pennstate.science_olympiad.sms;
 
 public class TwilioInfo {
 
+    private static TwilioInfo INSTANCE;
     private String phoneNumber;
     private String accountSid;
     private String authToken;
 
-    public TwilioInfo(String phoneNumber, String accountSid, String authToken) {
-        this.phoneNumber = phoneNumber;
-        this.accountSid = accountSid;
-        this.authToken = authToken;
+    private TwilioInfo() {
+    }
+
+    public static TwilioInfo getInstance() {
+        if (INSTANCE == null)
+            INSTANCE = new TwilioInfo();
+        return INSTANCE;
     }
 
     public String getPhoneNumber() {
