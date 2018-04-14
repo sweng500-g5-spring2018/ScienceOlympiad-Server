@@ -1,3 +1,4 @@
+package controller_tests;
 import com.google.gson.Gson;
 import edu.pennstate.science_olympiad.School;
 import edu.pennstate.science_olympiad.config.SpringConfig;

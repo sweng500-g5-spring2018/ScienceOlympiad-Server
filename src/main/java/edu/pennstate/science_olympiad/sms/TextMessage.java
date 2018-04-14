@@ -8,9 +8,6 @@ import edu.pennstate.science_olympiad.config.SpringConfig;
 import edu.pennstate.science_olympiad.people.AUser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.omg.CORBA.TIMEOUT;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 
