@@ -42,14 +42,43 @@ public class UsersController implements URIConstants{
     TeamService teamService;
 
     /**
-     * Returns a list of all of the users of the system
-     * URI is /sweng500/allUsers
-     * @return all of the users in the database in JSON form
+     * URI is /sweng500/createTestUser
+     * @return success, true pair
      */
     @CrossOrigin(origins = "*")
-    @RequestMapping(value= ALL_USERS, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public List<AUser> getAllUsers() {
-        return mongoTemplate.findAll(AUser.class);
+    @RequestMapping(value= TEST_USER ,method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public Object addUser() {
+        // log.info(">>addUser()");
+        Admin admin = (Admin) UserFactory.getInstance().createUser("admin");
+        admin.setFirstName("Kyle");
+        admin.setLastName("H");
+        admin.setEmailAddress("test@email");
+        admin.setPhoneNumber("+12345678910");
+        userRepository.addUser(admin);
+
+        Coach coach = (Coach) UserFactory.getInstance().createUser("coach");
+        coach.setFirstName("Coach");
+        coach.setLastName("Nixon");
+        userRepository.addUser(coach);
+        // log.info("<<addUser()");
+        Pair response = new Pair("success","true");
+        return response;
+    }
+
+    /**
+     * Creates a test User and returns it to the requester
+     * URI is /sweng500/users
+     * @return Brandon's information
+     */
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value= USERS, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
+    public AUser getBrandon() {
+        Admin admin = (Admin)UserFactory.getInstance().createUser("admin");
+        admin.setFirstName("Brandon");
+        admin.setLastName("Hessler");
+        admin.setEmailAddress("PennState@brandonhessler.com");
+        admin.setPassword("password");
+        return admin;
     }
 
     /**
@@ -477,4 +506,25 @@ public class UsersController implements URIConstants{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
         }
     }
+//    /**
+//     * Resets a user's password
+//     * @param emailAddress the email address of the user whos password is being reset
+//     * @return the response of the password being reset or not
+//     */
+//    @CrossOrigin(origins = "*")
+//    @RequestMapping(value= RESET_PASSWORD+"/{emailAddress}", method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
+//    public ResponseEntity<?> resetUserPassword(@PathVariable("emailAddress") String emailAddress) {
+//        try {
+//            logger.info("Hit reset password endpoint");
+//            boolean sent = userRepository.resetPassword(emailAddress);
+//
+//            if (sent){
+//                return ResponseEntity.status(HttpStatus.OK).body("User's password was reset.");}
+//            else
+//                return ResponseEntity.status(HttpStatus.CONFLICT).body("Password could not be reset.");
+//
+//        } catch(Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
+//        }
+//    }
 }
