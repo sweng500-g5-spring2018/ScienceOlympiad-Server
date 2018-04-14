@@ -333,7 +333,7 @@ public class EventRepository {
      * @param eventId
      * @return
      */
-    public boolean registerTeamToEvent(String teamId, String eventId) {
+    public boolean registerTeamToEvent(String teamId, String eventId, String teamName, String eventName) {
         Query singleQuery = new Query();
         singleQuery.addCriteria(Criteria.where("eventId").is(eventId));
         singleQuery.addCriteria(Criteria.where("teamId").is(teamId));
@@ -342,7 +342,9 @@ public class EventRepository {
         if(existing.size() > 0) {
             return false;
         }
-        Team_Event te = new Team_Event(teamId,eventId);
+
+        Team_Event te = new Team_Event(teamId, eventId, teamName, eventName);
+
         mongoTemplate.insert(te);
         return true;
     }

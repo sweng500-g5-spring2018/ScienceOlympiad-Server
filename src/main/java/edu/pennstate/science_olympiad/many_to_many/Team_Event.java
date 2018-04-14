@@ -17,15 +17,19 @@ public class Team_Event {
     public String id;
     private String teamId;
     private String eventId;
+    private String teamName;
+    private String eventName;
     private Double score;
 
-    public Team_Event(String teamId, String eventId) {
+    public Team_Event(String teamId, String eventId, String teamName, String eventName) {
         this.teamId = teamId;
         this.eventId = eventId;
+        this.teamName = teamName;
+        this.eventName = eventName;
     }
 
     public String getTeamId() {
-        return teamId;
+        return this.teamId;
     }
 
     public void setTeamId(String teamId) {
@@ -33,12 +37,20 @@ public class Team_Event {
     }
 
     public String getEventId() {
-        return eventId;
+        return this.eventId;
     }
 
     public void setEventId(String eventId) {
         this.eventId = eventId;
     }
+
+    public String getTeamName() { return this.teamName; }
+
+    public String getEventName() { return this.eventName; }
+
+    public void setTeamName(String teamName) { this.teamName = teamName; }
+
+    public void setEventName(String eventName) { this.eventName = eventName; }
 
     public Double getScore() {
         return score;
