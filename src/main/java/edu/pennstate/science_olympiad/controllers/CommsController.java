@@ -78,6 +78,7 @@ public class CommsController implements URIConstants{
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Email was not sent, an error occurred");
 
         } catch(Exception e) {
+            logger.info("Broken, text was not sent");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
         }
     }

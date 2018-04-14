@@ -1,10 +1,9 @@
+package controller_tests;
+
 import com.google.gson.Gson;
 import edu.pennstate.science_olympiad.config.SpringConfig;
-import edu.pennstate.science_olympiad.people.AUser;
 import edu.pennstate.science_olympiad.people.Admin;
 import edu.pennstate.science_olympiad.people.UserFactory;
-import edu.pennstate.science_olympiad.sms.EmailSender;
-import edu.pennstate.science_olympiad.sms.TextMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,11 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
-import org.hamcrest.Matcher;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
