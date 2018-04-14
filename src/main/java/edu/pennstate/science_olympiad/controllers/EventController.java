@@ -174,7 +174,6 @@ public class EventController implements URIConstants{
     @RequestMapping(value= GET_AN_EVENT, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> getAEvent(@PathVariable("eventId") String eventId) {
             Event event = eventRepository.getEvent(eventId);
-            logger.info("Got the event " + event.getName());
             if (event != null) {
                 return ResponseEntity.status(HttpStatus.OK).body(event);
             } else {

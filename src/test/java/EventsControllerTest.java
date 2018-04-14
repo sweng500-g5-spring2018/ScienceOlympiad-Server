@@ -1,14 +1,12 @@
 import com.google.gson.Gson;
+import edu.pennstate.science_olympiad.Team;
 import edu.pennstate.science_olympiad.config.SpringConfig;
 import edu.pennstate.science_olympiad.controllers.EventController;
-import edu.pennstate.science_olympiad.controllers.UsersController;
-import edu.pennstate.science_olympiad.people.AUser;
-import edu.pennstate.science_olympiad.people.Coach;
 import edu.pennstate.science_olympiad.Event;
-import edu.pennstate.science_olympiad.people.Student;
+import edu.pennstate.science_olympiad.people.Coach;
+import edu.pennstate.science_olympiad.people.Judge;
 import edu.pennstate.science_olympiad.repositories.EventRepository;
 import edu.pennstate.science_olympiad.repositories.SchoolRepository;
-import edu.pennstate.science_olympiad.repositories.UserRepository;
 import edu.pennstate.science_olympiad.services.EventService;
 import edu.pennstate.science_olympiad.services.TeamService;
 import org.junit.Before;
@@ -19,18 +17,15 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -220,12 +215,134 @@ public class EventsControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        //event not found, can't return a null
-       // Event event = null;
-      //  Mockito.when(eventRepository.getEvent(eventId)).thenReturn(event);
-       // MvcResult result5 = mockMvc.perform(MockMvcRequestBuilders.get("/event/{eventId}",eventId))
-            //    .andExpect(status().isConflict())
-              //  .andReturn();
+        //event not found
+       Mockito.when(eventRepository.getEvent(eventId)).thenReturn(null);
+        MvcResult result5 = mockMvc.perform(MockMvcRequestBuilders.get("/event/{eventId}",eventId))
+               .andExpect(status().isConflict())
+                .andReturn();
+
+    }
+
+    @Test
+    public void getEventJudges() throws Exception {
+        String eventId="123456789012345678901234";
+        List<Judge> judges = new ArrayList<Judge>();
+        judges.add(new Judge());
+        Mockito.when(eventService.getEventJudges(eventId)).thenReturn(judges);
+        MvcResult result4 = mockMvc.perform(MockMvcRequestBuilders.get("/event/judges/{eventId}",eventId))
+                .andExpect(status().isOk())
+                .andReturn();
+
+    }
+
+    /** Insert scoring tests here, endpoints may change so wait until the feature is finished  **/
+
+    @Test
+    public void getEventTeams() throws Exception {
+        String eventId="123456789012345678901234";
+        List<Team> teams = new ArrayList<Team>();
+        teams.add(new Team(new Coach()));
+        Mockito.when(eventService.getEventTeams(eventId)).thenReturn(teams);
+        MvcResult result4 = mockMvc.perform(MockMvcRequestBuilders.get("/event/teams/{eventId}",eventId))
+                .andExpect(status().isOk())
+                .andReturn();
+
+    }
+
+
+    @Test
+    public void registerTeamForEvent() throws Exception {
+        String eventId="123456789012345678901234";
+        String teamId="123456789012345678901235";
+        Mockito.when(eventRepository.registerTeamToEvent(teamId,eventId)).thenReturn(true);
+        MvcResult result4 = mockMvc.perform(MockMvcRequestBuilders.post("/event/{eventId}/{teamId}",eventId,teamId))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        //not added
+        Mockito.when(eventRepository.registerTeamToEvent(teamId,eventId)).thenReturn(false);
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/event/{eventId}/{teamId}",eventId,teamId))
+                .andExpect(status().isConflict())
+                .andReturn();
+
+        //bad team id
+        teamId="1234501235";
+        Mockito.when(eventRepository.registerTeamToEvent(teamId,eventId)).thenReturn(false);
+        MvcResult result1 = mockMvc.perform(MockMvcRequestBuilders.post("/event/{eventId}/{teamId}",eventId,teamId))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        //bad event id
+        teamId="123456789012345678901235";
+        eventId="1234501235";
+        Mockito.when(eventRepository.registerTeamToEvent(teamId,eventId)).thenReturn(false);
+        MvcResult resul2t = mockMvc.perform(MockMvcRequestBuilders.post("/event/{eventId}/{teamId}",eventId,teamId))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+    }
+
+    @Test
+    public void deleteTeamFromEvent() throws Exception {
+        String eventId="123456789012345678901234";
+        String teamId= "123456789012345678901235";
+        Mockito.when(eventRepository.removeTeamFromEvent(eventId,teamId)).thenReturn(true);
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/event/{eventId}/removeTeam/{teamId}",eventId,teamId))
+                .andExpect(status().isOk());
+
+        //not removed
+        Mockito.when(eventRepository.removeTeamFromEvent(eventId,teamId)).thenReturn(false);
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/event/{eventId}/removeTeam/{teamId}",eventId,teamId))
+                .andExpect(status().isConflict());
+
+
+        //an exception
+        Mockito.when(eventRepository.removeTeamFromEvent(eventId,teamId)).thenThrow(Exception.class);
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/event/{eventId}/removeTeam/{teamId}",eventId,teamId))
+                .andExpect(status().isInternalServerError());
+
+
+        //a bad team id
+        teamId = "1234567834";
+        Mockito.when(eventRepository.removeTeamFromEvent(eventId,teamId)).thenReturn(true);
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/event/{eventId}/removeTeam/{teamId}",eventId,teamId))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    public void deleteJudgeFromEvent() throws Exception {
+        String eventId="123456789012345678901234";
+        String judgeId="123456789012345678901235";
+        Mockito.when(eventRepository.removeJudgeFromEvent(eventId,judgeId)).thenReturn(true);
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/event/{eventId}/removeJudge/{judgeId}",eventId,judgeId))
+                .andExpect(status().isOk());
+
+        //not removed
+        Mockito.when(eventRepository.removeJudgeFromEvent(eventId,judgeId)).thenReturn(false);
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/event/{eventId}/removeJudge/{judgeId}",eventId,judgeId))
+                .andExpect(status().isConflict());
+
+
+        //an exception
+        Mockito.when(eventRepository.removeJudgeFromEvent(eventId,judgeId)).thenThrow(Exception.class);
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/event/{eventId}/removeJudge/{judgeId}",eventId,judgeId))
+                .andExpect(status().isInternalServerError());
+
+
+        //a bad team id
+        judgeId = "1234567834";
+        Mockito.when(eventRepository.removeJudgeFromEvent(eventId,judgeId)).thenReturn(true);
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/event/{eventId}/removeJudge/{judgeId}",eventId,judgeId))
+                .andExpect(status().isBadRequest());
 
     }
 
