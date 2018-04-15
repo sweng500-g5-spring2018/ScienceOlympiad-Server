@@ -1,17 +1,22 @@
 package edu.pennstate.science_olympiad.controllers;
 
+import com.twilio.type.PhoneNumber;
 import edu.pennstate.science_olympiad.URIConstants;
 import edu.pennstate.science_olympiad.helpers.json.JsonHelper;
 import edu.pennstate.science_olympiad.sms.EmailSender;
 import edu.pennstate.science_olympiad.sms.TextMessage;
+import edu.pennstate.science_olympiad.sms.TextingHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.InvalidClassException;
 
 
 @RestController
@@ -65,9 +70,16 @@ public class CommsController implements URIConstants{
         try {
 
             String toNumber = JsonHelper.getJsonString(toNumberJson, "phoneNumber");
+            PhoneNumber toPhone = new PhoneNumber(toNumber);
+
+            if (toNumber == null)
+                throw new InvalidClassException("Phone number was not numeric");
+
             logger.info("Hit the send text endpoint. Sending text to: " + toNumber);
 
-            boolean sent = TextMessage.getInstance().text(toNumber, "This is a sample text that could be " +
+            TextingHelper textingHelper = new TextingHelper();
+
+            boolean sent = textingHelper.sendMessage(toNumber, "This is a sample text that could be " +
                     "used to unsubscribe, or confirm a phone number.");
 
             logger.info("Text sent: " + sent);

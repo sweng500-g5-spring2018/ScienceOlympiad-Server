@@ -133,7 +133,7 @@ public class UsersControllerTest {
 
         //server error
         //some kind of error occured
-        Mockito.when(userRepository.getAllCoaches()).thenThrow(Exception.class);
+        Mockito.when(userRepository.getAllCoaches()).thenThrow(new Exception());
         mockMvc.perform(get("/getCoaches"))
                 .andExpect(status().isInternalServerError());
     }
