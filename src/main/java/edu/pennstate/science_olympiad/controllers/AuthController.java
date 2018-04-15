@@ -40,7 +40,8 @@ public class AuthController {
         Gson gson = new Gson();
         LoginJsonHelper helper = gson.fromJson(loginJson, LoginJsonHelper.class);
 
-        if(helper.getEmailAddress() == null || helper.getPassword() == null) {
+        if(helper.getEmailAddress() == null || helper.getEmailAddress().equals("") ||
+                helper.getPassword() == null || helper.getPassword().equals("")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
         }
 
