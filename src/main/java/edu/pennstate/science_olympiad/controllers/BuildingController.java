@@ -36,15 +36,19 @@ public class BuildingController implements URIConstants{
             Gson gson = new Gson();
             Building building = gson.fromJson(buildingJson, Building.class);
 
-            boolean added = buildingRepository.addNewBuilding(building);
+            if (building.getLat() != null && building.getLng() != null && building.getBuilding() != null) {
 
-            if (added)
-                return ResponseEntity.status(HttpStatus.OK).body("Building was added.");
-            else
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Building could not be added, already exists.");
+                boolean added = buildingRepository.addNewBuilding(building);
 
+                if (added)
+                    return ResponseEntity.status(HttpStatus.OK).body("Building was added.");
+                else
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("Building could not be added, already exists.");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
+            }
         } catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request data, malformed JSON.");
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Something went wrong.");
         }
     }
 
@@ -102,6 +106,11 @@ public class BuildingController implements URIConstants{
     @CrossOrigin(origins = "*")
     @RequestMapping(value= GET_A_BUILDING, method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> getABuilding(@PathVariable("buildingID") String buildingID) {
+
+        if (!MongoIdVerifier.isValidMongoId(buildingID)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid building ID.");
+        }
+
         Building building = buildingRepository.getBuilding(buildingID);
         if (building != null) {
             return ResponseEntity.status(HttpStatus.OK).body(building);
