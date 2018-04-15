@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
@@ -29,9 +30,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.http.HttpSession;
 
+import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+//@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration(classes= SpringConfig.class)
 @WebAppConfiguration
 public class AuthControllerTest {
@@ -40,7 +43,7 @@ public class AuthControllerTest {
     private MockMvc mockMvc;
     private Admin brandon;
 
-    @Autowired
+    @Mock
     UserRepository userRepository;
 
     @InjectMocks
@@ -51,6 +54,11 @@ public class AuthControllerTest {
      */
     @Before
     public void setup() {
+        MockitoAnnotations.initMocks(this);
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(authController)
+                .build();
+
         brandon  = (Admin)UserFactory.getInstance().createUser("admin");
         brandon.setSiteName("Penn State");
         brandon.setFirstName("Brandon");
@@ -60,12 +68,6 @@ public class AuthControllerTest {
         brandon.setReceiveText(false);
         brandon.setPasswordPlainText("Password");
 
-        userRepository.addUser(brandon);
-
-        MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(authController)
-                .build();
     }
 
     @Test
@@ -75,6 +77,10 @@ public class AuthControllerTest {
         LoginJsonHelper loginJsonHelper = new LoginJsonHelper(emailAddress, rawPassword);
         Gson gson = new Gson();
         String loginJson = gson.toJson(loginJsonHelper);
+
+        UserRepository userRepository=mock(UserRepository.class);
+
+        Mockito.when(userRepository.getUser(loginJsonHelper)).thenReturn(brandon);
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
                 .with((new RequestPostProcessor() {
