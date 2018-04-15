@@ -54,7 +54,7 @@ public class TextMessage {
 
     public boolean text(AUser user, String message) {
         try {
-            if (user != null && user.getPhoneNumber() != null) {
+            if (user != null && user.getPhoneNumber() != null && user.isReceiveText()) {
                 text(user.getPhoneNumber(), message);
                 return true;
             }
