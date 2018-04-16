@@ -203,11 +203,11 @@ public class EventController implements URIConstants{
      */
     @CrossOrigin(origins = "*")
     @RequestMapping(value= ADD_SCORE, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> addScoreToTeamEvent(@PathVariable("score") String score,
-                                                 @RequestBody String teamIdJson, @RequestBody String eventIdJson) {
-        String teamId = JsonHelper.getIdFromJson(teamIdJson);
-        String eventId = JsonHelper.getIdFromJson(eventIdJson);
-        boolean added = eventRepository.addScoreToTeamEvent(Double.parseDouble(score), teamId, eventId);
+    public ResponseEntity<?> addScoreToTeamEvent(@PathVariable("teamEventId") String teamEventId, @RequestBody String scoreJson) {
+
+        String score = JsonHelper.getJsonString(scoreJson, "score");
+
+        boolean added = eventRepository.addScoreToTeamEvent(score != null ? Double.parseDouble(score) : null, teamEventId);
         if (added)
             return ResponseEntity.status(HttpStatus.OK).body(added);
         else
@@ -283,14 +283,24 @@ public class EventController implements URIConstants{
      */
     @CrossOrigin(origins = "*")
     @RequestMapping(value= REGISTER_TEAM_FOR_EVENT, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> registerTeamForEvent(@PathVariable("eventId") String eventId,@PathVariable("teamId") String teamId) {
+    public ResponseEntity<?> registerTeamForEvent(@PathVariable("eventId") String eventId,@PathVariable("teamId") String teamId, @RequestBody String nameJson) {
         logger.info("Trying to register a team to an event " + eventId + "  ---  " + teamId);
         if(! MongoIdVerifier.isValidMongoId(eventId)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid event ID.");
         } else if(! MongoIdVerifier.isValidMongoId(teamId)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request, invalid team ID.");
         }
-        if(eventRepository.registerTeamToEvent(teamId,eventId)) {
+
+        String teamName = null;
+        String eventName = null;
+        try {
+            teamName = JsonHelper.getJsonString(nameJson, "teamName");
+            eventName = JsonHelper.getJsonString(nameJson, "eventName");
+        } catch(Exception e) {
+            logger.info("No team name or event name provided");
+        }
+
+        if(eventRepository.registerTeamToEvent(teamId,eventId,teamName,eventName)) {
             return ResponseEntity.status(HttpStatus.OK).body("Success, team has been registered");
         } else {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Team is already registered");

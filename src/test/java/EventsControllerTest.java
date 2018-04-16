@@ -9,6 +9,7 @@ import edu.pennstate.science_olympiad.repositories.EventRepository;
 import edu.pennstate.science_olympiad.repositories.SchoolRepository;
 import edu.pennstate.science_olympiad.services.EventService;
 import edu.pennstate.science_olympiad.services.TeamService;
+import edu.pennstate.science_olympiad.util.Pair;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -252,31 +253,33 @@ public class EventsControllerTest {
 
     @Test
     public void registerTeamForEvent() throws Exception {
+        String nameJson = gson.toJson("hellooo");
+
         String eventId="123456789012345678901234";
         String teamId="123456789012345678901235";
-        Mockito.when(eventRepository.registerTeamToEvent(teamId,eventId)).thenReturn(true);
-        MvcResult result4 = mockMvc.perform(MockMvcRequestBuilders.post("/event/{eventId}/{teamId}",eventId,teamId))
+        Mockito.when(eventRepository.registerTeamToEvent(teamId,eventId, null, null)).thenReturn(true);
+        MvcResult result4 = mockMvc.perform(MockMvcRequestBuilders.post("/event/{eventId}/{teamId}",eventId,teamId).content(nameJson))
                 .andExpect(status().isOk())
                 .andReturn();
 
         //not added
-        Mockito.when(eventRepository.registerTeamToEvent(teamId,eventId)).thenReturn(false);
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/event/{eventId}/{teamId}",eventId,teamId))
+        Mockito.when(eventRepository.registerTeamToEvent(teamId,eventId, null, null)).thenReturn(false);
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/event/{eventId}/{teamId}",eventId,teamId).content(nameJson))
                 .andExpect(status().isConflict())
                 .andReturn();
 
         //bad team id
         teamId="1234501235";
-        Mockito.when(eventRepository.registerTeamToEvent(teamId,eventId)).thenReturn(false);
-        MvcResult result1 = mockMvc.perform(MockMvcRequestBuilders.post("/event/{eventId}/{teamId}",eventId,teamId))
+        Mockito.when(eventRepository.registerTeamToEvent(teamId,eventId, null, null)).thenReturn(false);
+        MvcResult result1 = mockMvc.perform(MockMvcRequestBuilders.post("/event/{eventId}/{teamId}",eventId,teamId).content(nameJson))
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
         //bad event id
         teamId="123456789012345678901235";
         eventId="1234501235";
-        Mockito.when(eventRepository.registerTeamToEvent(teamId,eventId)).thenReturn(false);
-        MvcResult resul2t = mockMvc.perform(MockMvcRequestBuilders.post("/event/{eventId}/{teamId}",eventId,teamId))
+        Mockito.when(eventRepository.registerTeamToEvent(teamId,eventId, null, null)).thenReturn(false);
+        MvcResult resul2t = mockMvc.perform(MockMvcRequestBuilders.post("/event/{eventId}/{teamId}",eventId,teamId).content(nameJson))
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
