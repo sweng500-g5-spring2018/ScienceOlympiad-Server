@@ -18,7 +18,7 @@ public interface URIConstants {
     String UPDATE_EVENT             = "/updateEvent/{eventId}";
     String GET_AN_EVENT             = "/event/{eventId}";
     String GET_EVENT_JUDGES         = "/event/judges/{eventId}";
-    String ADD_SCORE                = "/addScore/{score}";
+    String ADD_SCORE                = "/addScore/{teamEventId}";
     String GET_TEAM_EVENTS          = "/getTeamEvents";
     String GET_SCORES_FOR_TEAM      = "/getTeamScores{teamId}";
     String GET_SCORES_FOR_EVENT     = "/getEventScores{eventId}";

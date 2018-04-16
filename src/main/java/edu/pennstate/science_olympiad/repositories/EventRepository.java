@@ -258,14 +258,13 @@ public class EventRepository {
     /**
      * Adds a score for a team for a specific event
      * @param score the score the team earned
-     * @param teamId the team id that earned the score
-     * @param eventId the event that the team earned the score participating in
+     * @param teamEventId the id of the TeamEvent object that will be scored
      * @return Whether the score was added or not
      */
-    public boolean addScoreToTeamEvent(Double score, String teamId, String eventId) {
+    public boolean addScoreToTeamEvent(Double score, String teamEventId) {
         try {
             Query query = new Query();
-            query.addCriteria(Criteria.where("teamId").is(teamId)).addCriteria(Criteria.where("eventId").is(eventId));
+            query.addCriteria(Criteria.where("_id").is(teamEventId));
             logger.info("Query " + query.toString());
             Team_Event dbTeamEvent = mongoTemplate.findOne(query, Team_Event.class);
             if (dbTeamEvent != null) {

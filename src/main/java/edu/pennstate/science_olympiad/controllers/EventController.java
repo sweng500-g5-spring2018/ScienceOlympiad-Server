@@ -203,11 +203,11 @@ public class EventController implements URIConstants{
      */
     @CrossOrigin(origins = "*")
     @RequestMapping(value= ADD_SCORE, method= RequestMethod.POST ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> addScoreToTeamEvent(@PathVariable("score") String score,
-                                                 @RequestBody String teamIdJson, @RequestBody String eventIdJson) {
-        String teamId = JsonHelper.getIdFromJson(teamIdJson);
-        String eventId = JsonHelper.getIdFromJson(eventIdJson);
-        boolean added = eventRepository.addScoreToTeamEvent(Double.parseDouble(score), teamId, eventId);
+    public ResponseEntity<?> addScoreToTeamEvent(@PathVariable("teamEventId") String teamEventId, @RequestBody String scoreJson) {
+
+        String score = JsonHelper.getJsonString(scoreJson, "score");
+
+        boolean added = eventRepository.addScoreToTeamEvent(score != null ? Double.parseDouble(score) : null, teamEventId);
         if (added)
             return ResponseEntity.status(HttpStatus.OK).body(added);
         else
