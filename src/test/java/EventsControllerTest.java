@@ -3,6 +3,8 @@ import edu.pennstate.science_olympiad.Team;
 import edu.pennstate.science_olympiad.config.SpringConfig;
 import edu.pennstate.science_olympiad.controllers.EventController;
 import edu.pennstate.science_olympiad.Event;
+import edu.pennstate.science_olympiad.helpers.request.LoginJsonHelper;
+import edu.pennstate.science_olympiad.many_to_many.Team_Event;
 import edu.pennstate.science_olympiad.people.Coach;
 import edu.pennstate.science_olympiad.people.Judge;
 import edu.pennstate.science_olympiad.repositories.EventRepository;
@@ -32,6 +34,7 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.mockito.Matchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -348,5 +351,59 @@ public class EventsControllerTest {
                 .andExpect(status().isBadRequest());
 
     }
+
+    @Test
+    public void addScoreToEvent() throws Exception {
+        String teamEventId="123456789012345678901234";
+        String score = "10";
+        String scoreJson = "{\"score\":\"10\"}";
+        Mockito.when(eventRepository.addScoreToTeamEvent(any(Double.class),any(String.class))).thenReturn(true);
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/addScore/{teamEventId}}",teamEventId).content(scoreJson))
+                .andExpect(status().isOk());
+
+        Mockito.when(eventRepository.addScoreToTeamEvent(any(Double.class),any(String.class))).thenReturn(false);
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/addScore/{teamEventId}}",teamEventId).content(scoreJson))
+                .andExpect(status().isConflict());
+
+
+    }
+
+    @Test
+    public void getScoresForEvent() throws Exception {
+        List<Team_Event> te = new ArrayList<Team_Event>();
+        String eventId="123456789012345678901234";
+        te.add(new Team_Event("123456789012345678901234","123456789012345678901234","team1","event1"));
+        Mockito.when(eventRepository.getAllScoresForEvent("123456789012345678901234")).thenReturn(te);
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/getEventScores{eventId}",eventId))
+                .andExpect(status().isOk());
+
+        Mockito.when(eventRepository.getAllScoresForEvent("123456789012345678901234")).thenReturn(null);
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/getEventScores{eventId}",eventId))
+                .andExpect(status().isConflict());
+
+    }
+
+
+    @Test
+    public void getScoresForTeam() throws Exception {
+        List<Team_Event> te = new ArrayList<Team_Event>();
+        String teamId="123456789012345678901234";
+        te.add(new Team_Event("123456789012345678901234","123456789012345678901234","team1","event1"));
+        Mockito.when(eventRepository.getAllScoresForTeam("123456789012345678901234")).thenReturn(te);
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/getTeamScores{teamId}",teamId))
+                .andExpect(status().isOk());
+
+        Mockito.when(eventRepository.getAllScoresForTeam("123456789012345678901234")).thenReturn(null);
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/getTeamScores{teamId}",teamId))
+                .andExpect(status().isConflict());
+
+    }
+
 
 }
