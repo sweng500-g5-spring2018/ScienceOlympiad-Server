@@ -24,15 +24,19 @@ public class RoomController implements URIConstants{
     RoomRepository roomRepository;
 
     @CrossOrigin(origins = "*")
-    @RequestMapping(value= GET_ROOMS ,method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
-    public List<Room> getRooms(@PathVariable("buildingID") String buildingID) {
-        return roomRepository.getBuildingRooms(buildingID);
-    }
-
-    @CrossOrigin(origins = "*")
     @RequestMapping(value= GET_ALL_ROOMS ,method= RequestMethod.GET ,produces={MediaType.APPLICATION_JSON_VALUE})
     public List<Room> getAllRooms() {
-        return roomRepository.getAllRooms();
+        try {
+            List<Room> rooms = roomRepository.getAllRooms();
+
+            if (rooms.size() > 0)
+                return rooms;
+            else
+                return null;
+
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @CrossOrigin(origins = "*")

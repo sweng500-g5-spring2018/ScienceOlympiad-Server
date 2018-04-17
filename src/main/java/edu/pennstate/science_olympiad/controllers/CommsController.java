@@ -16,6 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.InvalidClassException;
 
 
@@ -93,5 +95,16 @@ public class CommsController implements URIConstants{
             logger.info("Broken, text was not sent");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: Your request could not be processed.");
         }
+    }
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value="returnSms", method= RequestMethod.POST, produces={MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> returnSms(HttpServletRequest request, HttpServletResponse response) {
+        TextingHelper textingHelper = new TextingHelper();
+        boolean sent = textingHelper.sendMessage("+19086165430", "Text Received, with parameters");
+        if (sent){
+            return ResponseEntity.status(HttpStatus.OK).body("Email was sent.");}
+        else
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email was not sent, an error occurred");
     }
 }

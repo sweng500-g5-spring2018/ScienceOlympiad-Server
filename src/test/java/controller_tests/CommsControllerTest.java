@@ -34,6 +34,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
@@ -186,14 +187,5 @@ public class CommsControllerTest {
                 .andReturn();
 
     }
-
-
-
-
-
-
-
-
-
 
 }
