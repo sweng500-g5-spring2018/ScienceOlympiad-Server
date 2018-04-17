@@ -202,7 +202,7 @@ public class EventService {
             AUser newJudge = new Judge();
             ((Judge) newJudge).copyInfoFromJson(judge);
             //password is hashed in addUser method
-            String defaultPass = "default123";
+            String defaultPass = "Password1";
             newJudge.setPasswordPlainText(defaultPass);
             boolean added = userRepository.addUser(newJudge);
             //password will now be hashed if the user doesnt already exist
