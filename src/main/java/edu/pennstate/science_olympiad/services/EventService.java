@@ -2,22 +2,18 @@ package edu.pennstate.science_olympiad.services;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import edu.pennstate.science_olympiad.Building;
 import edu.pennstate.science_olympiad.Event;
 import edu.pennstate.science_olympiad.Room;
 import edu.pennstate.science_olympiad.Team;
 import edu.pennstate.science_olympiad.helpers.json.JsonHelper;
 import edu.pennstate.science_olympiad.helpers.request.NewJudgeHelper;
 import edu.pennstate.science_olympiad.many_to_many.Judge_Event;
-import edu.pennstate.science_olympiad.many_to_many.Team_Event;
 import edu.pennstate.science_olympiad.people.*;
 import edu.pennstate.science_olympiad.repositories.*;
 import edu.pennstate.science_olympiad.sms.EmailSender;
-import edu.pennstate.science_olympiad.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
@@ -202,7 +198,7 @@ public class EventService {
             AUser newJudge = new Judge();
             ((Judge) newJudge).copyInfoFromJson(judge);
             //password is hashed in addUser method
-            String defaultPass = "default123";
+            String defaultPass = "Password1";
             newJudge.setPasswordPlainText(defaultPass);
             boolean added = userRepository.addUser(newJudge);
             //password will now be hashed if the user doesnt already exist
