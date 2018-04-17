@@ -12,7 +12,6 @@ public interface URIConstants {
     //-----------------------------Event URIs------------------------------
     String GET_EVENTS               = "/events";
     String NEW_EVENT                = "/addEvent";
-    String ASSIGN_JUDGE_TO_EVENT    = "/assignJudgeToEvent";
     String VERIFY_EVENT             = "/verifyEvent/{eventName}";
     String REMOVE_EVENT             = "/removeEvent/{eventId}";
     String UPDATE_EVENT             = "/updateEvent/{eventId}";
@@ -50,15 +49,11 @@ public interface URIConstants {
     String ADD_STUDENT_TO_TEAM      = "/addStudentToTeam";
     String ADD_COACH_TO_TEAM        = "/addCoachToTeam";
     String REMOVE_TEAM              = "/removeTeam/{teamId}";
-    String UPDATE_TEAM              = "/updateTeam";
     String REMOVE_STUDENT_FROM_TEAM = "/removeStudentFromTeam";
     String GET_TEAMS_BY_USER        = "/getTeamsByUser";
     String UPDATE_STUDENTS_IN_TEAM  = "/updateStudentsInTeam";
 
     //-----------------------------Users URIs-----------------------------
-    String TEST_USER                = "/createTestUser";
-    String USERS                    = "/users";
-    String ALL_USERS                = "/allUsers";
     String GET_JUDGES               = "/getJudges";
     String GET_COACHES              = "/getCoaches";
     String REMOVE_USER              = "/removeUser/{userId}";
