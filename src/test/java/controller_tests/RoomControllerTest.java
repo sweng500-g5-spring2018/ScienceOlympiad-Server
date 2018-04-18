@@ -144,19 +144,6 @@ public class RoomControllerTest {
 
         String roomJson = gson.toJson(room1);
 
-        //This will throw an exception and return null
-        Mockito.when(roomRepository.addNewRoom(any(Room.class))).thenThrow(new NullPointerException());
-
-        MvcResult exception = mockMvc.perform(MockMvcRequestBuilders.post("/addRoom")
-                .with((new RequestPostProcessor() {
-                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-                        HttpSession session = request.getSession();
-                        session.setAttribute("user", brandon);
-                        return request;
-                    }})).content(roomJson))
-                .andExpect(status().isBadRequest())
-                .andReturn();
-
         //This will return a conflict
         Mockito.when(roomRepository.addNewRoom(any(Room.class))).thenReturn(false);
 
@@ -167,7 +154,7 @@ public class RoomControllerTest {
                         session.setAttribute("user", brandon);
                         return request;
                     }})).content(roomJson))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isConflict())
                 .andReturn();
 
         //This will work correctly
@@ -181,6 +168,19 @@ public class RoomControllerTest {
                         return request;
                     }})).content(roomJson))
                 .andExpect(status().isOk())
+                .andReturn();
+
+        //This will throw an exception and return null
+        Mockito.when(roomRepository.addNewRoom(any(Room.class))).thenThrow(Exception.class);
+
+        MvcResult exception = mockMvc.perform(MockMvcRequestBuilders.post("/addRoom")
+                .with((new RequestPostProcessor() {
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        HttpSession session = request.getSession();
+                        session.setAttribute("user", brandon);
+                        return request;
+                    }})).content(roomJson))
+                .andExpect(status().isBadRequest())
                 .andReturn();
     }
 
@@ -203,17 +203,6 @@ public class RoomControllerTest {
         assert badId.getResponse().getContentAsString().equals("Bad request, invalid room ID.");
 
         //This will throw an exception and return null
-        Mockito.when(roomRepository.removeRoom(anyString())).thenThrow(new NullPointerException());
-
-        MvcResult exception = mockMvc.perform(MockMvcRequestBuilders.delete("/removeRoom/" + roomId)
-                .with((new RequestPostProcessor() {
-                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-                        HttpSession session = request.getSession();
-                        session.setAttribute("user", brandon);
-                        return request;
-                    }})))
-                .andExpect(status().isInternalServerError())
-                .andReturn();
 
         //This will return a conflict
         Mockito.when(roomRepository.removeRoom(anyString())).thenReturn(false);
@@ -225,7 +214,7 @@ public class RoomControllerTest {
                         session.setAttribute("user", brandon);
                         return request;
                     }})))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isConflict())
                 .andReturn();
 
         //This will work correctly
@@ -239,6 +228,18 @@ public class RoomControllerTest {
                         return request;
                     }})))
                 .andExpect(status().isOk())
+                .andReturn();
+
+          Mockito.when(roomRepository.removeRoom(roomId)).thenThrow(Exception.class);
+
+        MvcResult exception = mockMvc.perform(MockMvcRequestBuilders.delete("/removeRoom/" + roomId)
+                .with((new RequestPostProcessor() {
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        HttpSession session = request.getSession();
+                        session.setAttribute("user", brandon);
+                        return request;
+                    }})))
+                .andExpect(status().isInternalServerError())
                 .andReturn();
     }
 
@@ -268,17 +269,6 @@ public class RoomControllerTest {
         assert badId.getResponse().getContentAsString().equals("Bad request, invalid room ID.");
 
         //This will throw an exception and return null
-        Mockito.when(roomRepository.updateRoom(anyString(), anyString())).thenThrow(new NullPointerException());
-
-        MvcResult exception = mockMvc.perform(MockMvcRequestBuilders.post("/updateRoom/" + roomId)
-                .with((new RequestPostProcessor() {
-                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-                        HttpSession session = request.getSession();
-                        session.setAttribute("user", brandon);
-                        return request;
-                    }})).content(roomJson))
-                .andExpect(status().isInternalServerError())
-                .andReturn();
 
         //This will return a conflict
         Mockito.when(roomRepository.updateRoom(anyString(), anyString())).thenReturn(false);
@@ -290,7 +280,7 @@ public class RoomControllerTest {
                         session.setAttribute("user", brandon);
                         return request;
                     }})).content(roomJson))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isConflict())
                 .andReturn();
 
         //This will work correctly
@@ -304,6 +294,17 @@ public class RoomControllerTest {
                         return request;
                     }})).content(roomJson))
                 .andExpect(status().isOk())
+                .andReturn();
+         Mockito.when(roomRepository.updateRoom(any(String.class), any(String.class))).thenThrow(Exception.class);
+
+        MvcResult exception = mockMvc.perform(MockMvcRequestBuilders.post("/updateRoom/" + roomId)
+                .with((new RequestPostProcessor() {
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        HttpSession session = request.getSession();
+                        session.setAttribute("user", brandon);
+                        return request;
+                    }})).content(roomJson))
+                .andExpect(status().isInternalServerError())
                 .andReturn();
     }
 }
