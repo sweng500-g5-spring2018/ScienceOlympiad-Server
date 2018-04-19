@@ -26,11 +26,7 @@ public interface URIConstants {
     String REMOVE_JUDGE_FROM_EVENT  ="/event/{eventId}/removeJudge/{judgeId}";
     String REMOVE_TEAM_FROM_EVENT   ="/event/{eventId}/removeTeam/{teamId}";
 
-    //-----------------------------First Controller URIs-----------------------------
-    //none
-
     //-----------------------------Room URIs--------------------------
-    String GET_ROOMS                = "/getRooms/{buildingID}";
     String GET_ALL_ROOMS            = "/getAllRooms";
     String ADD_ROOM                 = "/addRoom";
     String REMOVE_ROOM              = "/removeRoom/{roomID}";
