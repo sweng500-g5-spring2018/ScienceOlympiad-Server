@@ -29,14 +29,9 @@ For managing this project in an Agile fashion, Jetbrains YouTrack was used for a
 2. Clone the project from git 
    - In Intellij - Click VCS -> Checkout from version control -> Github
    - Enter the proper github repo and your project name
-  
 3. If your project name does not match the .iml file extratced from github, it will still run 
-  
-4. The mavenbuild should have been cloned and ready to run. If not, set up a custom run configuration with the following maven command line arugments.
-    ```
-    clean -Dmaven.clean.failOnError=false install package
-    ```
-    
+4. The mavenbuild should have been cloned and ready to run. If not, set up a custom run configuration with the following maven command line arugments. <br />
+    ```clean -Dmaven.clean.failOnError=false install package```
 5. The generated .war file will be built and placed in ```<project_name>/target/<war file>```
 6. Download a version of tomcat to use, preferably > Tomcat 8
 7. Navigate to <tomcat_directory>/bin/ and double click on startup.bat -- This will run your tomcat server under localhost:8080
